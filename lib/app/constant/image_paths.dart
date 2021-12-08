@@ -5,7 +5,7 @@ class ImagePaths {
   static const String IMAGES_PATH = "assets/images";
 
   // TODO :: ICONS
-  static const String logo = "$ICON_PATH/";
+  static const String appLogo = "$ICON_PATH/app_logo.png";
 
 // TODO :: IMAGES
   static const String mainSplash = "$IMAGES_PATH/";

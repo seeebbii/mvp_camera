@@ -33,7 +33,7 @@ ThemeData myTheme = ThemeData(
     ),
     inputDecorationTheme: InputDecorationTheme(
       hintStyle: TextStyle(
-          color: Colors.grey.withOpacity(0.7),
+          color: Colors.white.withOpacity(0.7),
           fontSize: 13.sp),
     ),
     appBarTheme: const AppBarTheme(
@@ -61,7 +61,7 @@ ThemeData myTheme = ThemeData(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         primary: primaryColor,
         shape: RoundedRectangleBorder( //to set border radius to button
-            borderRadius: BorderRadius.circular(28)
+            borderRadius: BorderRadius.circular(12)
         ),
       ),
     ),

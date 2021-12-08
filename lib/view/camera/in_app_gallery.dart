@@ -13,7 +13,6 @@ class InAppGallery extends StatefulWidget {
 }
 
 class _InAppGalleryState extends State<InAppGallery> {
-
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
@@ -34,21 +33,43 @@ class _InAppGalleryState extends State<InAppGallery> {
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
-        title: Text('Gallery', style: Theme.of(context).textTheme.headline2?.copyWith(color: primaryColor, fontSize: 17.sp, fontWeight: FontWeight.bold)),
-        leading: IconButton(onPressed: () {
-          navigationController.goBack();
-        }, icon: Icon(Icons.chevron_left,color: primaryColor, size: 25.sp,),),
+        title: Text('Gallery',
+            style: Theme.of(context).textTheme.headline2?.copyWith(
+                color: primaryColor,
+                fontSize: 17.sp,
+                fontWeight: FontWeight.bold)),
+        leading: IconButton(
+          onPressed: () {
+            navigationController.goBack();
+          },
+          icon: Icon(
+            Icons.chevron_left,
+            color: primaryColor,
+            size: 25.sp,
+          ),
+        ),
       ),
-      body: Obx(() => GridView.count(
-        cacheExtent: 999,
-        addAutomaticKeepAlives: true,
-        crossAxisCount: 3,
-        mainAxisSpacing: 2,
-        crossAxisSpacing: 2,
-        children: myCameraController.listOfCapturedImages
-            .map((image) => Image.file(image, fit: BoxFit.cover, filterQuality: FilterQuality.low,))
-            .toList(),
-      )),
+      body: Padding(
+        padding: EdgeInsets.all(5.0.r),
+        child: Obx(() => GridView.builder(
+            itemCount: myCameraController.listOfCapturedImages.length,
+            addAutomaticKeepAlives: true,
+            cacheExtent: 999,
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
+                childAspectRatio: 1,
+                crossAxisSpacing: 3.sp,
+                mainAxisSpacing: 3.sp),
+            itemBuilder: (_, index) {
+              return ClipRRect(
+                  borderRadius: BorderRadius.circular(5.r),
+                  child: Image.file(
+                    myCameraController.listOfCapturedImages[index],
+                    fit: BoxFit.cover,
+                    filterQuality: FilterQuality.low,
+                  ));
+            })),
+      ),
     );
   }
 }

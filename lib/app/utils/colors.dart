@@ -8,8 +8,6 @@ const themeColor = Color(0xFFFCFCFF);
 const bgScreenColor = Color(0xFFFCFCFF);
 // const bg=Color(0xFFE5E5E5);
 const textColor = Color(0xFF404041);
-//const backgroundColor = Color(0xffE5E5E5);
-const backgroundColor = Color(0xFFFDFDFD);
 
 const blue = Color(0xFF1ac0dc);
 const grey = Color(0xFF828282);
@@ -28,7 +26,10 @@ Color red = Colors.red.shade700;
 
 const backgroundCoffee = Color(0xffe0e0e1);
 const bord = Color(0xffd5dde0);
-Color primaryColor = Colors.orange.shade700;
+
+const Color primaryColor = Color(0xFFff9a3f);
+const Color backgroundColor = Color(0xFF333232);
+const Color bodyTextColor = Color(0xFF8d8d8d);
 
 // AUTH TEXT FIELD CONTAINER
 Color authTextFieldContainerColor = Colors.grey.shade200;

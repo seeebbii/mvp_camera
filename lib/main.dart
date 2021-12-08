@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
         builder: () => GetMaterialApp(
           debugShowCheckedModeBanner: false,
           theme: myTheme,
-          initialRoute: mainSplashScreen,
+          initialRoute: welcomeProjectName,
           onGenerateRoute: RouteGenerator.onGeneratedRoutes,
         ));
   }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mvp_camera/view/camera/camera_screen.dart';
 import 'package:mvp_camera/view/camera/in_app_gallery.dart';
-import 'package:mvp_camera/view/splash/main_splash_screen.dart';
+import 'package:mvp_camera/view/welcome/select_interval_screen.dart';
+import 'package:mvp_camera/view/welcome/welcome_project_name.dart';
 // STATIC ROUTE NAMES
 
 // SPLASH / ON BOARDING
-const String mainSplashScreen = '/main-splash-screen';
+const String welcomeProjectName = '/welcome-project-name-screen';
+const String selectIntervalScreen = '/select-interval-screen';
 const String cameraScreen = '/camera-screen';
 const String inAppGallery = '/in-app-gallery';
 
@@ -23,8 +25,11 @@ class RouteGenerator {
     debugPrint(settings.name);
     switch (settings.name) {
 
-      case mainSplashScreen:
-        return _getPageRoute(const MainSplashScreen());
+      case welcomeProjectName:
+        return _getPageRoute(const WelcomeProjectName());
+
+        case selectIntervalScreen:
+        return _getPageRoute(const SelectIntervalScreen());
 
         case cameraScreen:
         return _getPageRoute(const CameraScreen());
