@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mvp_camera/app/constant/controllers.dart';
 import 'package:mvp_camera/app/constant/image_paths.dart';
+import 'package:mvp_camera/app/router/router_generator.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
 import 'package:mvp_camera/view/components/custom_button.dart';
 import 'package:mvp_camera/view/components/custom_textfield.dart';
@@ -65,14 +66,18 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen> {
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 15.sp),
-              child:Text("DROP DOWN HERE"),
+              child: const Text("DROP DOWN HERE"),
             ),
             SizedBox(
               height: 0.03.sh,
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 15.sp),
-              child: CustomButton(buttonText: "Start", onPressed: () {}),
+              child: CustomButton(
+                  buttonText: "Start",
+                  onPressed: () {
+                    navigationController.navigateToNamed(cameraScreen);
+                  }),
             ),
           ],
         ),

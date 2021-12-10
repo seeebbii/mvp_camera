@@ -14,7 +14,6 @@ const String inAppGallery = '/in-app-gallery';
 // ignore: todo
 // TODO : ROUTES GENERATOR CLASS THAT CONTROLS THE FLOW OF NAVIGATION/ROUTING
 
-
 class RouteGenerator {
   // FUNCTION THAT HANDLES ROUTING
   static Route<dynamic> onGeneratedRoutes(RouteSettings settings) {
@@ -24,19 +23,17 @@ class RouteGenerator {
     }
     debugPrint(settings.name);
     switch (settings.name) {
-
       case welcomeProjectName:
         return _getPageRoute(const WelcomeProjectName());
 
-        case selectIntervalScreen:
+      case selectIntervalScreen:
         return _getPageRoute(const SelectIntervalScreen());
 
-        case cameraScreen:
+      case cameraScreen:
         return _getPageRoute(const CameraScreen());
 
-        case inAppGallery:
+      case inAppGallery:
         return _getPageRoute(const InAppGallery());
-
 
       default:
         return _errorRoute();

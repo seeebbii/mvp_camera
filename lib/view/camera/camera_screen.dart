@@ -21,9 +21,6 @@ class CameraScreen extends StatefulWidget {
 
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
-
-
-
   late PermissionStatus status;
   Timer? timer;
 
@@ -171,7 +168,9 @@ class _CameraScreenState extends State<CameraScreen>
                                   top: 0.03.sh,
                                   left: 0.18.sw,
                                   child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        Get.back();
+                                      },
                                       child: const Icon(
                                         Icons.chevron_left,
                                         color: Colors.white70,
@@ -214,7 +213,8 @@ class _CameraScreenState extends State<CameraScreen>
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        navigationController.navigateToNamed(inAppGallery);
+                                        navigationController
+                                            .navigateToNamed(inAppGallery);
                                         debugPrint("Gallery tapped");
                                       },
                                       child: Obx(() => Container(
@@ -304,12 +304,12 @@ class _CameraScreenState extends State<CameraScreen>
                               GestureDetector(
                                 behavior: HitTestBehavior.translucent,
                                 onScaleStart: (details) {
-
                                   print(details);
                                 },
                                 onScaleUpdate: (details) {
                                   setState(() {
-                                    myCameraController.controller.value.setZoomLevel(details.scale);
+                                    myCameraController.controller.value
+                                        .setZoomLevel(details.scale);
                                   });
                                   print(details);
                                 },

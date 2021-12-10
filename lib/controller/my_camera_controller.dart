@@ -48,8 +48,8 @@ class MyCameraController extends GetxController {
         .then((value) => minAvailableExposureOffset.value = value);
 
     controller.value
-        .getMaxExposureOffset()
-        .then((value) => maxAvailableExposureOffset.value = value);
+        .getMaxExposureOffset().then((value) => maxAvailableExposureOffset.value = value);
+        //.then((value) => maxAvailableExposureOffset.value = value);
 
     debugPrint("CURRENT ZOOM : $currentZoomLevel");
     debugPrint("MINIMUM ZOOM : $minAvailableZoom");
