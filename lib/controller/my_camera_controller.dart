@@ -7,9 +7,11 @@ import 'package:permission_handler/permission_handler.dart';
 
 class MyCameraController extends GetxController {
   static MyCameraController instance = Get.find();
-
+  Rx<TextEditingController> intervalController = TextEditingController().obs;
   // DATA VARIABLES
-  final projectNameController = TextEditingController().obs;
+  Rx<TextEditingController> projectNameController = TextEditingController().obs;
+  Directory projectDirectory = Directory('');
+
   Rx<int> intervalSeconds = 0.obs;
 
   var listOfCapturedImages = <File>[].obs;

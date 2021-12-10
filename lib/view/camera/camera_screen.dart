@@ -115,7 +115,8 @@ class _CameraScreenState extends State<CameraScreen>
       isCapturingImages = true;
     });
     // INITIALIZE DURATION FOR CAPTURING IMAGES
-    const duration = Duration(seconds: 1);
+    Duration duration = Duration(
+        seconds: int.parse(myCameraController.intervalController.value.text));
     timer = Timer.periodic(duration, (thisTimer) async {
       if (isCapturingImages == true) {
         setState(() {
@@ -169,7 +170,7 @@ class _CameraScreenState extends State<CameraScreen>
                                   left: 0.18.sw,
                                   child: InkWell(
                                       onTap: () {
-                                        Get.back();
+                                        navigationController.goBack();
                                       },
                                       child: const Icon(
                                         Icons.chevron_left,
@@ -337,5 +338,12 @@ class _CameraScreenState extends State<CameraScreen>
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+    super.dispose();
   }
 }
