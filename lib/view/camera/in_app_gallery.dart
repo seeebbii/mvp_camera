@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mvp_camera/app/constant/controllers.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
-
+import 'package:exif/exif.dart';
 class InAppGallery extends StatefulWidget {
   const InAppGallery({Key? key}) : super(key: key);
 
@@ -61,6 +61,7 @@ class _InAppGalleryState extends State<InAppGallery> {
                 crossAxisSpacing: 3.sp,
                 mainAxisSpacing: 3.sp),
             itemBuilder: (_, index) {
+              printExifOf();
               return ClipRRect(
                   borderRadius: BorderRadius.circular(5.r),
                   child: Image.file(
@@ -72,4 +73,29 @@ class _InAppGalleryState extends State<InAppGallery> {
       ),
     );
   }
+  printExifOf() async {
+
+  final fileBytes = myCameraController.listOfCapturedImages[0].readAsBytesSync();
+  final data = await readExifFromBytes(fileBytes);
+
+  if (data.isEmpty) {
+    print("No EXIF information found");
+    return;
+  }
+
+  if (data.containsKey('JPEGThumbnail')) {
+    print('File has JPEG thumbnail');
+    data.remove('JPEGThumbnail');
+  }
+  if (data.containsKey('TIFFThumbnail')) {
+    print('File has TIFF thumbnail');
+    data.remove('TIFFThumbnail');
+  }
+
+  for (final entry in data.entries) {
+    print("${entry.key}: ${entry.value}");
+  }
+  
+}
+
 }
