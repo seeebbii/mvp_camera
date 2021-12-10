@@ -6,6 +6,7 @@ import 'package:mvp_camera/app/router/router_generator.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
 import 'package:mvp_camera/view/components/custom_button.dart';
 import 'package:mvp_camera/view/components/custom_textfield.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class WelcomeProjectName extends StatefulWidget {
   const WelcomeProjectName({Key? key}) : super(key: key);
@@ -22,6 +23,11 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName> {
     FocusScope.of(context).unfocus();
 
     if (isValid) {
+      if(await Permission.photos.isDenied || await Permission.storage.isDenied){
+        Permission.photos.request().then((value) => debugPrint(value.toString()));
+        Permission.storage.request().then((value) => debugPrint(value.toString()));
+      }
+      print("HEY PROJECT: " + myCameraController.projectNameController.value.text);
       navigationController.navigateToNamed(selectIntervalScreen);
     }
   }

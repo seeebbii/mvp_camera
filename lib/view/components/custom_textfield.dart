@@ -30,6 +30,7 @@ class CustomTextField extends StatelessWidget {
     required this.suffixIcon,
     this.hintText, this.formatter = const [], this.validateMode = AutovalidateMode.disabled, }) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
     return Container(
