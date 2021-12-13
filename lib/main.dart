@@ -11,7 +11,6 @@ import 'controller/my_camera_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(NavigationController());
-  Get.put(MyCameraController());
 
   runApp(const MyApp());
 }
@@ -41,7 +40,7 @@ class _MyAppState extends State<MyApp> {
         builder: () => GetMaterialApp(
           debugShowCheckedModeBanner: false,
           theme: myTheme,
-          initialRoute: welcomeProjectName,
+          initialRoute: welcomeSplashScreen,
           onGenerateRoute: RouteGenerator.onGeneratedRoutes,
         ));
   }

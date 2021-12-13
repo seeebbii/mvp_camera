@@ -3,9 +3,11 @@ import 'package:mvp_camera/view/camera/camera_screen.dart';
 import 'package:mvp_camera/view/camera/in_app_gallery.dart';
 import 'package:mvp_camera/view/welcome/select_interval_screen.dart';
 import 'package:mvp_camera/view/welcome/welcome_project_name.dart';
+import 'package:mvp_camera/view/welcome/welcome_splash_screen.dart';
 // STATIC ROUTE NAMES
 
 // SPLASH / ON BOARDING
+const String welcomeSplashScreen = '/welcome-splash-screen';
 const String welcomeProjectName = '/welcome-project-name-screen';
 const String selectIntervalScreen = '/select-interval-screen';
 const String cameraScreen = '/camera-screen';
@@ -23,6 +25,9 @@ class RouteGenerator {
     }
     debugPrint(settings.name);
     switch (settings.name) {
+      case welcomeSplashScreen:
+        return _getPageRoute(const WelcomeSplashScreen());
+
       case welcomeProjectName:
         return _getPageRoute(const WelcomeProjectName());
 

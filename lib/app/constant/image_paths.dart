@@ -6,6 +6,7 @@ class ImagePaths {
 
   // TODO :: ICONS
   static const String appLogo = "$ICON_PATH/app_logo.png";
+  static const String intervalLogo = "$ICON_PATH/interval_logo.png";
   static const String boxLogo = "$ICON_PATH/box.png";
 
 // TODO :: IMAGES

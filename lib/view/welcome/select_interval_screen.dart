@@ -1,6 +1,6 @@
 // ignore_for_file: unnecessary_new
 
-import 'dart:io';
+import 'dart:io' as io;
 import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,24 +28,22 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen> {
     FocusScope.of(context).unfocus();
 
     if (isValid) {
-      Directory? directory = await getExternalStorageDirectory();
-      String newPath = "";
-      print(directory);
-      List<String> paths = directory!.path.split("/");
-      for (int x = 1; x < paths.length; x++) {
-        String folder = paths[x];
-        if (folder != "Android") {
-          newPath += "/" + folder;
-        } else {
-          break;
-        }
-      }
-      print(
-          "FOLDER NAME: ${myCameraController.projectNameController.value.text}");
-      newPath =
-          newPath + "/${myCameraController.projectNameController.value.text}";
-      print(newPath);
-      navigationController.navigateToNamed(cameraScreen);
+      var dirPath = await getExternalStorageDirectories();
+      debugPrint(myCameraController.projectNameController.value.text);
+      debugPrint(myCameraController.intervalController.value.text);
+
+      print(dirPath);
+
+      // var projectNameDirectory = await new io.Directory(
+      //         '${dirPath?.path}/${myCameraController.projectNameController.value.text}')
+      //     .create(recursive: true);
+      //
+      // final myImagePath = '${projectNameDirectory.path}/MyImages' ;
+      // final myImgDir = await new io.Directory(myImagePath).create(recursive: true);
+      //
+      // print(projectNameDirectory);
+
+      // navigationController.navigateToNamed(cameraScreen);
     }
   }
 
@@ -92,10 +90,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen> {
                 alignment: Alignment.center,
                 children: [
                   Image.asset(ImagePaths.boxLogo),
-                  Container(
-                      height: 0.1.sh,
-                      width: 0.1.sh,
-                      child: Image.asset(ImagePaths.appLogo)),
+                  Image.asset(ImagePaths.intervalLogo),
                 ],
               ),
               SizedBox(

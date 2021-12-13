@@ -43,6 +43,7 @@ class CustomTextField extends StatelessWidget {
         border: Border.all(color: primaryColor)
       ),
       child: TextFormField(
+        controller: controller,
         style: Theme
             .of(context)
             .textTheme

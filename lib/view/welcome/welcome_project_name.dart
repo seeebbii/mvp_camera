@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mvp_camera/app/constant/controllers.dart';
 import 'package:mvp_camera/app/router/router_generator.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
+import 'package:mvp_camera/controller/my_camera_controller.dart';
 import 'package:mvp_camera/view/components/custom_button.dart';
 import 'package:mvp_camera/view/components/custom_textfield.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -17,6 +18,7 @@ class WelcomeProjectName extends StatefulWidget {
 
 class _WelcomeProjectNameState extends State<WelcomeProjectName> {
   final _formKey = GlobalKey<FormState>();
+  final localNameController = TextEditingController();
 
   void _trySubmit() async {
     final isValid = _formKey.currentState!.validate();
@@ -30,6 +32,11 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName> {
       print("HEY PROJECT: " + myCameraController.projectNameController.value.text);
       navigationController.navigateToNamed(selectIntervalScreen);
     }
+  }
+
+  @override
+  void initState() {
+    Get.put(MyCameraController());    super.initState();
   }
 
   @override
