@@ -62,14 +62,18 @@ class MyCameraController extends GetxController {
   }
 
   getAvailableCameras() async {
-    cameras.value = await availableCameras();
-    controller = CameraController(cameras[0], ResolutionPreset.veryHigh).obs;
-    isRearCameraSelected.value = true;
-    controller.value.initialize().then((value) {
-      debugPrint("CAMERA INIT SUCCESS");
-      controller.value.setFlashMode(FlashMode.always);
-      initializeZoom();
-    });
+    if(await Permission.camera.isDenied){
+      debugPrint("DENIED");
+    }else{
+      cameras.value = await availableCameras();
+      controller = CameraController(cameras[0], ResolutionPreset.veryHigh).obs;
+      isRearCameraSelected.value = true;
+      controller.value.initialize().then((value) {
+        debugPrint("CAMERA INIT SUCCESS");
+        controller.value.setFlashMode(FlashMode.always);
+        initializeZoom();
+      });
+    }
   }
 
   Future<PermissionStatus> checkCameraPermission() async {

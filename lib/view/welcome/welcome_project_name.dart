@@ -16,7 +16,8 @@ class WelcomeProjectName extends StatefulWidget {
   State<WelcomeProjectName> createState() => _WelcomeProjectNameState();
 }
 
-class _WelcomeProjectNameState extends State<WelcomeProjectName> {
+class _WelcomeProjectNameState extends State<WelcomeProjectName>
+    with WidgetsBindingObserver {
   final _formKey = GlobalKey<FormState>();
   final localNameController = TextEditingController();
 
@@ -25,18 +26,41 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName> {
     FocusScope.of(context).unfocus();
 
     if (isValid) {
-      if(await Permission.photos.isDenied || await Permission.storage.isDenied){
-        Permission.photos.request().then((value) => debugPrint(value.toString()));
-        Permission.storage.request().then((value) => debugPrint(value.toString()));
+      if (await Permission.photos.isDenied ||
+          await Permission.storage.isDenied ||
+          await Permission.accessMediaLocation.isDenied) {
+        Permission.photos.request().then((value) {
+          Permission.storage.request().then((value) {
+            Permission.accessMediaLocation
+                .request()
+                .then((value) => debugPrint(value.toString()));
+          });
+        });
       }
-      print("HEY PROJECT: " + myCameraController.projectNameController.value.text);
+      print("HEY PROJECT: " +
+          myCameraController.projectNameController.value.text);
       navigationController.navigateToNamed(selectIntervalScreen);
     }
   }
 
   @override
   void initState() {
-    Get.put(MyCameraController());    super.initState();
+    Get.put(MyCameraController());
+    WidgetsBinding.instance!.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    debugPrint(state.toString());
+    if (state == AppLifecycleState.inactive && myCameraController.controller.value.value.isInitialized) {
+      myCameraController.controller.value.dispose();
+    }
+    if (state == AppLifecycleState.resumed) {
+      myCameraController.getAvailableCameras();
+      setState(() {});
+    }
   }
 
   @override
@@ -45,7 +69,7 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName> {
       backgroundColor: backgroundColor,
       body: SingleChildScrollView(
         child: Form(
-          key: _formKey ,
+          key: _formKey,
           child: Column(
             children: [
               SizedBox(
@@ -92,7 +116,7 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName> {
                 height: 0.03.sh,
               ),
               Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15.sp),
+                padding: EdgeInsets.symmetric(horizontal: 15.sp),
                 child: CustomButton(buttonText: "Next", onPressed: _trySubmit),
               ),
             ],

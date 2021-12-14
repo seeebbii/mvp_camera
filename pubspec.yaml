@@ -32,7 +32,7 @@ dependencies:
   image: ^3.1.0
   exif: ^3.0.1
   path: ^1.8.0
-
+  gallery_saver: ^2.3.2
 
 dev_dependencies:
   flutter_test:

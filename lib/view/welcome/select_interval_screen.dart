@@ -12,6 +12,7 @@ import 'package:mvp_camera/app/utils/colors.dart';
 import 'package:mvp_camera/view/components/custom_button.dart';
 import 'package:mvp_camera/view/components/custom_textfield.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SelectIntervalScreen extends StatefulWidget {
   const SelectIntervalScreen({Key? key}) : super(key: key);
@@ -28,11 +29,15 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen> {
     FocusScope.of(context).unfocus();
 
     if (isValid) {
-      var dirPath = await getExternalStorageDirectories();
+      var dirPath = await getExternalStorageDirectory();
       debugPrint(myCameraController.projectNameController.value.text);
       debugPrint(myCameraController.intervalController.value.text);
+      final myImgDir = await new io.Directory(
+              '${dirPath!.path}/${myCameraController.projectNameController.value.text}')
+          .create();
+      myCameraController.projectDirectory = myImgDir;
 
-      print(dirPath);
+      getLocationPermission();
 
       // var projectNameDirectory = await new io.Directory(
       //         '${dirPath?.path}/${myCameraController.projectNameController.value.text}')
@@ -43,7 +48,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen> {
       //
       // print(projectNameDirectory);
 
-      // navigationController.navigateToNamed(cameraScreen);
+      navigationController.navigateToNamed(cameraScreen);
     }
   }
 
@@ -54,6 +59,25 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen> {
     "4 sec",
     "Custom",
   ];
+
+  void getLocationPermission() async {
+    if (await Permission.locationWhenInUse.isDenied) {
+      Permission.locationWhenInUse.request().then((value) async {
+        if (value.isGranted) {
+          if (await Permission.locationAlways.isDenied) {
+            Permission.locationAlways
+                .request()
+                .then((value) => debugPrint(value.toString()));
+          }
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   bool _isNumeric(String? result) {
     if (result == null) {

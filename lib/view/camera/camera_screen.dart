@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:exif/exif.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:mvp_camera/app/constant/controllers.dart';
 import 'package:mvp_camera/app/router/router_generator.dart';
@@ -103,10 +105,12 @@ class _CameraScreenState extends State<CameraScreen>
 
     if (state == AppLifecycleState.inactive) {
       // Free up memory when camera not active
+      stopCapturingImages();
       myCameraController.controller.value.dispose();
     } else if (state == AppLifecycleState.resumed) {
       // Reinitialize the camera with same properties
       onNewCameraSelected(myCameraController.controller.value.description);
+      startCapturingImages();
     }
   }
 
@@ -123,8 +127,22 @@ class _CameraScreenState extends State<CameraScreen>
           debugPrint("Taking Pictures");
         });
         var xFile = await myCameraController.controller.value.takePicture();
-        myCameraController.listOfCapturedImages.add(File(xFile.path));
-        print(
+        final capturedFile = File(xFile.path);
+        debugPrint(capturedFile.path);
+        final data = await readExifFromBytes(capturedFile.readAsBytesSync());
+        if (data.containsKey('GPS GPSLongitude')) {
+          print(true);
+        } else {
+          print(false);
+        }
+
+        // print(data);
+
+        GallerySaver.saveImage(capturedFile.path, albumName: myCameraController.projectDirectory.path).then((value) {
+          debugPrint("Image: $value");
+        });
+        myCameraController.listOfCapturedImages.add(capturedFile);
+        debugPrint(
             "TOTAL IMAGES CAPTURED: ${myCameraController.listOfCapturedImages.length}");
       } else {
         timer?.cancel();
