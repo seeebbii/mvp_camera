@@ -29,6 +29,9 @@ class _CameraScreenState extends State<CameraScreen>
   final emptyAlbum = Album.fromJson(
       const {'id': 'null', 'count': 0, 'mediumType': 'image', 'name': 'null'});
 
+  double _currentScale = 1.0;
+  double _baseScale = 1.0;
+
   late PermissionStatus status;
   Timer? timer;
 
@@ -38,17 +41,17 @@ class _CameraScreenState extends State<CameraScreen>
   List<Icon> listOfFlashButtons = [
     Icon(
       Icons.flash_off,
-      size: 12.sp,
+      size: 20.sp,
       color: Colors.white70,
     ),
     Icon(
       Icons.flash_on,
-      size: 12.sp,
+      size: 20.sp,
       color: Colors.white70,
     ),
     Icon(
       Icons.flash_auto,
-      size: 12.sp,
+      size: 20.sp,
       color: Colors.white70,
     ),
   ];
@@ -143,12 +146,10 @@ class _CameraScreenState extends State<CameraScreen>
 
     if (state == AppLifecycleState.inactive) {
       // Free up memory when camera not active
-      stopCapturingImages();
       myCameraController.controller.value.dispose();
     } else if (state == AppLifecycleState.resumed) {
       // Reinitialize the camera with same properties
       onNewCameraSelected(myCameraController.controller.value.description);
-      startCapturingImages();
     }
   }
 
@@ -226,18 +227,19 @@ class _CameraScreenState extends State<CameraScreen>
                                   .buildPreview(),
                               Positioned(
                                   top: 0.03.sh,
-                                  left: 0.18.sw,
+                                  left: 0.12.sw,
                                   child: InkWell(
                                       onTap: () {
                                         navigationController.goBack();
                                       },
-                                      child: const Icon(
+                                      child: Icon(
                                         Icons.chevron_left,
                                         color: Colors.white70,
+                                        size: 22.sp,
                                       ))),
                               Positioned(
                                   top: 0.03.sh,
-                                  right: 0.2.sw,
+                                  right: 0.15.sw,
                                   child: InkWell(
                                     onTap: () {
                                       if (flashIndex == 0) {
@@ -262,7 +264,7 @@ class _CameraScreenState extends State<CameraScreen>
                                     },
                                     child: CircleAvatar(
                                         backgroundColor: Colors.black87,
-                                        maxRadius: 13.r,
+                                        maxRadius: 15.r,
                                         child: listOfFlashButtons[flashIndex]),
                                   )),
                               Positioned(
@@ -279,8 +281,8 @@ class _CameraScreenState extends State<CameraScreen>
                                         fetchGalleryImages();
                                       },
                                       child: Obx(() => Container(
-                                            height: 18.sp,
-                                            width: 18.sp,
+                                            height: 20.sp,
+                                            width: 20.sp,
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade400,
                                               borderRadius:
@@ -311,7 +313,7 @@ class _CameraScreenState extends State<CameraScreen>
                                           ? stopCapturingImages
                                           : startCapturingImages,
                                       child: CircleAvatar(
-                                        maxRadius: 20.r,
+                                        maxRadius: 28.r,
                                         backgroundColor: isCapturingImages
                                             ? red
                                             : primaryColor,
@@ -323,7 +325,7 @@ class _CameraScreenState extends State<CameraScreen>
                                               .headline2
                                               ?.copyWith(
                                                   color: Colors.white,
-                                                  fontSize: 10.sp),
+                                                  fontSize: 12.sp),
                                         ),
                                       ),
                                     ),
@@ -332,11 +334,11 @@ class _CameraScreenState extends State<CameraScreen>
                                     ),
                                     CircleAvatar(
                                       backgroundColor: Colors.black87,
-                                      maxRadius: 13.r,
+                                      maxRadius: 20.r,
                                       child: IconButton(
                                         icon: Icon(
                                           Icons.flip_camera_android,
-                                          size: 12.sp,
+                                          size: 18.sp,
                                           color: Colors.white70,
                                         ),
                                         onPressed: () {
@@ -367,14 +369,14 @@ class _CameraScreenState extends State<CameraScreen>
                               GestureDetector(
                                 behavior: HitTestBehavior.translucent,
                                 onScaleStart: (details) {
-                                  print(details);
+                                  _baseScale = _currentScale;
                                 },
                                 onScaleUpdate: (details) {
+                                  _currentScale = (_baseScale * details.scale).clamp(myCameraController.minAvailableZoom.value, myCameraController.maxAvailableZoom.value).toDouble();
                                   setState(() {
                                     myCameraController.controller.value
-                                        .setZoomLevel(details.scale);
+                                        .setZoomLevel(_currentScale);
                                   });
-                                  print(details);
                                 },
                               )
                             ],

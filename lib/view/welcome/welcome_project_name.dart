@@ -46,7 +46,7 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName>
   @override
   void initState() {
     Get.put(MyCameraController());
-    // WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     super.initState();
   }
 
