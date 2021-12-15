@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
@@ -12,6 +13,7 @@ import 'package:mvp_camera/app/constant/controllers.dart';
 import 'package:mvp_camera/app/router/router_generator.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:photo_gallery/photo_gallery.dart';
 import 'package:wakelock/wakelock.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -23,6 +25,10 @@ class CameraScreen extends StatefulWidget {
 
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
+  // Initializing empty gallery album
+  final emptyAlbum = Album.fromJson(
+      const {'id': 'null', 'count': 0, 'mediumType': 'image', 'name': 'null'});
+
   late PermissionStatus status;
   Timer? timer;
 
@@ -31,12 +37,12 @@ class _CameraScreenState extends State<CameraScreen>
   int flashIndex = 0;
   List<Icon> listOfFlashButtons = [
     Icon(
-      Icons.flash_on,
+      Icons.flash_off,
       size: 12.sp,
       color: Colors.white70,
     ),
     Icon(
-      Icons.flash_off,
+      Icons.flash_on,
       size: 12.sp,
       color: Colors.white70,
     ),
@@ -49,9 +55,14 @@ class _CameraScreenState extends State<CameraScreen>
 
   @override
   void initState() {
+    // Fetching gallery album to check if the directory exists
+    // If it exists simply load all of its media to our list
+    fetchGalleryImages();
+
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
         overlays: []);
     Wakelock.toggle(enable: true);
+
     super.initState();
   }
 
@@ -95,6 +106,33 @@ class _CameraScreenState extends State<CameraScreen>
     }
   }
 
+  void fetchGalleryImages() async {
+    debugPrint("GALLERY FETCHED");
+    final List<Album> imageAlbums = await PhotoGallery.listAlbums(
+      mediumType: MediumType.image,
+    );
+    Album projectDirectoryAlbum = imageAlbums.firstWhere(
+        (element) =>
+            myCameraController.projectNameController.value.text.trim() ==
+            element.name,
+        orElse: () => emptyAlbum);
+    if (projectDirectoryAlbum.count != 0) {
+      MediaPage mediaPage = await projectDirectoryAlbum.listMedia();
+
+      setState(() {
+        myCameraController.listOfImagesFromAlbum.value = mediaPage.items;
+      });
+
+      debugPrint(
+          "Length of images from album is: ${myCameraController.listOfImagesFromAlbum.length}");
+    } else {
+      debugPrint("Directory is currently empty");
+      debugPrint(
+          "Length of images from album is: ${myCameraController.listOfImagesFromAlbum.length}");
+      myCameraController.listOfImagesFromAlbum.value = <Medium>[];
+    }
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // App state changed before we got the chance to initialize.
@@ -123,6 +161,7 @@ class _CameraScreenState extends State<CameraScreen>
         seconds: int.parse(myCameraController.intervalController.value.text));
     timer = Timer.periodic(duration, (thisTimer) async {
       if (isCapturingImages == true) {
+        fetchGalleryImages();
         setState(() {
           debugPrint("Taking Pictures");
         });
@@ -138,7 +177,9 @@ class _CameraScreenState extends State<CameraScreen>
 
         // print(data);
 
-        GallerySaver.saveImage(capturedFile.path, albumName: myCameraController.projectDirectory.path).then((value) {
+        GallerySaver.saveImage(capturedFile.path,
+                albumName: myCameraController.projectDirectory.path)
+            .then((value) {
           debugPrint("Image: $value");
         });
         myCameraController.listOfCapturedImages.add(capturedFile);
@@ -202,7 +243,7 @@ class _CameraScreenState extends State<CameraScreen>
                                       if (flashIndex == 0) {
                                         setState(() {
                                           myCameraController.controller.value
-                                              .setFlashMode(FlashMode.off);
+                                              .setFlashMode(FlashMode.always);
                                           flashIndex = 1;
                                         });
                                       } else if (flashIndex == 1) {
@@ -214,7 +255,7 @@ class _CameraScreenState extends State<CameraScreen>
                                       } else {
                                         setState(() {
                                           myCameraController.controller.value
-                                              .setFlashMode(FlashMode.always);
+                                              .setFlashMode(FlashMode.off);
                                           flashIndex = 0;
                                         });
                                       }
@@ -235,6 +276,7 @@ class _CameraScreenState extends State<CameraScreen>
                                         navigationController
                                             .navigateToNamed(inAppGallery);
                                         debugPrint("Gallery tapped");
+                                        fetchGalleryImages();
                                       },
                                       child: Obx(() => Container(
                                             height: 18.sp,
@@ -247,13 +289,15 @@ class _CameraScreenState extends State<CameraScreen>
                                                   color: Colors.grey.shade800
                                                       .withOpacity(0.4)),
                                               image: myCameraController
-                                                      .listOfCapturedImages
+                                                      .listOfImagesFromAlbum
                                                       .isNotEmpty
                                                   ? DecorationImage(
-                                                      image: FileImage(
-                                                          myCameraController
-                                                              .listOfCapturedImages
-                                                              .last),
+                                                      image: PhotoProvider(
+                                                          mediumId:
+                                                              myCameraController
+                                                                  .listOfImagesFromAlbum
+                                                                  .last
+                                                                  .id),
                                                       fit: BoxFit.cover)
                                                   : null,
                                             ),

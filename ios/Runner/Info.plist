@@ -8,6 +8,10 @@
     <string>Can I use the mic please?</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>This app requires access to the photo library.</string>
+    <key>NSLocationAlwaysAndWhenInUsageDescription </key>
+    <string>When in use permissions</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Always permissions</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

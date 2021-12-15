@@ -4,14 +4,16 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:photo_gallery/photo_gallery.dart';
 
 class MyCameraController extends GetxController {
   static MyCameraController instance = Get.find();
   // DATA VARIABLES
-
   Rx<TextEditingController> intervalController = TextEditingController().obs;
   final projectNameController = TextEditingController().obs;
   Directory projectDirectory = Directory('');
+
+  var listOfImagesFromAlbum = <Medium>[].obs  ;
 
   Rx<int> intervalSeconds = 0.obs;
 
@@ -62,18 +64,20 @@ class MyCameraController extends GetxController {
   }
 
   getAvailableCameras() async {
-    if(await Permission.camera.isDenied){
-      debugPrint("DENIED");
-    }else{
-      cameras.value = await availableCameras();
-      controller = CameraController(cameras[0], ResolutionPreset.veryHigh).obs;
-      isRearCameraSelected.value = true;
-      controller.value.initialize().then((value) {
-        debugPrint("CAMERA INIT SUCCESS");
-        controller.value.setFlashMode(FlashMode.always);
-        initializeZoom();
-      });
-    }
+    Permission.camera.request().then((value) async{
+      if(value.isGranted){
+        cameras.value = await availableCameras();
+        controller = CameraController(cameras[0], ResolutionPreset.veryHigh).obs;
+        isRearCameraSelected.value = true;
+        controller.value.initialize().then((value) {
+          debugPrint("CAMERA INIT SUCCESS");
+          controller.value.setFlashMode(FlashMode.off);
+          initializeZoom();
+        });
+      }else{
+        debugPrint("Camera Permission is DENIED");
+      }
+    });
   }
 
   Future<PermissionStatus> checkCameraPermission() async {

@@ -33,6 +33,8 @@ dependencies:
   exif: ^3.0.1
   path: ^1.8.0
   gallery_saver: ^2.3.2
+  photo_gallery: ^1.1.1
+  photo_manager: ^1.3.10
 
 dev_dependencies:
   flutter_test:
