@@ -8,12 +8,13 @@ import 'package:photo_gallery/photo_gallery.dart';
 
 class MyCameraController extends GetxController {
   static MyCameraController instance = Get.find();
+
   // DATA VARIABLES
   Rx<TextEditingController> intervalController = TextEditingController().obs;
   final projectNameController = TextEditingController().obs;
   Directory projectDirectory = Directory('');
 
-  var listOfImagesFromAlbum = <Medium>[].obs  ;
+  var listOfImagesFromAlbum = <Medium>[].obs;
 
   Rx<int> intervalSeconds = 0.obs;
 
@@ -39,7 +40,7 @@ class MyCameraController extends GetxController {
     super.onInit();
   }
 
-  initializeZoom(){
+  initializeZoom() {
     controller.value
         .getMaxZoomLevel()
         .then((value) => maxAvailableZoom.value = value);
@@ -53,8 +54,9 @@ class MyCameraController extends GetxController {
         .then((value) => minAvailableExposureOffset.value = value);
 
     controller.value
-        .getMaxExposureOffset().then((value) => maxAvailableExposureOffset.value = value);
-        //.then((value) => maxAvailableExposureOffset.value = value);
+        .getMaxExposureOffset()
+        .then((value) => maxAvailableExposureOffset.value = value);
+    //.then((value) => maxAvailableExposureOffset.value = value);
 
     debugPrint("CURRENT ZOOM : $currentZoomLevel");
     debugPrint("MINIMUM ZOOM : $minAvailableZoom");
@@ -64,19 +66,13 @@ class MyCameraController extends GetxController {
   }
 
   getAvailableCameras() async {
-    Permission.camera.request().then((value) async{
-      if(value.isGranted){
-        cameras.value = await availableCameras();
-        controller = CameraController(cameras[0], ResolutionPreset.max).obs;
-        isRearCameraSelected.value = true;
-        controller.value.initialize().then((value) {
-          debugPrint("CAMERA INIT SUCCESS");
-          controller.value.setFlashMode(FlashMode.off);
-          initializeZoom();
-        });
-      }else{
-        debugPrint("Camera Permission is DENIED");
-      }
+    cameras.value = await availableCameras();
+    controller = CameraController(cameras[0], ResolutionPreset.max).obs;
+    isRearCameraSelected.value = true;
+    controller.value.initialize().then((value) {
+      debugPrint("CAMERA INIT SUCCESS");
+      controller.value.setFlashMode(FlashMode.off);
+      initializeZoom();
     });
   }
 

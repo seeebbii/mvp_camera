@@ -46,21 +46,7 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName>
   @override
   void initState() {
     Get.put(MyCameraController());
-    WidgetsBinding.instance!.addObserver(this);
     super.initState();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    debugPrint(state.toString());
-    if (state == AppLifecycleState.inactive && myCameraController.controller.value.value.isInitialized) {
-      myCameraController.controller.value.dispose();
-    }
-    if (state == AppLifecycleState.resumed) {
-      myCameraController.getAvailableCameras();
-      setState(() {});
-    }
   }
 
   @override

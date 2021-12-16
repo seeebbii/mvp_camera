@@ -21,7 +21,7 @@ class SelectIntervalScreen extends StatefulWidget {
   _SelectIntervalScreenState createState() => _SelectIntervalScreenState();
 }
 
-class _SelectIntervalScreenState extends State<SelectIntervalScreen> {
+class _SelectIntervalScreenState extends State<SelectIntervalScreen> with WidgetsBindingObserver {
   final formKey = GlobalKey<FormState>();
 
   void _trySubmit() async {
@@ -75,7 +75,21 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    debugPrint(state.toString());
+    if (state == AppLifecycleState.paused && myCameraController.controller.value.value.isInitialized) {
+      myCameraController.controller.value.dispose();
+    }
+    if (state == AppLifecycleState.resumed) {
+      myCameraController.getAvailableCameras();
+      setState(() {});
+    }
+  }
+
+  @override
   void initState() {
+    WidgetsBinding.instance!.addObserver(this);
     super.initState();
   }
 

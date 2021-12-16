@@ -298,7 +298,7 @@ class _CameraScreenState extends State<CameraScreen>
                                                           mediumId:
                                                               myCameraController
                                                                   .listOfImagesFromAlbum
-                                                                  .last
+                                                                  .first
                                                                   .id),
                                                       fit: BoxFit.cover)
                                                   : null,
