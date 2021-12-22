@@ -63,43 +63,57 @@ class _InAppGalleryState extends State<InAppGallery> {
                 crossAxisSpacing: 3.sp,
                 mainAxisSpacing: 3.sp),
             itemBuilder: (_, index) {
-              printExifOf();
-              return ClipRRect(
-                  borderRadius: BorderRadius.circular(5.r), child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: PhotoProvider(
-                        mediumId: myCameraController.listOfImagesFromAlbum[index].id
+              return GestureDetector(
+                onTap: (){
+                  printExifOf(index);
+                },
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5.r), child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: PhotoProvider(
+                          mediumId: myCameraController.listOfImagesFromAlbum[index].id
+                      )
                     )
-                  )
-                ),
-              ));
+                  ),
+                )),
+              );
             })),
       ),
     );
   }
 
-  printExifOf() async {
+  printExifOf(int indexTapped) async {
     final fileBytes =
-        myCameraController.listOfCapturedImages[0].readAsBytesSync();
+        myCameraController.listOfCapturedImages[indexTapped].readAsBytesSync();
     final data = await readExifFromBytes(fileBytes);
 
     if (data.isEmpty) {
       print("No EXIF information found");
       return;
     }
+    
+    if(data.containsKey('GPS GPSLongitude')){
+      print("GPS AVAILABLE");
+      for (final entry in data.entries) {
+        print("${entry.key}: ${entry.value}");
+      }
+    }
+    else{
+      print("Not Avaialable");
+    }
 
-    if (data.containsKey('JPEGThumbnail')) {
-      print('File has JPEG thumbnail');
-      data.remove('JPEGThumbnail');
-    }
-    if (data.containsKey('TIFFThumbnail')) {
-      print('File has TIFF thumbnail');
-      data.remove('TIFFThumbnail');
-    }
+    // if (data.containsKey('JPEGThumbnail')) {
+    //   print('File has JPEG thumbnail');
+    //   data.remove('JPEGThumbnail');
+    // }
+    // if (data.containsKey('TIFFThumbnail')) {
+    //   print('File has TIFF thumbnail');
+    //   data.remove('TIFFThumbnail');
+    // }
 
-    for (final entry in data.entries) {
-      print("${entry.key}: ${entry.value}");
-    }
+    // for (final entry in data.entries) {
+    //   print("${entry.key}: ${entry.value}");
+    // }
   }
 }
