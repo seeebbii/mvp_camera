@@ -29,13 +29,27 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen> with Widget
     FocusScope.of(context).unfocus();
 
     if (isValid) {
-      var dirPath = await getExternalStorageDirectory();
-      debugPrint(myCameraController.projectNameController.value.text);
-      debugPrint(myCameraController.intervalController.value.text);
-      final myImgDir = await new io.Directory(
-              '${dirPath!.path}/${myCameraController.projectNameController.value.text}')
-          .create();
-      myCameraController.projectDirectory = myImgDir;
+      if(io.Platform.isAndroid){
+        debugPrint("ANDROID PLATFORM");
+        var dirPath = await getExternalStorageDirectory();
+        debugPrint(myCameraController.projectNameController.value.text);
+        debugPrint(myCameraController.intervalController.value.text);
+        final myImgDir = await new io.Directory(
+            '${dirPath!.path}/${myCameraController.projectNameController.value.text}')
+            .create();
+        myCameraController.projectDirectory = myImgDir;
+      }
+      if(io.Platform.isIOS){
+        debugPrint("IOS PLATFORM");
+        var dirPath = await getApplicationDocumentsDirectory();
+        debugPrint(myCameraController.projectNameController.value.text);
+        debugPrint(myCameraController.intervalController.value.text);
+        final myImgDir = await new io.Directory(
+            '${dirPath.path}/${myCameraController.projectNameController.value.text}')
+            .create();
+        myCameraController.projectDirectory = myImgDir;
+      }
+
 
       getLocationPermission();
 
