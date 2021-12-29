@@ -65,15 +65,31 @@ class MyCameraController extends GetxController {
     debugPrint("MINIMUM EXPOSURE : $minAvailableExposureOffset");
   }
 
-  getAvailableCameras() async {
-    cameras.value = await availableCameras();
-    controller = CameraController(cameras[0], ResolutionPreset.max).obs;
-    isRearCameraSelected.value = true;
-    controller.value.initialize().then((value) {
-      debugPrint("CAMERA INIT SUCCESS");
-      controller.value.setFlashMode(FlashMode.off);
-      initializeZoom();
-    });
+ getAvailableCameras() async {
+    if(Platform.isIOS){
+      PermissionStatus status = await checkCameraPermission();
+      if(status.isDenied){
+        Permission.camera.request();
+      }else if(status.isGranted){
+        cameras.value = await availableCameras();
+        controller = CameraController(cameras[0], ResolutionPreset.max).obs;
+        isRearCameraSelected.value = true;
+        controller.value.initialize().then((value) {
+          debugPrint("CAMERA INIT SUCCESS");
+          controller.value.setFlashMode(FlashMode.off);
+          initializeZoom();
+        });
+      }
+    }if(Platform.isAndroid){
+      cameras.value = await availableCameras();
+      controller = CameraController(cameras[0], ResolutionPreset.max).obs;
+      isRearCameraSelected.value = true;
+      controller.value.initialize().then((value) {
+        debugPrint("CAMERA INIT SUCCESS");
+        controller.value.setFlashMode(FlashMode.off);
+        initializeZoom();
+      });
+    }
   }
 
   Future<PermissionStatus> checkCameraPermission() async {

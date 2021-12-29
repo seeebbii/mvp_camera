@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
@@ -23,11 +24,9 @@ class CameraScreen extends StatefulWidget {
   _CameraScreenState createState() => _CameraScreenState();
 }
 
-class _CameraScreenState extends State<CameraScreen>
-    with WidgetsBindingObserver {
+class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver {
   // Initializing empty gallery album
-  final emptyAlbum = Album.fromJson(
-      const {'id': 'null', 'count': 0, 'mediumType': 'image', 'name': 'null'});
+  final emptyAlbum = Album.fromJson(const {'id': 'null', 'count': 0, 'mediumType': 'image', 'name': 'null'});
 
   double _currentScale = 1.0;
   double _baseScale = 1.0;
@@ -62,8 +61,7 @@ class _CameraScreenState extends State<CameraScreen>
     // If it exists simply load all of its media to our list
     fetchGalleryImages();
 
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
-        overlays: []);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky, overlays: []);
     Wakelock.toggle(enable: true);
 
     super.initState();
@@ -103,8 +101,7 @@ class _CameraScreenState extends State<CameraScreen>
     // Update the Boolean
     if (mounted) {
       setState(() {
-        myCameraController.isCameraInitialized.value =
-            myCameraController.controller.value.value.isInitialized;
+        myCameraController.isCameraInitialized.value = myCameraController.controller.value.value.isInitialized;
       });
     }
   }
@@ -114,33 +111,56 @@ class _CameraScreenState extends State<CameraScreen>
     final List<Album> imageAlbums = await PhotoGallery.listAlbums(
       mediumType: MediumType.image,
     );
-    Album projectDirectoryAlbum = imageAlbums.firstWhere(
-        (element) =>
-            myCameraController.projectNameController.value.text.trim() ==
-            element.name,
-        orElse: () => emptyAlbum);
-    if (projectDirectoryAlbum.count != 0) {
-      MediaPage mediaPage = await projectDirectoryAlbum.listMedia();
+    // log(imageAlbums.length.toString());
+    // log(myCameraController.projectNameController.value.text.toString());
+    // log(imageAlbums.length.toString());
+    // for (Album item in imageAlbums) {
+    //   log(item.name.toString());
+    // }
+    if(Platform.isAndroid){
+      Album projectDirectoryAlbum = imageAlbums.firstWhere(
+              (element) => myCameraController.projectNameController.value.text.trim() == element.name?.trim(),
+          orElse: () => emptyAlbum);
+      // log("val $projectDirectoryAlbum");
+      if (projectDirectoryAlbum.count != 0) {
+        MediaPage mediaPage = await projectDirectoryAlbum.listMedia();
 
-      setState(() {
-        myCameraController.listOfImagesFromAlbum.value = mediaPage.items;
-      });
+        setState(() {
+          myCameraController.listOfImagesFromAlbum.value = mediaPage.items;
+        });
 
-      debugPrint(
-          "Length of images from album is: ${myCameraController.listOfImagesFromAlbum.length}");
-    } else {
-      debugPrint("Directory is currently empty");
-      debugPrint(
-          "Length of images from album is: ${myCameraController.listOfImagesFromAlbum.length}");
-      myCameraController.listOfImagesFromAlbum.value = <Medium>[];
+        debugPrint("Length of images from album is: ${myCameraController.listOfImagesFromAlbum.length}");
+      } else {
+        debugPrint("Directory is currently empty");
+        debugPrint("Length of images from album is: ${myCameraController.listOfImagesFromAlbum.length}");
+        myCameraController.listOfImagesFromAlbum.value = <Medium>[];
+      }
+
+    }if(Platform.isIOS){
+      Album projectDirectoryAlbum = imageAlbums.firstWhere(
+              (element) => "Recents"== element.name?.trim(),
+          orElse: () => emptyAlbum);
+      // log("val $projectDirectoryAlbum");
+      if (projectDirectoryAlbum.count != 0) {
+        MediaPage mediaPage = await projectDirectoryAlbum.listMedia();
+
+        setState(() {
+          myCameraController.listOfImagesFromAlbum.value = mediaPage.items;
+        });
+
+        debugPrint("Length of images from album is: ${myCameraController.listOfImagesFromAlbum.length}");
+      } else {
+        debugPrint("Directory is currently empty");
+        debugPrint("Length of images from album is: ${myCameraController.listOfImagesFromAlbum.length}");
+        myCameraController.listOfImagesFromAlbum.value = <Medium>[];
+      }
     }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // App state changed before we got the chance to initialize.
-    if (myCameraController.controller.value == null ||
-        !myCameraController.controller.value.value.isInitialized) {
+    if (myCameraController.controller.value == null || !myCameraController.controller.value.value.isInitialized) {
       return;
     }
 
@@ -158,8 +178,7 @@ class _CameraScreenState extends State<CameraScreen>
       isCapturingImages = true;
     });
     // INITIALIZE DURATION FOR CAPTURING IMAGES
-    Duration duration = Duration(
-        seconds: int.parse(myCameraController.intervalController.value.text));
+    Duration duration = Duration(seconds: int.parse(myCameraController.intervalController.value.text));
     timer = Timer.periodic(duration, (thisTimer) async {
       if (isCapturingImages == true) {
         fetchGalleryImages();
@@ -178,14 +197,29 @@ class _CameraScreenState extends State<CameraScreen>
 
         // print(data);
 
-        GallerySaver.saveImage(capturedFile.path,
-                albumName: myCameraController.projectDirectory.path)
-            .then((value) {
-          debugPrint("Image: $value");
-        });
-        myCameraController.listOfCapturedImages.add(capturedFile);
-        debugPrint(
-            "TOTAL IMAGES CAPTURED: ${myCameraController.listOfCapturedImages.length}");
+        // GallerySaver.saveImage(capturedFile.path,
+        //         albumName: myCameraController.projectDirectory.path)
+        //     .then((value) {
+        //   debugPrint("Image: $value");
+        // });
+        // myCameraController.listOfCapturedImages.add(capturedFile);
+        // debugPrint(
+        //     "TOTAL IMAGES CAPTURED: ${myCameraController.listOfCapturedImages.length}");
+
+        if (Platform.isAndroid) {
+          GallerySaver.saveImage(capturedFile.path, albumName: myCameraController.projectDirectory.path).then((value) {
+            debugPrint("Image: $value");
+          });
+          myCameraController.listOfCapturedImages.add(capturedFile);
+          debugPrint("TOTAL IMAGES CAPTURED: ${myCameraController.listOfCapturedImages.length}");
+        } else if (Platform.isIOS) {
+          GallerySaver.saveImage(capturedFile.path, albumName: myCameraController.projectNameController.value.text)
+              .then((value) {
+            debugPrint("Image: $value");
+          });
+          myCameraController.listOfCapturedImages.add(capturedFile);
+          debugPrint("TOTAL IMAGES CAPTURED: ${myCameraController.listOfCapturedImages.length}");
+        }
       } else {
         timer?.cancel();
       }
@@ -212,19 +246,13 @@ class _CameraScreenState extends State<CameraScreen>
               if (myCameraController.controller.value.value.isInitialized) {
                 return Obx(() => Center(
                       child: Transform.scale(
-                        scale: 1 /
-                            (myCameraController
-                                    .controller.value.value.aspectRatio *
-                                deviceRatio),
+                        scale: 1 / (myCameraController.controller.value.value.aspectRatio * deviceRatio),
                         child: AspectRatio(
-                          aspectRatio: 1 /
-                              myCameraController
-                                  .controller.value.value.aspectRatio,
+                          aspectRatio: 1 / myCameraController.controller.value.value.aspectRatio,
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              myCameraController.controller.value
-                                  .buildPreview(),
+                              myCameraController.controller.value.buildPreview(),
                               Positioned(
                                   top: 0.03.sh,
                                   left: 0.12.sw,
@@ -244,20 +272,17 @@ class _CameraScreenState extends State<CameraScreen>
                                     onTap: () {
                                       if (flashIndex == 0) {
                                         setState(() {
-                                          myCameraController.controller.value
-                                              .setFlashMode(FlashMode.always);
+                                          myCameraController.controller.value.setFlashMode(FlashMode.always);
                                           flashIndex = 1;
                                         });
                                       } else if (flashIndex == 1) {
                                         setState(() {
-                                          myCameraController.controller.value
-                                              .setFlashMode(FlashMode.auto);
+                                          myCameraController.controller.value.setFlashMode(FlashMode.auto);
                                           flashIndex = 2;
                                         });
                                       } else {
                                         setState(() {
-                                          myCameraController.controller.value
-                                              .setFlashMode(FlashMode.off);
+                                          myCameraController.controller.value.setFlashMode(FlashMode.off);
                                           flashIndex = 0;
                                         });
                                       }
@@ -270,13 +295,11 @@ class _CameraScreenState extends State<CameraScreen>
                               Positioned(
                                 bottom: 0.05.sh,
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        navigationController
-                                            .navigateToNamed(inAppGallery);
+                                        navigationController.navigateToNamed(inAppGallery);
                                         debugPrint("Gallery tapped");
                                         fetchGalleryImages();
                                       },
@@ -285,21 +308,12 @@ class _CameraScreenState extends State<CameraScreen>
                                             width: 20.sp,
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade400,
-                                              borderRadius:
-                                                  BorderRadius.circular(3.r),
-                                              border: Border.all(
-                                                  color: Colors.grey.shade800
-                                                      .withOpacity(0.4)),
-                                              image: myCameraController
-                                                      .listOfImagesFromAlbum
-                                                      .isNotEmpty
+                                              borderRadius: BorderRadius.circular(3.r),
+                                              border: Border.all(color: Colors.grey.shade800.withOpacity(0.4)),
+                                              image: myCameraController.listOfImagesFromAlbum.isNotEmpty
                                                   ? DecorationImage(
                                                       image: PhotoProvider(
-                                                          mediumId:
-                                                              myCameraController
-                                                                  .listOfImagesFromAlbum
-                                                                  .first
-                                                                  .id),
+                                                          mediumId: myCameraController.listOfImagesFromAlbum.first.id),
                                                       fit: BoxFit.cover)
                                                   : null,
                                             ),
@@ -309,23 +323,17 @@ class _CameraScreenState extends State<CameraScreen>
                                       width: 0.02.sh,
                                     ),
                                     InkWell(
-                                      onTap: isCapturingImages
-                                          ? stopCapturingImages
-                                          : startCapturingImages,
+                                      onTap: isCapturingImages ? stopCapturingImages : startCapturingImages,
                                       child: CircleAvatar(
                                         maxRadius: 28.r,
-                                        backgroundColor: isCapturingImages
-                                            ? red
-                                            : primaryColor,
+                                        backgroundColor: isCapturingImages ? red : primaryColor,
                                         foregroundColor: primaryColor,
                                         child: Text(
                                           isCapturingImages ? "Stop" : "Start",
                                           style: Theme.of(context)
                                               .textTheme
                                               .headline2
-                                              ?.copyWith(
-                                                  color: Colors.white,
-                                                  fontSize: 12.sp),
+                                              ?.copyWith(color: Colors.white, fontSize: 12.sp),
                                         ),
                                       ),
                                     ),
@@ -342,23 +350,14 @@ class _CameraScreenState extends State<CameraScreen>
                                           color: Colors.white70,
                                         ),
                                         onPressed: () {
-                                          if (myCameraController.controller
-                                                  .value.description ==
+                                          if (myCameraController.controller.value.description ==
                                               myCameraController.cameras[0]) {
-                                            if (myCameraController
-                                                    .cameras.length >
-                                                0) {
-                                              onNewCameraSelected(
-                                                  myCameraController
-                                                      .cameras[1]);
+                                            if (myCameraController.cameras.length > 0) {
+                                              onNewCameraSelected(myCameraController.cameras[1]);
                                             }
-                                          } else if (myCameraController
-                                                  .controller
-                                                  .value
-                                                  .description ==
+                                          } else if (myCameraController.controller.value.description ==
                                               myCameraController.cameras[1]) {
-                                            onNewCameraSelected(
-                                                myCameraController.cameras[0]);
+                                            onNewCameraSelected(myCameraController.cameras[0]);
                                           }
                                         },
                                       ),
@@ -372,10 +371,12 @@ class _CameraScreenState extends State<CameraScreen>
                                   _baseScale = _currentScale;
                                 },
                                 onScaleUpdate: (details) {
-                                  _currentScale = (_baseScale * details.scale).clamp(myCameraController.minAvailableZoom.value, myCameraController.maxAvailableZoom.value).toDouble();
+                                  _currentScale = (_baseScale * details.scale)
+                                      .clamp(myCameraController.minAvailableZoom.value,
+                                          myCameraController.maxAvailableZoom.value)
+                                      .toDouble();
                                   setState(() {
-                                    myCameraController.controller.value
-                                        .setZoomLevel(_currentScale);
+                                    myCameraController.controller.value.setZoomLevel(_currentScale);
                                   });
                                 },
                               )
@@ -392,9 +393,7 @@ class _CameraScreenState extends State<CameraScreen>
                 );
               }
             } else {
-              return const Center(
-                  child: Text(
-                      "Please allow required permissions and restart our app"));
+              return const Center(child: Text("Please allow required permissions and restart our app"));
             }
           } else {
             return const Center(child: Text("Cannot Initialize Camera"));
@@ -406,8 +405,7 @@ class _CameraScreenState extends State<CameraScreen>
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
     super.dispose();
   }
 }
