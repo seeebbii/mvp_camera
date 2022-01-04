@@ -46,7 +46,7 @@ android {
         applicationId "com.geeklone.mvp_camera"
         minSdkVersion 21
         multiDexEnabled true
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

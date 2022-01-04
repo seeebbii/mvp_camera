@@ -13,6 +13,7 @@ import 'package:mvp_camera/view/components/custom_button.dart';
 import 'package:mvp_camera/view/components/custom_textfield.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class SelectIntervalScreen extends StatefulWidget {
   const SelectIntervalScreen({Key? key}) : super(key: key);
@@ -21,7 +22,8 @@ class SelectIntervalScreen extends StatefulWidget {
   _SelectIntervalScreenState createState() => _SelectIntervalScreenState();
 }
 
-class _SelectIntervalScreenState extends State<SelectIntervalScreen> with WidgetsBindingObserver {
+class _SelectIntervalScreenState extends State<SelectIntervalScreen>
+    with WidgetsBindingObserver {
   final formKey = GlobalKey<FormState>();
 
   void _trySubmit() async {
@@ -29,38 +31,33 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen> with Widget
     FocusScope.of(context).unfocus();
 
     if (isValid) {
-      if(io.Platform.isAndroid){
+      if (io.Platform.isAndroid) {
         debugPrint("ANDROID PLATFORM");
         var dirPath = await getExternalStorageDirectory();
         debugPrint(myCameraController.projectNameController.value.text);
         debugPrint(myCameraController.intervalController.value.text);
         final myImgDir = await new io.Directory(
-            '${dirPath!.path}/${myCameraController.projectNameController.value.text}')
+                '${dirPath!.path}/${myCameraController.projectNameController.value.text}')
             .create();
         myCameraController.projectDirectory = myImgDir;
       }
-      if(io.Platform.isIOS){
+      if (io.Platform.isIOS) {
         debugPrint("IOS PLATFORM");
         var dirPath = await getApplicationDocumentsDirectory();
         debugPrint(myCameraController.projectNameController.value.text);
         debugPrint(myCameraController.intervalController.value.text);
         final myImgDir = await new io.Directory(
-            '${dirPath.path}/${myCameraController.projectNameController.value.text}')
+                '${dirPath.path}/${myCameraController.projectNameController.value.text}')
             .create();
         myCameraController.projectDirectory = myImgDir;
       }
 
-
       getLocationPermission();
 
-      // var projectNameDirectory = await new io.Directory(
-      //         '${dirPath?.path}/${myCameraController.projectNameController.value.text}')
-      //     .create(recursive: true);
-      //
-      // final myImagePath = '${projectNameDirectory.path}/MyImages' ;
-      // final myImgDir = await new io.Directory(myImagePath).create(recursive: true);
-      //
-      // print(projectNameDirectory);
+      // PhotoManager.requestPermission().then((value){
+      //   print("PHOTO MANAGER: $value");
+      // });
+
 
       navigationController.navigateToNamed(cameraScreen);
     }
@@ -92,7 +89,8 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen> with Widget
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     debugPrint(state.toString());
-    if (state == AppLifecycleState.paused && myCameraController.controller.value.value.isInitialized) {
+    if (state == AppLifecycleState.paused &&
+        myCameraController.controller.value.value.isInitialized) {
       myCameraController.controller.value.dispose();
     }
     if (state == AppLifecycleState.resumed) {

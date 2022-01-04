@@ -15,6 +15,7 @@ import 'package:mvp_camera/app/router/router_generator.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:wakelock/wakelock.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -63,7 +64,6 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky, overlays: []);
     Wakelock.toggle(enable: true);
-
     super.initState();
   }
 
@@ -111,6 +111,7 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
     final List<Album> imageAlbums = await PhotoGallery.listAlbums(
       mediumType: MediumType.image,
     );
+
     // log(imageAlbums.length.toString());
     // log(myCameraController.projectNameController.value.text.toString());
     // log(imageAlbums.length.toString());
@@ -138,7 +139,7 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
 
     }if(Platform.isIOS){
       Album projectDirectoryAlbum = imageAlbums.firstWhere(
-              (element) => "Recents"== element.name?.trim(),
+              (element) => myCameraController.projectNameController.value.text.trim() == element.name?.trim(),
           orElse: () => emptyAlbum);
       // log("val $projectDirectoryAlbum");
       if (projectDirectoryAlbum.count != 0) {
@@ -310,12 +311,17 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
                                               color: Colors.grey.shade400,
                                               borderRadius: BorderRadius.circular(3.r),
                                               border: Border.all(color: Colors.grey.shade800.withOpacity(0.4)),
-                                              image: myCameraController.listOfImagesFromAlbum.isNotEmpty
+                                              image: (Platform.isAndroid) ? myCameraController.listOfImagesFromAlbum.isNotEmpty
                                                   ? DecorationImage(
                                                       image: PhotoProvider(
-                                                          mediumId: myCameraController.listOfImagesFromAlbum.first.id),
+                                                          mediumId: myCameraController.listOfImagesFromAlbum.last.id),
                                                       fit: BoxFit.cover)
-                                                  : null,
+                                                  : null :  myCameraController.listOfCapturedImages.isNotEmpty ? DecorationImage(
+                                                  image: FileImage(
+                                                          myCameraController
+                                                              .listOfCapturedImages
+                                                              .first),
+                                                  fit: BoxFit.cover) : null,
                                             ),
                                           )),
                                     ),

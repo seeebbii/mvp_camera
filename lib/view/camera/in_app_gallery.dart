@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -53,32 +55,56 @@ class _InAppGalleryState extends State<InAppGallery> {
       ),
       body: Padding(
         padding: EdgeInsets.all(5.0.r),
-        child: Obx(() => GridView.builder(
-            itemCount: myCameraController.listOfImagesFromAlbum.length,
-            addAutomaticKeepAlives: true,
-            cacheExtent: 999,
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-                childAspectRatio: 1,
-                crossAxisSpacing: 3.sp,
-                mainAxisSpacing: 3.sp),
-            itemBuilder: (_, index) {
-              return GestureDetector(
-                onTap: (){
-                  printExifOf(index);
-                },
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5.r), child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: PhotoProvider(
-                          mediumId: myCameraController.listOfImagesFromAlbum[index].id
-                      )
-                    )
-                  ),
-                )),
-              );
-            })),
+        child: Platform.isAndroid
+            ? Obx(() => GridView.builder(
+                itemCount: myCameraController.listOfImagesFromAlbum.length,
+                addAutomaticKeepAlives: true,
+                cacheExtent: 999,
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: 3.sp,
+                    mainAxisSpacing: 3.sp),
+                itemBuilder: (_, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      // printExifOf(index);
+                    },
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5.r),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: PhotoProvider(
+                                      mediumId: myCameraController
+                                          .listOfImagesFromAlbum[index].id))),
+                        )),
+                  );
+                }))
+            : Obx(() => GridView.builder(
+                itemCount: myCameraController.listOfCapturedImages.length,
+                addAutomaticKeepAlives: true,
+                cacheExtent: 999,
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: 3.sp,
+                    mainAxisSpacing: 3.sp),
+                itemBuilder: (_, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      // printExifOf(index);
+                    },
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5.r),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: FileImage(myCameraController
+                                          .listOfCapturedImages[index]))),
+                        )),
+                  );
+                })),
       ),
     );
   }
@@ -92,14 +118,13 @@ class _InAppGalleryState extends State<InAppGallery> {
       print("No EXIF information found");
       return;
     }
-    
-    if(data.containsKey('GPS GPSLongitude')){
+
+    if (data.containsKey('GPS GPSLongitude')) {
       print("GPS AVAILABLE");
       for (final entry in data.entries) {
         print("${entry.key}: ${entry.value}");
       }
-    }
-    else{
+    } else {
       print("Not Avaialable");
     }
 
