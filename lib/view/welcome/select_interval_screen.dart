@@ -64,6 +64,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
   }
 
   final List<String> intervals = const [
+    "0.5 sec",
     "1 sec",
     "2 sec",
     "3 sec",
@@ -167,10 +168,8 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
                         border: Border.all(color: primaryColor)),
                     child: TextFormField(
                       validator: (str) {
-                        if (_isNumeric(str) == false) {
-                          return "Required*";
-                        } else if (int.parse(str ?? '0') <= 0) {
-                          return "Invalid";
+                        if(double.parse(str ?? '0') < 0.5){
+                          return "Cannot use lower than 0.5";
                         }
                         return null;
                       },
@@ -194,7 +193,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
                                   '';
                             } else {
                               myCameraController.intervalController.value.text =
-                                  value[0];
+                                  value.substring(0, value.indexOf(' '))  ;
                             }
                           },
                           itemBuilder: (BuildContext context) {

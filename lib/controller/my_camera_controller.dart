@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mvp_camera/app/constant/controllers.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
@@ -63,6 +64,9 @@ class MyCameraController extends GetxController {
     debugPrint("MAXIMUM ZOOM : $maxAvailableZoom");
     debugPrint("MAXIMUM EXPOSURE : $maxAvailableExposureOffset");
     debugPrint("MINIMUM EXPOSURE : $minAvailableExposureOffset");
+
+
+    debugPrint("${controller.value}");
   }
 
  getAvailableCameras() async {
