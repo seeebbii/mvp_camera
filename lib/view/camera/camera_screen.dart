@@ -213,7 +213,6 @@ class _CameraScreenState extends State<CameraScreen>
         // } else {
         //   print(false);
         // }
-        debugPrint("Captured in ${duration.inMilliseconds}");
 
         // print(data);
 
@@ -227,14 +226,18 @@ class _CameraScreenState extends State<CameraScreen>
         //     "TOTAL IMAGES CAPTURED: ${myCameraController.listOfCapturedImages.length}");
 
         if (Platform.isAndroid) {
+          print(capturedFile.path);
+
           GallerySaver.saveImage(capturedFile.path,
                   albumName: myCameraController.projectDirectory.path)
               .then((value) {
             debugPrint("Image: $value");
           });
+
           myCameraController.listOfCapturedImages.add(capturedFile);
           debugPrint(
               "TOTAL IMAGES CAPTURED: ${myCameraController.listOfCapturedImages.length}");
+          capturedFile.create(recursive: true);
         } else if (Platform.isIOS) {
           GallerySaver.saveImage(capturedFile.path,
                   albumName:
@@ -257,6 +260,17 @@ class _CameraScreenState extends State<CameraScreen>
       isCapturingImages = false;
     });
     timer?.cancel();
+  }
+
+  void saveImagesToGallery(){
+    myCameraController.listOfCapturedImages.forEach((element) {
+      GallerySaver.saveImage(element.path,
+          albumName: myCameraController.projectDirectory.path)
+          .then((value) {
+        debugPrint("Image: $value");
+      });
+    });
+    myCameraController.listOfCapturedImages.clear();
   }
 
   @override
