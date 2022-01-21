@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -37,7 +39,7 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName>
           });
         });
       }
-      print("HEY PROJECT: " +
+      debugPrint("HEY PROJECT: " +
           myCameraController.projectNameController.value.text);
       navigationController.navigateToNamed(selectIntervalScreen);
     }
@@ -71,7 +73,7 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName>
               )),
               Center(
                   child: Text(
-                "Please Enter the information!",
+                "Create Data Capture Folder",
                 style: Theme.of(context)
                     .textTheme
                     .bodyText1
@@ -104,6 +106,13 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName>
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15.sp),
                 child: CustomButton(buttonText: "Next", onPressed: _trySubmit),
+              ),
+              SizedBox(
+                height: 0.015.sh,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.sp),
+                child: CustomButton(buttonText: "Exit App", onPressed: () => exit(0)),
               ),
             ],
           ),

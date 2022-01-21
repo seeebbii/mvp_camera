@@ -15,6 +15,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import '../../controller/map_controller.dart';
+
 class SelectIntervalScreen extends StatefulWidget {
   const SelectIntervalScreen({Key? key}) : super(key: key);
 
@@ -57,8 +59,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
       // PhotoManager.requestPermission().then((value){
       //   print("PHOTO MANAGER: $value");
       // });
-
-
+      Get.put(MapController());
       navigationController.navigateToNamed(cameraScreen);
     }
   }
@@ -118,16 +119,17 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            navigationController.goBack();
-          },
-          icon: Icon(
-            Icons.chevron_left,
-            color: primaryColor,
-            size: 25.sp,
-          ),
-        ),
+        automaticallyImplyLeading: false,
+        title: ElevatedButton(onPressed: () { navigationController.goBack(); },
+        child: Text("Back", style: Theme.of(context).textTheme.headline1?.copyWith(fontSize: 10.sp, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1),),
+          style: ElevatedButton.styleFrom(
+            onPrimary: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            primary: primaryColor,
+            shape: RoundedRectangleBorder( //to set border radius to button
+                borderRadius: BorderRadius.circular(12)
+            ),
+          ),),
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -168,7 +170,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
                         border: Border.all(color: primaryColor)),
                     child: TextFormField(
                       validator: (str) {
-                        if(double.parse(str ?? '0') < 0.5){
+                        if (double.parse(str ?? '0') < 0.5) {
                           return "Cannot use lower than 0.5";
                         }
                         return null;
@@ -193,7 +195,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
                                   '';
                             } else {
                               myCameraController.intervalController.value.text =
-                                  value.substring(0, value.indexOf(' '))  ;
+                                  value.substring(0, value.indexOf(' '));
                             }
                           },
                           itemBuilder: (BuildContext context) {

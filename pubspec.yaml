@@ -35,6 +35,15 @@ dependencies:
   gallery_saver: ^2.3.2
   photo_gallery: ^1.1.1
   photo_manager: ^1.3.10
+  sensors_plus: ^1.2.1
+  edit_exif: ^0.0.4
+  google_maps_flutter: ^2.1.1
+  geolocator: ^8.0.3
+
+  flutter_exif_plugin:
+    git:
+      url: https://github.com/spacycoder/flutter_exif.git
+
 
 dev_dependencies:
   flutter_test:

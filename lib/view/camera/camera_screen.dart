@@ -262,10 +262,10 @@ class _CameraScreenState extends State<CameraScreen>
     timer?.cancel();
   }
 
-  void saveImagesToGallery(){
+  void saveImagesToGallery() {
     myCameraController.listOfCapturedImages.forEach((element) {
       GallerySaver.saveImage(element.path,
-          albumName: myCameraController.projectDirectory.path)
+              albumName: myCameraController.projectDirectory.path)
           .then((value) {
         debugPrint("Image: $value");
       });
@@ -300,17 +300,35 @@ class _CameraScreenState extends State<CameraScreen>
                               myCameraController.controller.value
                                   .buildPreview(),
                               Positioned(
-                                  top: 0.03.sh,
-                                  left: 0.12.sw,
-                                  child: InkWell(
-                                      onTap: () {
-                                        navigationController.goBack();
-                                      },
-                                      child: Icon(
-                                        Icons.chevron_left,
-                                        color: Colors.white70,
-                                        size: 22.sp,
-                                      ))),
+                                top: 0.03.sh,
+                                left: 0.12.sw,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    navigationController.goBack();
+                                  },
+                                  child: Text(
+                                    "Back",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline1
+                                        ?.copyWith(
+                                            fontSize: 10.sp,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 1),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    onPrimary: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 10),
+                                    primary: primaryColor,
+                                    shape: RoundedRectangleBorder(
+                                        //to set border radius to button
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                  ),
+                                ),
+                              ),
                               Positioned(
                                   top: 0.03.sh,
                                   right: 0.15.sw,
@@ -352,9 +370,13 @@ class _CameraScreenState extends State<CameraScreen>
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Obx(() => Text(
-                                      myCameraController.currentExposureOffset.toStringAsFixed(1) + 'x',
-                                      style: const TextStyle(color: Colors.black),
-                                    )),
+                                          myCameraController
+                                                  .currentExposureOffset
+                                                  .toStringAsFixed(1) +
+                                              'x',
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        )),
                                   ),
                                 ),
                               ),
@@ -380,7 +402,8 @@ class _CameraScreenState extends State<CameraScreen>
                                             onChanged: (value) async {
                                               setState(() {});
                                               myCameraController
-                                                  .currentExposureOffset.value = value;
+                                                  .currentExposureOffset
+                                                  .value = value;
                                               await myCameraController
                                                   .controller.value
                                                   .setExposureOffset(value);
@@ -413,41 +436,25 @@ class _CameraScreenState extends State<CameraScreen>
                                         debugPrint("Gallery tapped");
                                         fetchGalleryImages();
                                       },
-                                      child: Obx(() => Container(
-                                            height: 20.sp,
-                                            width: 20.sp,
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey.shade400,
-                                              borderRadius:
-                                                  BorderRadius.circular(3.r),
-                                              border: Border.all(
-                                                  color: Colors.grey.shade800
-                                                      .withOpacity(0.4)),
-                                              image: (Platform.isAndroid)
-                                                  ? myCameraController
-                                                          .listOfImagesFromAlbum
-                                                          .isNotEmpty
-                                                      ? DecorationImage(
-                                                          image: PhotoProvider(
-                                                              mediumId:
-                                                                  myCameraController
-                                                                      .listOfImagesFromAlbum
-                                                                      .last
-                                                                      .id),
-                                                          fit: BoxFit.cover)
-                                                      : null
-                                                  : myCameraController
-                                                          .listOfCapturedImages
-                                                          .isNotEmpty
-                                                      ? DecorationImage(
-                                                          image: FileImage(
-                                                              myCameraController
-                                                                  .listOfCapturedImages
-                                                                  .first),
-                                                          fit: BoxFit.cover)
-                                                      : null,
-                                            ),
-                                          )),
+                                      child: InkWell(
+                                        onTap: (){
+                                          navigationController.navigateToNamed(qaRootScreen);
+                                        },
+                                        child: CircleAvatar(
+                                          maxRadius: 20.r,
+                                          backgroundColor: primaryColor,
+                                          foregroundColor: primaryColor,
+                                          child: Text(
+                                            "QA",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline2
+                                                ?.copyWith(
+                                                color: Colors.white,
+                                                fontSize: 12.sp),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                     SizedBox(
                                       width: 0.02.sh,
