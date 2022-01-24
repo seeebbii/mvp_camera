@@ -27,6 +27,7 @@ class SensorController extends GetxController {
 
     gyroscopeEvents.listen((GyroscopeEvent event) {
       gyroscopeEvent.value = event;
+      print(event);
     });
 
     magnetometerEvents.listen((MagnetometerEvent event) {

@@ -2,17 +2,22 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:exif/exif.dart';
+import 'package:image/image.dart' as img;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_beep/flutter_beep.dart';
+import 'package:flutter_exif_plugin/flutter_exif_plugin.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
+import 'package:metadata/metadata.dart' as meta;
 import 'package:mvp_camera/app/constant/controllers.dart';
 import 'package:mvp_camera/app/router/router_generator.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -63,6 +68,10 @@ class _CameraScreenState extends State<CameraScreen>
     // Fetching gallery album to check if the directory exists
     // If it exists simply load all of its media to our list
     fetchGalleryImages();
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp
+    ]);
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
         overlays: []);
@@ -200,15 +209,55 @@ class _CameraScreenState extends State<CameraScreen>
     timer = Timer.periodic(duration, (thisTimer) async {
       if (isCapturingImages == true) {
         // fetchGalleryImages();
-        setState(() {
-          debugPrint("Taking Pictures");
-        });
+        // setState(() {
+        //   debugPrint("Taking Pictures");
+        // });
+
+        FlutterBeep.beep(true);
         var xFile = await myCameraController.controller.value.takePicture();
-        final capturedFile = File(xFile.path);
-        debugPrint(capturedFile.path);
+        File capturedFile = File(xFile.path);
+
+        FlutterExif exifData = FlutterExif.fromPath(capturedFile.path);
+        // exifData.setLatLong(mapController.userLocation.value.latitude, mapController.userLocation.value.latitude);
+
+
+        exifData.getRotationDegrees().then((value) => print("DEGREES ROTATION: $value"));
+        // setting latitude and longitude
+        print("<MY LATITUDE: ${mapController.userLocation.value.latitude}>, <MY LONGITUDE: ${mapController.userLocation.value.longitude}>");
+        exifData.setLatLong(mapController.userLocation.value.latitude, mapController.userLocation.value.longitude);
+        exifData.setAttribute("GPSLatitude", mapController.userLocation.value.latitude.toString());
+        exifData.setAttribute("GPSLongitude", mapController.userLocation.value.longitude.toString());
+        exifData.saveAttributes();
+
+        exifData.getLatLong().then((value) => print(value));
+
+        // final directory = await getExternalStorageDirectory();
+        // print(directory);
+
+        exifData.imageData.then((value) async{
+          capturedFile.writeAsBytes(value!);
+        });
+
+        // var result = meta.MetaData.exifData(capturedFile.readAsBytesSync());
+        // if (result.error == null) {
+        //   var content = result.exifData;
+        //   Map<dynamic, dynamic> gpsMap = content['gps'];
+        //   gpsMap['GPSLatitude']= mapController.userLocation.value.latitude;
+        //   gpsMap['GPSLongitude']= mapController.userLocation.value.longitude;
+        //   print(gpsMap);
+        //   print(content);
+        //   // meta.saveFile(image_name, content);
+        //   capturedFile.writeAsStringSync(jsonEncode(content),mode: FileMode.append);
+        //
+        // } else {
+        //   print('File: $capturedFile.jpg, Error: ${result.error}');
+        // }
 
         // final data = await readExifFromBytes(capturedFile.readAsBytesSync());
-        // if (data.containsKey('GPS GPSLongitude')) {
+        // capturedFile.writeAsStringSync(jsonEncode(data.toString()),mode: FileMode.append);
+        // print("");
+        // print(data);
+        // if (data.containsKey('GPSLatitude')) {
         //   print(true);
         // } else {
         //   print(false);
@@ -227,6 +276,11 @@ class _CameraScreenState extends State<CameraScreen>
 
         if (Platform.isAndroid) {
           print(capturedFile.path);
+
+
+          final data = await readExifFromBytes(capturedFile.readAsBytesSync());
+
+          print(data);
 
           GallerySaver.saveImage(capturedFile.path,
                   albumName: myCameraController.projectDirectory.path)
@@ -273,6 +327,14 @@ class _CameraScreenState extends State<CameraScreen>
     myCameraController.listOfCapturedImages.clear();
   }
 
+
+  // TAP TO FOCS AND SHOW FOCUS CIRCLE
+  bool showFocusCircle = false;
+  double x = 0;
+  double y = 0;
+
+  bool focusModeAuto = true;
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -284,263 +346,7 @@ class _CameraScreenState extends State<CameraScreen>
           if (snap.hasData) {
             if (snap.data!.isGranted) {
               if (myCameraController.controller.value.value.isInitialized) {
-                return Obx(() => Center(
-                      child: Transform.scale(
-                        scale: 1 /
-                            (myCameraController
-                                    .controller.value.value.aspectRatio *
-                                deviceRatio),
-                        child: AspectRatio(
-                          aspectRatio: 1 /
-                              myCameraController
-                                  .controller.value.value.aspectRatio,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              myCameraController.controller.value
-                                  .buildPreview(),
-                              Positioned(
-                                top: 0.03.sh,
-                                left: 0.12.sw,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    navigationController.goBack();
-                                  },
-                                  child: Text(
-                                    "Back",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headline1
-                                        ?.copyWith(
-                                            fontSize: 10.sp,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    onPrimary: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
-                                    primary: primaryColor,
-                                    shape: RoundedRectangleBorder(
-                                        //to set border radius to button
-                                        borderRadius:
-                                            BorderRadius.circular(12)),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                  top: 0.03.sh,
-                                  right: 0.15.sw,
-                                  child: InkWell(
-                                    onTap: () {
-                                      if (flashIndex == 0) {
-                                        setState(() {
-                                          myCameraController.controller.value
-                                              .setFlashMode(FlashMode.always);
-                                          flashIndex = 1;
-                                        });
-                                      } else if (flashIndex == 1) {
-                                        setState(() {
-                                          myCameraController.controller.value
-                                              .setFlashMode(FlashMode.auto);
-                                          flashIndex = 2;
-                                        });
-                                      } else {
-                                        setState(() {
-                                          myCameraController.controller.value
-                                              .setFlashMode(FlashMode.off);
-                                          flashIndex = 0;
-                                        });
-                                      }
-                                    },
-                                    child: CircleAvatar(
-                                        backgroundColor: Colors.black87,
-                                        maxRadius: 15.r,
-                                        child: listOfFlashButtons[flashIndex]),
-                                  )),
-                              Positioned(
-                                top: 0.18.sh,
-                                right: 0.12.sw,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Obx(() => Text(
-                                          myCameraController
-                                                  .currentExposureOffset
-                                                  .toStringAsFixed(1) +
-                                              'x',
-                                          style: const TextStyle(
-                                              color: Colors.black),
-                                        )),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                  top: 0.2.sh,
-                                  right: 0.15.sw,
-                                  child: RotatedBox(
-                                    quarterTurns: 3,
-                                    child: Container(
-                                      height: 10,
-                                      width: 1.sw,
-                                      child: Obx(() => Slider(
-                                            value: myCameraController
-                                                .currentExposureOffset.value,
-                                            min: myCameraController
-                                                .minAvailableExposureOffset
-                                                .value,
-                                            max: myCameraController
-                                                .maxAvailableExposureOffset
-                                                .value,
-                                            activeColor: Colors.white,
-                                            inactiveColor: Colors.white30,
-                                            onChanged: (value) async {
-                                              setState(() {});
-                                              myCameraController
-                                                  .currentExposureOffset
-                                                  .value = value;
-                                              await myCameraController
-                                                  .controller.value
-                                                  .setExposureOffset(value);
-                                            },
-                                          )),
-                                    ),
-                                  )),
-                              isCapturingImages
-                                  ? Text(
-                                      '${myCameraController.listOfCapturedImages.length}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline1
-                                          ?.copyWith(
-                                              color:
-                                                  Colors.white.withOpacity(0.5),
-                                              fontSize: 80.sp),
-                                    )
-                                  : const SizedBox.shrink(),
-                              Positioned(
-                                bottom: 0.05.sh,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        navigationController
-                                            .navigateToNamed(inAppGallery);
-                                        debugPrint("Gallery tapped");
-                                        fetchGalleryImages();
-                                      },
-                                      child: InkWell(
-                                        onTap: (){
-                                          navigationController.navigateToNamed(qaRootScreen);
-                                        },
-                                        child: CircleAvatar(
-                                          maxRadius: 20.r,
-                                          backgroundColor: primaryColor,
-                                          foregroundColor: primaryColor,
-                                          child: Text(
-                                            "QA",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline2
-                                                ?.copyWith(
-                                                color: Colors.white,
-                                                fontSize: 12.sp),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 0.02.sh,
-                                    ),
-                                    InkWell(
-                                      onTap: isCapturingImages
-                                          ? stopCapturingImages
-                                          : startCapturingImages,
-                                      child: CircleAvatar(
-                                        maxRadius: 28.r,
-                                        backgroundColor: isCapturingImages
-                                            ? red
-                                            : primaryColor,
-                                        foregroundColor: primaryColor,
-                                        child: Text(
-                                          isCapturingImages ? "Stop" : "Start",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline2
-                                              ?.copyWith(
-                                                  color: Colors.white,
-                                                  fontSize: 12.sp),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 0.02.sh,
-                                    ),
-                                    CircleAvatar(
-                                      backgroundColor: Colors.black87,
-                                      maxRadius: 20.r,
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.flip_camera_android,
-                                          size: 18.sp,
-                                          color: Colors.white70,
-                                        ),
-                                        onPressed: () {
-                                          if (myCameraController.controller
-                                                  .value.description ==
-                                              myCameraController.cameras[0]) {
-                                            if (myCameraController
-                                                    .cameras.length >
-                                                0) {
-                                              onNewCameraSelected(
-                                                  myCameraController
-                                                      .cameras[1]);
-                                            }
-                                          } else if (myCameraController
-                                                  .controller
-                                                  .value
-                                                  .description ==
-                                              myCameraController.cameras[1]) {
-                                            onNewCameraSelected(
-                                                myCameraController.cameras[0]);
-                                          }
-                                        },
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              GestureDetector(
-                                behavior: HitTestBehavior.translucent,
-                                onScaleStart: (details) {
-                                  _baseScale = _currentScale;
-                                },
-                                onScaleUpdate: (details) {
-                                  _currentScale = (_baseScale * details.scale)
-                                      .clamp(
-                                          myCameraController
-                                              .minAvailableZoom.value,
-                                          myCameraController
-                                              .maxAvailableZoom.value)
-                                      .toDouble();
-                                  setState(() {
-                                    myCameraController.controller.value
-                                        .setZoomLevel(_currentScale);
-                                  });
-                                },
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ));
+                return portraitCameraLayout(deviceRatio);
               } else {
                 return Container(
                   height: size.height,
@@ -559,6 +365,337 @@ class _CameraScreenState extends State<CameraScreen>
         },
       ),
     );
+  }
+
+  Widget portraitCameraLayout(double deviceRatio){
+    return Obx(() => Center(
+      child: Transform.scale(
+        scale: 1 /
+            (myCameraController
+                .controller.value.value.aspectRatio *
+                deviceRatio),
+        child: AspectRatio(
+          aspectRatio: 1 /
+              myCameraController
+                  .controller.value.value.aspectRatio,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              myCameraController.controller.value
+                  .buildPreview(),
+              GestureDetector(
+                onTapUp: (TapUpDetails tapUpDetails){
+                  // TAP TO FOCUS
+                  if(myCameraController.controller.value.value.isInitialized) {
+
+                    // CHECK IF FOCUS POINT AVAILABLE
+                    if(myCameraController.controller.value.value.focusPointSupported){
+                      showFocusCircle = true;
+                      x = tapUpDetails.localPosition.dx;
+                      y = tapUpDetails.localPosition.dy;
+
+                      double fullWidth = MediaQuery.of(context).size.width;
+                      double cameraHeight = fullWidth * myCameraController.controller.value.value.aspectRatio;
+
+                      double xp = x / fullWidth;
+                      double yp = y / cameraHeight;
+
+                      Offset point = Offset(xp,yp);
+                      print("point : $point");
+
+                      // Manually focus
+                      myCameraController.controller.value.setFocusPoint(point);
+                      myCameraController.controller.value.setFocusMode(FocusMode.locked);
+                      // Manually set light exposure
+                      myCameraController.controller.value.setExposurePoint(point);
+                      setState(() {
+                        Future.delayed(const Duration(seconds: 2)).whenComplete(() {
+                          setState(() {
+                            showFocusCircle = false;
+                            focusModeAuto = false;
+                          });
+                        });
+                      });
+                    }
+                  }
+                },
+                onLongPress: (){
+                  print("Auto focus Enabled");
+                  setState(() {
+                    focusModeAuto = true;
+                    myCameraController.controller.value.setFocusMode(FocusMode.auto);
+                    myCameraController.controller.value.setExposureMode(ExposureMode.auto);
+                  });
+                },
+              ),
+              if(showFocusCircle) Positioned(
+                  top: y-20,
+                  left: x-20,
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white,width: 1.5)
+                    ),
+                  )),
+              Positioned(
+                top: 0.03.sh,
+                left: 0.12.sw,
+                child: ElevatedButton(
+                  onPressed: () {
+                    navigationController.goBack();
+                  },
+                  child: Text(
+                    "Back",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1
+                        ?.copyWith(
+                        fontSize: 10.sp,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    onPrimary: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
+                    primary: primaryColor,
+                    shape: RoundedRectangleBorder(
+                      //to set border radius to button
+                        borderRadius:
+                        BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+              Positioned(
+                  top: 0.03.sh,
+                  right: 0.15.sw,
+                  child: Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          if (flashIndex == 0) {
+                            setState(() {
+                              myCameraController.controller.value
+                                  .setFlashMode(FlashMode.always);
+                              flashIndex = 1;
+                            });
+                          } else if (flashIndex == 1) {
+                            setState(() {
+                              myCameraController.controller.value
+                                  .setFlashMode(FlashMode.auto);
+                              flashIndex = 2;
+                            });
+                          } else {
+                            setState(() {
+                              myCameraController.controller.value
+                                  .setFlashMode(FlashMode.off);
+                              flashIndex = 0;
+                            });
+                          }
+                        },
+                        child: CircleAvatar(
+                            backgroundColor: Colors.black87,
+                            maxRadius: 15.r,
+                            child: listOfFlashButtons[flashIndex]),
+                      ),
+                      SizedBox(width: 5.sm,),
+                      Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.all(Radius.circular(15))
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(focusModeAuto ? "Auto" : "Locked", style: TextStyle(color: Colors.white, fontSize: 14.sm),),
+                        ),
+                      ),
+                    ],
+                  )),
+              Positioned(
+                top: 0.18.sh,
+                right: 0.12.sw,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Obx(() => Text(
+                      myCameraController
+                          .currentExposureOffset
+                          .toStringAsFixed(1) +
+                          'x',
+                      style: const TextStyle(
+                          color: Colors.black),
+                    )),
+                  ),
+                ),
+              ),
+              Positioned(
+                  top: 0.2.sh,
+                  right: 0.15.sw,
+                  child: RotatedBox(
+                    quarterTurns: 3,
+                    child: Container(
+                      height: 10,
+                      width: 1.sw,
+                      child: Obx(() => Slider(
+                        value: myCameraController
+                            .currentExposureOffset.value,
+                        min: myCameraController
+                            .minAvailableExposureOffset
+                            .value,
+                        max: myCameraController
+                            .maxAvailableExposureOffset
+                            .value,
+                        activeColor: Colors.white,
+                        inactiveColor: Colors.white30,
+                        onChanged: (value) async {
+                          setState(() {});
+                          myCameraController
+                              .currentExposureOffset
+                              .value = value;
+                          await myCameraController
+                              .controller.value
+                              .setExposureOffset(value);
+                        },
+                      )),
+                    ),
+                  )),
+              isCapturingImages
+                  ? Text(
+                '${myCameraController.listOfCapturedImages.length}',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline1
+                    ?.copyWith(
+                    color:
+                    Colors.white.withOpacity(0.5),
+                    fontSize: 80.sp),
+              )
+                  : const SizedBox.shrink(),
+              Positioned(
+                bottom: 0.05.sh,
+                child: Row(
+                  mainAxisAlignment:
+                  MainAxisAlignment.spaceEvenly,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        navigationController
+                            .navigateToNamed(inAppGallery);
+                        debugPrint("Gallery tapped");
+                        fetchGalleryImages();
+                      },
+                      child: InkWell(
+                        onTap: (){
+                          navigationController.navigateToNamed(qaRootScreen);
+                        },
+                        child: CircleAvatar(
+                          maxRadius: 20.r,
+                          backgroundColor: primaryColor,
+                          foregroundColor: primaryColor,
+                          child: Text(
+                            "QA",
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline2
+                                ?.copyWith(
+                                color: Colors.white,
+                                fontSize: 12.sp),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 0.02.sh,
+                    ),
+                    InkWell(
+                      onTap: isCapturingImages
+                          ? stopCapturingImages
+                          : startCapturingImages,
+                      child: CircleAvatar(
+                        maxRadius: 28.r,
+                        backgroundColor: isCapturingImages
+                            ? red
+                            : primaryColor,
+                        foregroundColor: primaryColor,
+                        child: Text(
+                          isCapturingImages ? "Stop" : "Start",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline2
+                              ?.copyWith(
+                              color: Colors.white,
+                              fontSize: 12.sp),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 0.02.sh,
+                    ),
+                    CircleAvatar(
+                      backgroundColor: Colors.black87,
+                      maxRadius: 20.r,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.flip_camera_android,
+                          size: 18.sp,
+                          color: Colors.white70,
+                        ),
+                        onPressed: () {
+                          if (myCameraController.controller
+                              .value.description ==
+                              myCameraController.cameras[0]) {
+                            if (myCameraController
+                                .cameras.length >
+                                0) {
+                              onNewCameraSelected(
+                                  myCameraController
+                                      .cameras[1]);
+                            }
+                          } else if (myCameraController
+                              .controller
+                              .value
+                              .description ==
+                              myCameraController.cameras[1]) {
+                            onNewCameraSelected(
+                                myCameraController.cameras[0]);
+                          }
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onScaleStart: (details) {
+                  _baseScale = _currentScale;
+                },
+                onScaleUpdate: (details) {
+                  _currentScale = (_baseScale * details.scale)
+                      .clamp(
+                      myCameraController
+                          .minAvailableZoom.value,
+                      myCameraController
+                          .maxAvailableZoom.value)
+                      .toDouble();
+                  setState(() {
+                    myCameraController.controller.value
+                        .setZoomLevel(_currentScale);
+                  });
+                }
+              )
+            ],
+          ),
+        ),
+      ),
+    ));
   }
 
   @override

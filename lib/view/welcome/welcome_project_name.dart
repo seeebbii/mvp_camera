@@ -49,11 +49,22 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName>
   void initState() {
     Get.put(MyCameraController());
     super.initState();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      callAppLockDialog();
+    });
+  }
+
+  void callAppLockDialog() {
+    showDialog(
+        context: context, builder: (_) => WillPopScope(onWillPop: () async => false,
+        child: MyDialog()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+
       backgroundColor: backgroundColor,
       body: SingleChildScrollView(
         child: Form(
@@ -112,10 +123,76 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName>
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15.sp),
-                child: CustomButton(buttonText: "Exit App", onPressed: () => exit(0)),
+                child: CustomButton(
+                    buttonText: "Exit App", onPressed: () => exit(0)),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class MyDialog extends StatelessWidget {
+  MyDialog({Key? key}) : super(key: key);
+  final accentColor = backgroundColor;
+
+  final passCodeController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height / 3,
+        decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(15.0),
+            boxShadow: [
+              BoxShadow(
+                  offset: const Offset(12, 26),
+                  blurRadius: 50,
+                  spreadRadius: 0,
+                  color: Colors.grey.withOpacity(.1)),
+            ]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(20.sm),
+              child: CustomTextField(
+                  controller: passCodeController,
+                  containerBoxColor: Colors.grey,
+                  borderRadius: 12.r,
+                  obSecureText: true,
+                  validator: (str) {
+                    if (str == '' || str == null) {
+                      return "Required*";
+                    }
+                    return null;
+                  },
+                  action: TextInputAction.done,
+                  keyType: TextInputType.text,
+                  hintText: "Enter your passcode?",
+                  suffixIcon: const SizedBox.shrink()),
+            ),
+            SizedBox(
+              width: 0.3.sw,
+              child: CustomButton(
+                  buttonText: "Verify",
+                  onPressed: () {
+                    if (passCodeController.text.trim() == "metaspatial" ||
+                        passCodeController.text.trim() == "Metaspatial") {
+                      navigationController.goBack();
+                    }else{
+                      passCodeController.clear();
+                    }
+                  }),
+            ),
+          ],
         ),
       ),
     );

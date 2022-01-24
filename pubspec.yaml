@@ -39,6 +39,9 @@ dependencies:
   edit_exif: ^0.0.4
   google_maps_flutter: ^2.1.1
   geolocator: ^8.0.3
+  flutter_beep: ^1.0.0
+  metadata: any
+
 
   flutter_exif_plugin:
     git:

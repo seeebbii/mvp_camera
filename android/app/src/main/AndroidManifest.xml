@@ -13,7 +13,7 @@
 
     <application
         android:icon="@mipmap/ic_launcher"
-        android:label="MSC Camera"
+        android:label="SmartSurveyor"
         android:requestLegacyExternalStorage="true">
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCNvTcW5SQsjdpR9vs0jcXEIYid2091TUk"/>
