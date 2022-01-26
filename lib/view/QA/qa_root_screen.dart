@@ -21,6 +21,8 @@ class _QaRootScreenState extends State<QaRootScreen> {
   void initState() {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //     overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+
+    print('loading directory files');
     super.initState();
   }
 

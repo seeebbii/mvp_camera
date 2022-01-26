@@ -40,8 +40,9 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
         debugPrint(myCameraController.intervalController.value.text);
         final myImgDir = await new io.Directory(
                 '${dirPath!.path}/${myCameraController.projectNameController.value.text}')
-            .create();
+            .create(recursive: true);
         myCameraController.projectDirectory = myImgDir;
+        print(myCameraController.projectDirectory);
       }
       if (io.Platform.isIOS) {
         debugPrint("IOS PLATFORM");

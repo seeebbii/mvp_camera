@@ -77,7 +77,7 @@ class MyCameraController extends GetxController {
         Permission.camera.request();
       }else if(status.isGranted){
         cameras.value = await availableCameras();
-        controller = CameraController(cameras[0], ResolutionPreset.max).obs;
+        controller = CameraController(cameras[0], ResolutionPreset.max, imageFormatGroup: ImageFormatGroup.jpeg).obs;
         isRearCameraSelected.value = true;
         controller.value.initialize().then((value) {
           debugPrint("CAMERA INIT SUCCESS");
