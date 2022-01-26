@@ -9,7 +9,7 @@ class MapController extends GetxController {
   static MapController instance = Get.find();
 
   late Stream<Position> _geoLocationStream;
-
+  late GoogleMapController controller;
   Completer<GoogleMapController> googleMapController = Completer();
 
   // INITIALIZE DEFAULT VALUES
@@ -57,7 +57,10 @@ class MapController extends GetxController {
   }
 
   Future<void> animateCamera(CameraPosition position) async {
-    final GoogleMapController controller = await googleMapController.future;
+    controller = await googleMapController.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(position));
   }
+
+
+
 }
