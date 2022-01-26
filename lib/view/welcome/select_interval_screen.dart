@@ -9,6 +9,7 @@ import 'package:mvp_camera/app/constant/controllers.dart';
 import 'package:mvp_camera/app/constant/image_paths.dart';
 import 'package:mvp_camera/app/router/router_generator.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
+import 'package:mvp_camera/controller/fetch_files_controller.dart';
 import 'package:mvp_camera/view/components/custom_button.dart';
 import 'package:mvp_camera/view/components/custom_textfield.dart';
 import 'package:path_provider/path_provider.dart';
@@ -105,6 +106,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
   @override
   void initState() {
     WidgetsBinding.instance!.addObserver(this);
+    Get.put(FetchFilesController()).fetchDirectories();
     super.initState();
   }
 
