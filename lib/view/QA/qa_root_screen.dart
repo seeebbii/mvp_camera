@@ -42,14 +42,6 @@ class _QaRootScreenState extends State<QaRootScreen> {
   void didChangeDependencies() {
     if (mounted) {
       debugPrint("Mounted");
-
-      // LatLng(
-      //   mapController.userLocation.value.latitude,
-      //   mapController.userLocation.value.longitude,
-      // )
-
-      // ANIMATING CAMERA TO CURRENT LOCATION
-
     } else {
       debugPrint("Not Mounted");
     }
@@ -65,7 +57,6 @@ class _QaRootScreenState extends State<QaRootScreen> {
     );
   }
 
-
   Widget buildStackedContainer() {
     return Stack(
       fit: StackFit.expand,
@@ -73,14 +64,11 @@ class _QaRootScreenState extends State<QaRootScreen> {
         Positioned.fill(
           child: Obx(() => GoogleMap(
                 mapType: MapType.normal,
+                markers: mapController.imageMarkers,
                 zoomControlsEnabled: false,
                 initialCameraPosition:
                     mapController.currentLocationCameraPosition.value,
-                onMapCreated: (GoogleMapController controller) {
-                  if (!mapController.googleMapController.isCompleted) {
-                    mapController.googleMapController.complete(controller);
-                  }
-                },
+                onMapCreated: mapController.onMapCreated,
                 myLocationButtonEnabled: true,
                 myLocationEnabled: true,
               )),
@@ -145,6 +133,10 @@ class _QaRootScreenState extends State<QaRootScreen> {
                   ),
                   _buildTotalFiles(),
                   SizedBox(
+                    height: 0.01.sh.sm,
+                  ),
+                  _buildTotalGyro(),
+                  SizedBox(
                     height: 0.1.sh.sm,
                   ),
                 ],
@@ -152,6 +144,35 @@ class _QaRootScreenState extends State<QaRootScreen> {
             ),
           );
         });
+  }
+
+  Widget _buildTotalGyro() {
+    return Padding(
+      padding: EdgeInsets.all(10.0.sm),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              "Gyro info: ",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  ?.copyWith(color: Colors.white, fontSize: 14.sp.sm),
+            ),
+          ),
+          Expanded(
+              child: Obx(
+                    () => Text(
+                  "${sensorController.gyroscopeEvent.value}",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1
+                      ?.copyWith(color: Colors.white, fontSize: 14.sp.sm),
+                ),
+              )),
+        ],
+      ),
+    );
   }
 
   Widget _buildTotalFiles() {
