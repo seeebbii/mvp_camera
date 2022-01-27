@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mvp_camera/app/constant/controllers.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
@@ -35,6 +36,16 @@ class MyCameraController extends GetxController {
   Rx<double> currentExposureOffset = 0.0.obs;
 
   Rx<bool> isRearCameraSelected = false.obs;
+
+  Future<void> changeProjectDirectory(String project)async{
+    if(Platform.isAndroid){
+      final dir = await getExternalStorageDirectory();
+      projectDirectory = await Directory('${dir?.path}/$project').create(recursive: true);
+    }if(Platform.isIOS){
+      final dir = await getApplicationDocumentsDirectory();
+      projectDirectory = await Directory('${dir.path}/$project').create();
+    }
+  }
 
   @override
   void onInit() {

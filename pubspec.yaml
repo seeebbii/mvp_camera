@@ -41,6 +41,7 @@ dependencies:
   geolocator: ^8.0.3
   flutter_beep: ^1.0.0
   metadata: any
+  modal_bottom_sheet: ^2.0.0
 
 
   flutter_exif_plugin:

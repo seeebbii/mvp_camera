@@ -47,7 +47,7 @@ class HandleFile {
     fromFile.saveTo(newFile.path);
   }
 
-  static FlutterExif getExif(String path) {
+  FlutterExif getExif(String path) {
     return FlutterExif.fromPath(path);
   }
 

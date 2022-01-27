@@ -62,6 +62,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
       //   print("PHOTO MANAGER: $value");
       // });
       Get.put(MapController());
+      Get.put(FetchFilesController()).fetchDirectories();
       navigationController.navigateToNamed(cameraScreen);
     }
   }
@@ -106,7 +107,6 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
   @override
   void initState() {
     WidgetsBinding.instance!.addObserver(this);
-    Get.put(FetchFilesController()).fetchDirectories();
     super.initState();
   }
 

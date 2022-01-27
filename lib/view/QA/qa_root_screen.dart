@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,13 +17,15 @@ class QaRootScreen extends StatefulWidget {
 }
 
 class _QaRootScreenState extends State<QaRootScreen> {
-
   @override
   void initState() {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //     overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
 
-    print('loading directory files');
+
+    // FETCH TOTAL NUMBER OF FILES IN CURRENT DIRECTORY
+    fetchFilesController.checkDirectoriesAndFetch(myCameraController.projectNameController.value.text);
+
     super.initState();
   }
 
@@ -30,12 +33,18 @@ class _QaRootScreenState extends State<QaRootScreen> {
   void dispose() {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //     overlays: []);
+
+    fetchFilesController.filesInCurrentProject.clear();
     super.dispose();
   }
 
   @override
   void didChangeDependencies() {
-    if(mounted){debugPrint("Mounted");}else{debugPrint("Not Mounted");}
+    if (mounted) {
+      debugPrint("Mounted");
+    } else {
+      debugPrint("Not Mounted");
+    }
     super.didChangeDependencies();
   }
 
@@ -44,33 +53,196 @@ class _QaRootScreenState extends State<QaRootScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          Obx(() => GoogleMap(
-            mapType: MapType.normal,
-            initialCameraPosition: mapController.currentLocationCameraPosition.value,
-            onMapCreated: (GoogleMapController controller) {
-              mapController.googleMapController.complete(controller);
+      body: buildStackedContainer(),
+    );
+  }
+
+  Widget buildContainerBelow() {
+    return Column(
+      children: [
+        Expanded(
+          child: Obx(() => GoogleMap(
+                mapType: MapType.normal,
+                initialCameraPosition:
+                    mapController.currentLocationCameraPosition.value,
+                onMapCreated: (GoogleMapController controller) {
+                  if (!mapController.googleMapController.isCompleted) {
+                    mapController.googleMapController.complete(controller);
+                  }
+                },
+                myLocationButtonEnabled: true,
+                myLocationEnabled: true,
+              )),
+        ),
+        Container(
+          color: Colors.white,
+          height: 0.25.sh.sm,
+        ),
+      ],
+    );
+  }
+
+  Widget buildStackedContainer() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Positioned.fill(
+          child: Obx(() => GoogleMap(
+                mapType: MapType.normal,
+                zoomControlsEnabled: false,
+                initialCameraPosition:
+                    mapController.currentLocationCameraPosition.value,
+                onMapCreated: (GoogleMapController controller) {
+                  if (!mapController.googleMapController.isCompleted) {
+                    mapController.googleMapController.complete(controller);
+                  }
+                },
+                myLocationButtonEnabled: true,
+                myLocationEnabled: true,
+              )),
+        ),
+        Positioned.fill(top: 0.8.sh.sm, child: modalBottomSheet()),
+        Positioned(
+          top: 3.sp,
+          left: 3.sp,
+          child: ElevatedButton(
+            onPressed: () {
+              navigationController.goBack();
             },
-            myLocationButtonEnabled: true,
-            myLocationEnabled: true,
-          )),
-          Positioned(
-            top: 3.sp,
-            left: 3.sp,
-            child: ElevatedButton(onPressed: () { navigationController.goBack(); },
-              child: Text("Back", style: Theme.of(context).textTheme.headline1?.copyWith(fontSize: 10.sp, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1),),
-              style: ElevatedButton.styleFrom(
-                onPrimary: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                primary: primaryColor,
-                shape: RoundedRectangleBorder( //to set border radius to button
-                    borderRadius: BorderRadius.circular(12)
-                ),
-              ),),
+            child: Text(
+              "Back",
+              style: Theme.of(context).textTheme.headline1?.copyWith(
+                  fontSize: 10.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1),
+            ),
+            style: ElevatedButton.styleFrom(
+              onPrimary: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              primary: primaryColor,
+              shape: RoundedRectangleBorder(
+                  //to set border radius to button
+                  borderRadius: BorderRadius.circular(12)),
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+
+  Widget modalBottomSheet() {
+    return DraggableScrollableSheet(
+        initialChildSize: .3,
+        minChildSize: .2,
+        maxChildSize: 1,
+        builder: (BuildContext _, ScrollController scrollController) {
+          return SingleChildScrollView(
+            controller: scrollController,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: backgroundColor.withOpacity(1),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15.sm),
+                    topRight: Radius.circular(15.sm),
+                  )),
+              child: Column(
+                children: [
+                  Center(
+                    child: Icon(
+                      Icons.maximize,
+                      size: 50.sm,
+                      color: Colors.white,
+                    ),
+                  ),
+                  _buildDropDown(),
+                  SizedBox(
+                    height: 0.01.sh.sm,
+                  ),
+
+                  // WIDGET HERE
+
+                  SizedBox(
+                    height: 0.1.sh.sm,
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget _buildDropDown() {
+    return Row(
+      children: [
+        Expanded(
+            child: Padding(
+          padding: EdgeInsets.all(10.0.sm),
+          child: Text(
+            "Current Project Directory: ",
+            style: Theme.of(context)
+                .textTheme
+                .bodyText1
+                ?.copyWith(color: Colors.white, fontSize: 14.sp.sm),
+          ),
+        )),
+        Expanded(
+          child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: 10.sp.sm, vertical: 10.sp.sm),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.r),
+                    color: backgroundColor,
+                    border: Border.all(color: primaryColor)),
+                child: TextFormField(
+                  validator: (str) {
+                    print(str);
+                  },
+                  keyboardType: TextInputType.number,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1
+                      ?.copyWith(color: whiteColor),
+                  controller: myCameraController.projectNameController.value,
+                  decoration: InputDecoration(
+                    hintText: "Current Project",
+                    border: InputBorder.none,
+                    // suffixText: " Seconds",
+                    focusColor: primaryColor,
+                    suffixIcon: PopupMenuButton<String>(
+                      icon: const Icon(
+                        Icons.arrow_drop_down,
+                        color: primaryColor,
+                      ),
+                      color: backgroundColor,
+                      onSelected: (String value) {
+                        print(value);
+                        print(myCameraController.projectNameController.value.text);
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return fetchFilesController.listOfAvailableProject
+                            .map<PopupMenuItem<String>>((String value) {
+                          return PopupMenuItem(
+                            child: Text(
+                              value,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  ?.copyWith(color: Colors.white),
+                            ),
+                            value: value,
+                          );
+                        }).toList();
+                      },
+                    ),
+                  ),
+                ),
+              )),
+        ),
+      ],
     );
   }
 }
