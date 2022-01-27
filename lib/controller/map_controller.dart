@@ -46,6 +46,12 @@ class MapController extends GetxController {
     initCurrentLocationCameraPosition();
   }
 
+
+  Future<void> createMarkers() async {
+
+  }
+
+
   Future<bool> checkLocationPermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
     return LocationPermission.always == permission;

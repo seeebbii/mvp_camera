@@ -22,9 +22,9 @@ class _QaRootScreenState extends State<QaRootScreen> {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //     overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
 
-
     // FETCH TOTAL NUMBER OF FILES IN CURRENT DIRECTORY
-    fetchFilesController.checkDirectoriesAndFetch(myCameraController.projectNameController.value.text);
+    fetchFilesController.checkDirectoriesAndFetch(
+        myCameraController.projectNameController.value.text);
 
     super.initState();
   }
@@ -42,6 +42,14 @@ class _QaRootScreenState extends State<QaRootScreen> {
   void didChangeDependencies() {
     if (mounted) {
       debugPrint("Mounted");
+
+      // LatLng(
+      //   mapController.userLocation.value.latitude,
+      //   mapController.userLocation.value.longitude,
+      // )
+
+      // ANIMATING CAMERA TO CURRENT LOCATION
+
     } else {
       debugPrint("Not Mounted");
     }
@@ -57,30 +65,6 @@ class _QaRootScreenState extends State<QaRootScreen> {
     );
   }
 
-  Widget buildContainerBelow() {
-    return Column(
-      children: [
-        Expanded(
-          child: Obx(() => GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition:
-                    mapController.currentLocationCameraPosition.value,
-                onMapCreated: (GoogleMapController controller) {
-                  if (!mapController.googleMapController.isCompleted) {
-                    mapController.googleMapController.complete(controller);
-                  }
-                },
-                myLocationButtonEnabled: true,
-                myLocationEnabled: true,
-              )),
-        ),
-        Container(
-          color: Colors.white,
-          height: 0.25.sh.sm,
-        ),
-      ],
-    );
-  }
 
   Widget buildStackedContainer() {
     return Stack(
@@ -159,9 +143,7 @@ class _QaRootScreenState extends State<QaRootScreen> {
                   SizedBox(
                     height: 0.01.sh.sm,
                   ),
-
-                  // WIDGET HERE
-
+                  _buildTotalFiles(),
                   SizedBox(
                     height: 0.1.sh.sm,
                   ),
@@ -172,77 +154,103 @@ class _QaRootScreenState extends State<QaRootScreen> {
         });
   }
 
+  Widget _buildTotalFiles() {
+    return Padding(
+      padding: EdgeInsets.all(10.0.sm),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              "Number of Photos: ",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  ?.copyWith(color: Colors.white, fontSize: 14.sp.sm),
+            ),
+          ),
+          Expanded(
+              child: Obx(
+            () => Text(
+              "${fetchFilesController.filesInCurrentProject.length}",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  ?.copyWith(color: Colors.white, fontSize: 14.sp.sm),
+            ),
+          )),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDropDown() {
-    return Row(
-      children: [
-        Expanded(
-            child: Padding(
-          padding: EdgeInsets.all(10.0.sm),
-          child: Text(
+    return Padding(
+      padding: EdgeInsets.all(10.0.sm),
+      child: Row(
+        children: [
+          Expanded(
+              child: Text(
             "Current Project Directory: ",
             style: Theme.of(context)
                 .textTheme
                 .bodyText1
                 ?.copyWith(color: Colors.white, fontSize: 14.sp.sm),
-          ),
-        )),
-        Expanded(
-          child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 10.sp.sm, vertical: 10.sp.sm),
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.r),
-                    color: backgroundColor,
-                    border: Border.all(color: primaryColor)),
-                child: TextFormField(
-                  validator: (str) {
-                    print(str);
-                  },
-                  keyboardType: TextInputType.number,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1
-                      ?.copyWith(color: whiteColor),
-                  controller: myCameraController.projectNameController.value,
-                  decoration: InputDecoration(
-                    hintText: "Current Project",
-                    border: InputBorder.none,
-                    // suffixText: " Seconds",
-                    focusColor: primaryColor,
-                    suffixIcon: PopupMenuButton<String>(
-                      icon: const Icon(
-                        Icons.arrow_drop_down,
-                        color: primaryColor,
-                      ),
-                      color: backgroundColor,
-                      onSelected: (String value) {
-                        print(value);
-                        print(myCameraController.projectNameController.value.text);
-                      },
-                      itemBuilder: (BuildContext context) {
-                        return fetchFilesController.listOfAvailableProject
-                            .map<PopupMenuItem<String>>((String value) {
-                          return PopupMenuItem(
-                            child: Text(
-                              value,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  ?.copyWith(color: Colors.white),
-                            ),
-                            value: value,
-                          );
-                        }).toList();
-                      },
+          )),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.r),
+                  color: backgroundColor,
+                  border: Border.all(color: primaryColor)),
+              child: TextFormField(
+                validator: (str) {
+                },
+                keyboardType: TextInputType.none,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(color: whiteColor),
+                controller: myCameraController.projectNameController.value,
+                decoration: InputDecoration(
+                  hintText: "Current Project",
+                  border: InputBorder.none,
+                  focusColor: primaryColor,
+                  suffixIcon: PopupMenuButton<String>(
+                    icon: const Icon(
+                      Icons.arrow_drop_down,
+                      color: primaryColor,
                     ),
+                    color: backgroundColor,
+                    onSelected: (String value) {
+                      myCameraController.projectNameController.value.text = value;
+                      fetchFilesController.checkDirectoriesAndFetch(value);
+                      myCameraController.changeProjectDirectory(value);
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return fetchFilesController.listOfAvailableProject
+                          .map<PopupMenuItem<String>>((String value) {
+                        return PopupMenuItem(
+                          child: Text(
+                            value,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: Colors.white),
+                          ),
+                          value: value,
+                        );
+                      }).toList();
+                    },
                   ),
                 ),
-              )),
-        ),
-      ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
+
+  //
 }

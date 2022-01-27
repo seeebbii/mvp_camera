@@ -36,23 +36,26 @@ class FetchFilesController extends GetxController {
   }
 
   Future<void> checkDirectoriesAndFetch(String project) async {
+    print(project);
     if(Platform.isAndroid){
       final dir = await getExternalStorageDirectory();
       Directory newDir = await Directory('${dir?.path}/$project').create(recursive: true);
-      fetchNumberOfFiles(project, newDir);
+      filesInCurrentProject.value = await fetchNumberOfFiles(project, newDir);
     }if(Platform.isIOS){
       final dir = await getApplicationDocumentsDirectory();
       Directory newDir = await Directory('${dir.path}/$project').create();
-      fetchNumberOfFiles(project, newDir);
+      filesInCurrentProject.value = await fetchNumberOfFiles(project, newDir);
     }
   }
 
-  Future<void> fetchNumberOfFiles(String project, Directory newDir) async {
+  Future<List<FileDataModel>> fetchNumberOfFiles(String project, Directory newDir) async {
     List<FileSystemEntity> tempFiles = newDir.listSync();
+    List<FileDataModel> files = <FileDataModel>[];
     tempFiles.forEach((element) async {
       FileDataModel tempObj = await createObject(element.path);
-      filesInCurrentProject.add(tempObj);
+      files.add(tempObj);
     });
+    return files;
   }
 
 
