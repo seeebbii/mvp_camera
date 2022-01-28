@@ -18,13 +18,6 @@ class SensorController extends GetxController {
 
   // CSV FILE DATA
 
-  List<dynamic> associateList = [
-    {
-      "Time": 1,
-      "Gyro-Sensor": "14.97534313396318",
-      "Accelerometer": "101.22998536005622"
-    },
-  ];
 
   List<List<dynamic>> rows = [];
   List<dynamic> row = [];
