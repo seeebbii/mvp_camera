@@ -42,6 +42,8 @@ dependencies:
   flutter_beep: ^1.0.0
   metadata: any
   modal_bottom_sheet: ^2.0.0
+  intl: ^0.17.0
+  flutter_cache_manager: ^3.3.0
 
 
   flutter_exif_plugin:

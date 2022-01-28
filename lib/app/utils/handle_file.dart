@@ -38,7 +38,7 @@ class HandleFile {
 
     exifData.setLatLong(mapController.userLocation.value.latitude,
         mapController.userLocation.value.longitude);
-    exifData.setAttribute("UserComment", "HERE WOW THIS IS GREAT");
+    exifData.setAttribute("UserComment", "${sensorController.gyroscopeEvent.value}");
 
     exifData.saveAttributes();
   }

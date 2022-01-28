@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:metadata/metadata.dart' as meta;
 import 'package:flutter_exif_plugin/flutter_exif_plugin.dart';
@@ -17,7 +18,7 @@ class FetchFilesController extends GetxController {
   var listOfAvailableProject = <String>[].obs;
   var filesInCurrentProject = <FileDataModel>[].obs;
 
-  void createObject(String filePath) async {
+  Future<FileDataModel> createObject(String filePath) async {
     HandleFile handleFile = HandleFile();
 
     // CREATING FILE
@@ -39,11 +40,11 @@ class FetchFilesController extends GetxController {
     }
 
     // RETURN [FileDataModel] Object
-    filesInCurrentProject.add(FileDataModel(
+    return FileDataModel(
         imageFile: imageFile,
         fileData: fileData,
         position: latLng,
-        metaData: content.exifData));
+        metaData: content.exifData);
   }
 
   @override
@@ -76,12 +77,21 @@ class FetchFilesController extends GetxController {
 
   void fetchNumberOfFiles(String project, Directory newDir) async {
     List<FileSystemEntity> tempFiles = newDir.listSync();
+    List<FileDataModel> files = <FileDataModel>[];
+    await Future.wait(tempFiles.map((e) async{
+      FileDataModel obj = await createObject(e.path);
+      files.add(obj);
+    })).whenComplete((){
+      filesInCurrentProject.value = files;
+      // print("checkDirectoriesAndFetch FUNCTION: $filesInCurrentProject");
 
-    await Future.wait(tempFiles.map((e) async => createObject(e.path)));
+      // ReceivePort _receivePort;
+      // Isolate _isolate;
+      //
+      // _isolate = await Isolate.spawn(_checkTimer, _receivePort.sendPort);
 
-    print("checkDirectoriesAndFetch FUNCTION: $filesInCurrentProject");
-    // print("checkDirectoriesAndFetch FUNCTION: ${files.length}");
-    // mapController.createMarkers(files);
+      mapController.createMarkers();
+    });
   }
 
   List<String> splitAvailableProjects() {

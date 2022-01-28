@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mvp_camera/app/constant/controllers.dart';
+import 'dart:ui' as ui;
+import 'package:intl/intl.dart';
 import 'package:image/image.dart' as img;
 import 'package:permission_handler/permission_handler.dart';
 
@@ -14,7 +17,7 @@ class MapController extends GetxController {
 
   late Stream<Position> _geoLocationStream;
   late GoogleMapController controller;
-  RxSet<Marker> imageMarkers = <Marker>{}.obs;
+  var imageMarkers = <Marker>{}.obs;
   late BitmapDescriptor bitmapDescriptor;
   Completer<GoogleMapController> googleMapController = Completer();
 
@@ -53,26 +56,37 @@ class MapController extends GetxController {
     initCurrentLocationCameraPosition();
   }
 
-  Future<void> createMarkers(List<FileDataModel> imageFiles) async {
+  Future<void> createMarkers() async {
     // ITERATING THROUGH THE FILE AND GETTING [LAT LNG] FROM THEIR INSTANCE VARIABLES FOR SETTING UP MARKERS
+    Set<Marker> temp = {};
+    int markerId = 0;
+    print(fetchFilesController.filesInCurrentProject.length);
+    for (var element in fetchFilesController.filesInCurrentProject) {
 
-    print("createMarkers() FUNCTION CALLED");
+      // EDITING MARKER BITMAP
+      // ui.Codec codec = await ui.instantiateImageCodec(
+      //     element.imageFile.readAsBytesSync(),
+      //     targetWidth: 100,
+      //     targetHeight: 100);
+      // ui.FrameInfo fi = await codec.getNextFrame();
+      // final Uint8List? markerImage =
+      //     (await fi.image.toByteData(format: ui.ImageByteFormat.png))
+      //         ?.buffer
+      //         .asUint8List();
 
-    // Set<Marker> temp = {};
-    // int markerId = 0;
-    // print(imageFiles.length);
-    // imageFiles.forEach((element) {
-    //   markerId +=1 ;
-    //   print(element.position);
-    //   temp.add(
-    //     Marker(
-    //         markerId: MarkerId('$markerId'),
-    //         position: element.position,
-    //         infoWindow: const InfoWindow(title: "TEST")),
-    //   );
-    // });
-    // imageMarkers.value = temp;
-    // print(temp);
+      markerId += 1;
+
+      temp.add(
+        Marker(
+            icon: true ? BitmapDescriptor.defaultMarker : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+            markerId: MarkerId('$markerId'),
+            position: element.position,
+            infoWindow: InfoWindow(
+                title: '${element.metaData['exif']['CreateDate']}',
+                snippet: "${element.metaData['exif']['UserComment']}")),
+      );
+    }
+    imageMarkers.value = temp;
     // print(imageMarkers);
   }
 
@@ -83,8 +97,8 @@ class MapController extends GetxController {
 
   Future<void> initCurrentLocationCameraPosition() async {
     currentLocationCameraPosition.value = CameraPosition(
-        target:
-            LatLng(userLocation.value.latitude, userLocation.value.longitude),);
+      target: LatLng(userLocation.value.latitude, userLocation.value.longitude),
+    );
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -96,7 +110,7 @@ class MapController extends GetxController {
             userLocation.value.latitude,
             userLocation.value.longitude,
           ),
-          zoom: 50.00));
+          zoom: 11.00));
     }
   }
 

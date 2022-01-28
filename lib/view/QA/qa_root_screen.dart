@@ -17,14 +17,16 @@ class QaRootScreen extends StatefulWidget {
 }
 
 class _QaRootScreenState extends State<QaRootScreen> {
+
   @override
   void initState() {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //     overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
 
     // FETCH TOTAL NUMBER OF FILES IN CURRENT DIRECTORY
-    fetchFilesController.checkDirectoriesAndFetch(
-        myCameraController.projectNameController.value.text);
+    fetchFilesController
+        .checkDirectoriesAndFetch(
+            myCameraController.projectNameController.value.text);
 
     super.initState();
   }
@@ -64,7 +66,7 @@ class _QaRootScreenState extends State<QaRootScreen> {
         Positioned.fill(
           child: Obx(() => GoogleMap(
                 mapType: MapType.normal,
-                markers: mapController.imageMarkers,
+                markers: mapController.imageMarkers.value,
                 zoomControlsEnabled: false,
                 initialCameraPosition:
                     mapController.currentLocationCameraPosition.value,
@@ -162,14 +164,14 @@ class _QaRootScreenState extends State<QaRootScreen> {
           ),
           Expanded(
               child: Obx(
-                    () => Text(
-                  "${sensorController.gyroscopeEvent.value}",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1
-                      ?.copyWith(color: Colors.white, fontSize: 14.sp.sm),
-                ),
-              )),
+            () => Text(
+              "${sensorController.gyroscopeEvent.value}",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  ?.copyWith(color: Colors.white, fontSize: 14.sp.sm),
+            ),
+          )),
         ],
       ),
     );
@@ -225,8 +227,7 @@ class _QaRootScreenState extends State<QaRootScreen> {
                   color: backgroundColor,
                   border: Border.all(color: primaryColor)),
               child: TextFormField(
-                validator: (str) {
-                },
+                validator: (str) {},
                 keyboardType: TextInputType.none,
                 style: Theme.of(context)
                     .textTheme
@@ -244,7 +245,8 @@ class _QaRootScreenState extends State<QaRootScreen> {
                     ),
                     color: backgroundColor,
                     onSelected: (String value) {
-                      myCameraController.projectNameController.value.text = value;
+                      myCameraController.projectNameController.value.text =
+                          value;
                       fetchFilesController.checkDirectoriesAndFetch(value);
                       myCameraController.changeProjectDirectory(value);
                     },
@@ -273,5 +275,5 @@ class _QaRootScreenState extends State<QaRootScreen> {
     );
   }
 
-  //
+//
 }
