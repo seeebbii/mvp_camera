@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../app/constant/controllers.dart';
 import '../../app/utils/colors.dart';
+import '../../app/utils/dialogs.dart';
 
 class QaRootScreen extends StatefulWidget {
   const QaRootScreen({Key? key}) : super(key: key);
@@ -17,16 +18,23 @@ class QaRootScreen extends StatefulWidget {
 }
 
 class _QaRootScreenState extends State<QaRootScreen> {
-
   @override
   void initState() {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //     overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
 
     // FETCH TOTAL NUMBER OF FILES IN CURRENT DIRECTORY
-    fetchFilesController
-        .checkDirectoriesAndFetch(
-            myCameraController.projectNameController.value.text);
+    WidgetsBinding.instance?.addPostFrameCallback((duration) {
+      Dialogs.showLoadingDialog(context);
+    });
+
+    Future.delayed(
+        const Duration(
+          seconds: 3,
+        ), () {
+      fetchFilesController.checkDirectoriesAndFetch(
+          myCameraController.projectNameController.value.text);
+    });
 
     super.initState();
   }
@@ -134,10 +142,10 @@ class _QaRootScreenState extends State<QaRootScreen> {
                     height: 0.01.sh.sm,
                   ),
                   _buildTotalFiles(),
-                  SizedBox(
-                    height: 0.01.sh.sm,
-                  ),
-                  _buildTotalGyro(),
+                  // SizedBox(
+                  //   height: 0.01.sh.sm,
+                  // ),
+                  // _buildTotalGyro(),
                   SizedBox(
                     height: 0.1.sh.sm,
                   ),
@@ -146,35 +154,6 @@ class _QaRootScreenState extends State<QaRootScreen> {
             ),
           );
         });
-  }
-
-  Widget _buildTotalGyro() {
-    return Padding(
-      padding: EdgeInsets.all(10.0.sm),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              "Gyro info: ",
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1
-                  ?.copyWith(color: Colors.white, fontSize: 14.sp.sm),
-            ),
-          ),
-          Expanded(
-              child: Obx(
-            () => Text(
-              "${sensorController.gyroscopeEvent.value}",
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1
-                  ?.copyWith(color: Colors.white, fontSize: 14.sp.sm),
-            ),
-          )),
-        ],
-      ),
-    );
   }
 
   Widget _buildTotalFiles() {
@@ -245,10 +224,22 @@ class _QaRootScreenState extends State<QaRootScreen> {
                     ),
                     color: backgroundColor,
                     onSelected: (String value) {
-                      myCameraController.projectNameController.value.text =
-                          value;
-                      fetchFilesController.checkDirectoriesAndFetch(value);
-                      myCameraController.changeProjectDirectory(value);
+                      if (value ==
+                          myCameraController.projectNameController.value.text) {
+                        return;
+                      }
+                      Dialogs.showLoadingDialog(context);
+
+                      WidgetsBinding.instance?.addPostFrameCallback((duration) {
+                        myCameraController.projectNameController.value.text =
+                            value;
+                        fetchFilesController.checkDirectoriesAndFetch(
+                            myCameraController
+                                .projectNameController.value.text);
+                        myCameraController.changeProjectDirectory(
+                            myCameraController
+                                .projectNameController.value.text);
+                      });
                     },
                     itemBuilder: (BuildContext context) {
                       return fetchFilesController.listOfAvailableProject

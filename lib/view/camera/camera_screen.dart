@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:exif/exif.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +20,20 @@ import 'package:metadata/metadata.dart' as meta;
 import 'package:mvp_camera/app/constant/controllers.dart';
 import 'package:mvp_camera/app/router/router_generator.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
+import 'package:mvp_camera/app/utils/dialogs.dart';
 import 'package:mvp_camera/app/utils/handle_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:wakelock/wakelock.dart';
+
+import '../../controller/sensor_controller.dart';
+
+
+ double calculateByteToMb(int bytes){
+   return bytes / pow(1024, 2);
+ }
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key}) : super(key: key);
@@ -206,6 +217,11 @@ class _CameraScreenState extends State<CameraScreen>
   }
 
   void startCapturingImages() {
+    Get.lazyPut(() => SensorController());
+    final sensorController = Get.find<SensorController>();
+    // INITIALIZING CSV FILE AND DEVICE TOTAL/FREE STORAGE
+    sensorController.initCsvFile();
+    fetchFilesController.initializeDeviceStorageInfo();
     setState(() {
       isCapturingImages = true;
     });
@@ -217,8 +233,17 @@ class _CameraScreenState extends State<CameraScreen>
             .toInt());
     timer = Timer.periodic(duration, (thisTimer) async {
       if (isCapturingImages == true) {
-        // SETTING BEEP TO TRUE EVERY TIME THE PICTURE IS CLICKED
+        // SAVING INFO TO CSV FILE
+        sensorController.createCsvFile();
 
+        // IF DEVICE IS LESS THAN 2 GB, STOP CAPTURING
+        if(fetchFilesController.freeDiskSpace <= 2048){
+          Dialogs.openErrorSnackBar(context, 'Device low on storage!');
+          stopCapturingImages();
+          return;
+        }
+
+        // SETTING BEEP TO TRUE EVERY TIME THE PICTURE IS CLICKED
         FlutterBeep.beep(true);
         var xFile = await myCameraController.controller.value.takePicture();
         File newFile = File("${myCameraController.projectDirectory.path}/${DateTime.now().toUtc().toIso8601String()}.jpeg");
@@ -232,6 +257,11 @@ class _CameraScreenState extends State<CameraScreen>
         handleFile.setFileLatLong(newFile, mapController.userLocation.value.latitude, mapController.userLocation.value.longitude);
 
         myCameraController.listOfCapturedImages.add(newFile);
+
+
+        double sizeOfFile = calculateByteToMb(newFile.lengthSync());
+        fetchFilesController.freeDiskSpace -= sizeOfFile;
+        print("AVAILABLE FREE DISK SPACE: ${fetchFilesController.freeDiskSpace }");
 
         if (Platform.isAndroid) {
           // GallerySaver.saveImage(newFile.path,)
@@ -257,23 +287,18 @@ class _CameraScreenState extends State<CameraScreen>
     });
   }
 
-  void stopCapturingImages() {
+  void stopCapturingImages() async{
+    Get.lazyPut(() => SensorController());
+    final sensorController = Get.find<SensorController>();
+    sensorController.saveCsvFile();
+    fetchFilesController.initializeDeviceStorageInfo();
+
     setState(() {
       isCapturingImages = false;
     });
     timer?.cancel();
   }
 
-  void saveImagesToGallery() {
-    myCameraController.listOfCapturedImages.forEach((element) {
-      GallerySaver.saveImage(element.path,
-          albumName: myCameraController.projectDirectory.path)
-          .then((value) {
-        debugPrint("Image: $value");
-      });
-    });
-    myCameraController.listOfCapturedImages.clear();
-  }
 
   // TAP TO FOCS AND SHOW FOCUS CIRCLE
   bool showFocusCircle = false;
@@ -547,12 +572,16 @@ class _CameraScreenState extends State<CameraScreen>
                       children: [
                         InkWell(
                           onTap: () {
+                            if(isCapturingImages){
+                              // stopCapturingImages();
+                              return;
+                            }
                             navigationController
                                 .navigateToNamed(qaRootScreen);
                           },
                           child: CircleAvatar(
                             maxRadius: 20.r,
-                            backgroundColor: primaryColor,
+                            backgroundColor: isCapturingImages ? Colors.grey : primaryColor,
                             foregroundColor: primaryColor,
                             child: Text(
                               "QA",
@@ -647,5 +676,14 @@ class _CameraScreenState extends State<CameraScreen>
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
     super.dispose();
+  }
+}
+
+Future<void> save(List<File> list) async{
+  for (var element in list) {
+    GallerySaver.saveImage(element.path,)
+        .then((value) {
+      debugPrint("Image: $value");
+    });
   }
 }

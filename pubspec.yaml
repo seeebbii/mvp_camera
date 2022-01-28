@@ -44,6 +44,8 @@ dependencies:
   modal_bottom_sheet: ^2.0.0
   intl: ^0.17.0
   flutter_cache_manager: ^3.3.0
+  disk_space: ^0.2.1
+  csv: ^5.0.1
 
 
   flutter_exif_plugin:

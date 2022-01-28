@@ -1,15 +1,21 @@
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
+import 'package:disk_space/disk_space.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:metadata/metadata.dart' as meta;
 import 'package:flutter_exif_plugin/flutter_exif_plugin.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mvp_camera/app/utils/handle_file.dart';
+import 'package:mvp_camera/controller/map_controller.dart';
 import 'package:mvp_camera/model/file_data_model.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../app/constant/controllers.dart';
+import '../app/utils/dialogs.dart';
+import 'navigation_controller.dart';
 
 class FetchFilesController extends GetxController {
   static FetchFilesController instance = Get.find();
@@ -17,6 +23,9 @@ class FetchFilesController extends GetxController {
   var listOfProjects = <FileSystemEntity>[].obs;
   var listOfAvailableProject = <String>[].obs;
   var filesInCurrentProject = <FileDataModel>[].obs;
+
+  double freeDiskSpace = 0.0;
+  double totalDiskSpace = 0.0;
 
   Future<FileDataModel> createObject(String filePath) async {
     HandleFile handleFile = HandleFile();
@@ -47,8 +56,16 @@ class FetchFilesController extends GetxController {
         metaData: content.exifData);
   }
 
+  Future<void> initializeDeviceStorageInfo() async {
+    freeDiskSpace = (await DiskSpace.getFreeDiskSpace)!;
+    totalDiskSpace = (await DiskSpace.getTotalDiskSpace)!;
+    print(freeDiskSpace);
+    print(totalDiskSpace);
+  }
+
   @override
   void onInit() {
+    initializeDeviceStorageInfo();
     super.onInit();
   }
 
@@ -61,6 +78,7 @@ class FetchFilesController extends GetxController {
   }
 
   Future<void> checkDirectoriesAndFetch(String project) async {
+    print(myCameraController.projectNameController.value.text);
     print(project);
     if (Platform.isAndroid) {
       final dir = await getExternalStorageDirectory();
@@ -81,18 +99,16 @@ class FetchFilesController extends GetxController {
     await Future.wait(tempFiles.map((e) async{
       FileDataModel obj = await createObject(e.path);
       files.add(obj);
-    })).whenComplete((){
+    })).whenComplete(()async{
       filesInCurrentProject.value = files;
       // print("checkDirectoriesAndFetch FUNCTION: $filesInCurrentProject");
 
-      // ReceivePort _receivePort;
-      // Isolate _isolate;
-      //
-      // _isolate = await Isolate.spawn(_checkTimer, _receivePort.sendPort);
-
       mapController.createMarkers();
+
     });
+
   }
+
 
   List<String> splitAvailableProjects() {
     List<String> tempProjects = <String>[];
@@ -115,3 +131,4 @@ class FetchFilesController extends GetxController {
     }
   }
 }
+

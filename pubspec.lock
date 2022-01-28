@@ -99,6 +99,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  csv:
+    dependency: "direct main"
+    description:
+      name: csv
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.1"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -106,6 +113,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  disk_space:
+    dependency: "direct main"
+    description:
+      name: disk_space
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.1"
   edit_exif:
     dependency: "direct main"
     description:

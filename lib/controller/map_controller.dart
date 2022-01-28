@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:isolate';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -75,10 +77,9 @@ class MapController extends GetxController {
       //         .asUint8List();
 
       markerId += 1;
-
       temp.add(
         Marker(
-            icon: true ? BitmapDescriptor.defaultMarker : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+            // icon: true ? BitmapDescriptor.defaultMarker : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
             markerId: MarkerId('$markerId'),
             position: element.position,
             infoWindow: InfoWindow(
@@ -87,6 +88,7 @@ class MapController extends GetxController {
       );
     }
     imageMarkers.value = temp;
+    navigationController.goBack();
     // print(imageMarkers);
   }
 

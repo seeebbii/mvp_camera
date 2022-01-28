@@ -7,5 +7,4 @@ import '../../controller/sensor_controller.dart';
 MyCameraController myCameraController = MyCameraController.instance;
 NavigationController navigationController = NavigationController.instance;
 MapController mapController = MapController.instance;
-SensorController sensorController = SensorController.instance;
 FetchFilesController fetchFilesController = FetchFilesController.instance;

@@ -16,7 +16,6 @@ import 'controller/sensor_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(NavigationController());
-  Get.put(SensorController());
 
   // FOR GOOGLE MAPS
   if (defaultTargetPlatform == TargetPlatform.android) {
