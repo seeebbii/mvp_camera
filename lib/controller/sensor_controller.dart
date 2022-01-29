@@ -8,7 +8,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
 class SensorController extends GetxController {
-
   late Rx<AccelerometerEvent> accelerometerEvent =
       AccelerometerEvent(0, 0, 0).obs;
   late Rx<UserAccelerometerEvent> userAccelerometerEvent =
@@ -17,8 +16,7 @@ class SensorController extends GetxController {
   late Rx<MagnetometerEvent> magnetometerEvent = MagnetometerEvent(0, 0, 0).obs;
 
   // CSV FILE DATA
-
-
+  Directory? extDir;
   List<List<dynamic>> rows = [];
   List<dynamic> row = [];
 
@@ -35,19 +33,20 @@ class SensorController extends GetxController {
     List<dynamic> row = [];
     row.add(DateFormat('MM/dd/yyyy').format(DateTime.now()));
     row.add(DateFormat('hh:mm:ss').format(DateTime.now()));
-    row.add("X: ${gyroscopeEvent.value.x}, Y: ${gyroscopeEvent.value.y}, Z: ${gyroscopeEvent.value.z}");
-    row.add("X: ${accelerometerEvent.value.x}, Y: ${accelerometerEvent.value.y}, Z: ${accelerometerEvent.value.z}");
+    row.add(
+        "X: ${gyroscopeEvent.value.x}, Y: ${gyroscopeEvent.value.y}, Z: ${gyroscopeEvent.value.z}");
+    row.add(
+        "X: ${accelerometerEvent.value.x}, Y: ${accelerometerEvent.value.y}, Z: ${accelerometerEvent.value.z}");
     rows.add(row);
   }
 
   void saveCsvFile() async {
     // CONVERTING LIST TO CSV ROWS
     String csv = const ListToCsvConverter().convert(rows);
-
-    // CREATING A NEWS DIRECTORY UNDER MY PROJECT PATH
-    Directory? extDir = await getExternalStorageDirectory();
     String currProject = myCameraController.projectNameController.value.text;
-    Directory csvDirectory = await Directory(extDir!.path + "/$currProject/csv").create(recursive: true);
+
+    Directory csvDirectory = await Directory(extDir!.path + "/$currProject/csv")
+        .create(recursive: true);
     // SAVING CSV FILE
     File file = File(
         csvDirectory.path + "/${DateTime.now().toUtc().toIso8601String()}.csv");
@@ -58,10 +57,21 @@ class SensorController extends GetxController {
     rows.clear();
   }
 
+  void initDirectory() async {
+    // CREATING A NEWS DIRECTORY UNDER MY PROJECT PATH
+    if (Platform.isAndroid) {
+      extDir = await getExternalStorageDirectory();
+    }
+    if (Platform.isIOS) {
+      extDir = await getApplicationDocumentsDirectory();
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
     listenToEvents();
+    initDirectory();
   }
 
   void listenToEvents() {
