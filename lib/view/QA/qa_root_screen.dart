@@ -206,7 +206,9 @@ class _QaRootScreenState extends State<QaRootScreen> {
                   color: backgroundColor,
                   border: Border.all(color: primaryColor)),
               child: TextFormField(
-                validator: (str) {},
+                validator: (str) {
+                  return null;
+                },
                 keyboardType: TextInputType.none,
                 style: Theme.of(context)
                     .textTheme
@@ -229,7 +231,6 @@ class _QaRootScreenState extends State<QaRootScreen> {
                         return;
                       }
                       Dialogs.showLoadingDialog(context);
-
                       WidgetsBinding.instance?.addPostFrameCallback((duration) {
                         myCameraController.projectNameController.value.text =
                             value;

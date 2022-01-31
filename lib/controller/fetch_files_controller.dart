@@ -96,19 +96,16 @@ class FetchFilesController extends GetxController {
   void fetchNumberOfFiles(String project, Directory newDir) async {
     List<FileSystemEntity> tempFiles = newDir.listSync();
     List<FileDataModel> files = <FileDataModel>[];
-    await Future.wait(tempFiles.map((e) async{
+    await Future.wait(tempFiles.map((e) async {
       FileDataModel obj = await createObject(e.path);
       files.add(obj);
-    })).whenComplete(()async{
+    })).whenComplete(() async {
       filesInCurrentProject.value = files;
       // print("checkDirectoriesAndFetch FUNCTION: $filesInCurrentProject");
 
       mapController.createMarkers();
-
     });
-
   }
-
 
   List<String> splitAvailableProjects() {
     List<String> tempProjects = <String>[];
@@ -117,7 +114,10 @@ class FetchFilesController extends GetxController {
       // BREAKING DIRECTORIES
       List<String> subStringsList = element.path.split('/');
       // ADDING LAST INDEX OF BROKEN DIRECTORY WHICH INCLUDES PROJECT NAME
-      tempProjects.add(subStringsList[subStringsList.length - 1]);
+      // EXCLUDING CSV FOLDER
+      if (subStringsList[subStringsList.length - 1] != 'csv') {
+        tempProjects.add(subStringsList[subStringsList.length - 1]);
+      }
     }
 
     return tempProjects;
@@ -131,4 +131,3 @@ class FetchFilesController extends GetxController {
     }
   }
 }
-

@@ -59,11 +59,12 @@ class MapController extends GetxController {
   }
 
   static Future<Set<Marker>> getMarkersInAnotherIsolate(List<FileDataModel> files) async{
-    print(files);
+    // print(files);
     Set<Marker> temp = {};
     int markerId = 0;
     print(files.length);
     for (var element in files) {
+
 
       // EDITING MARKER BITMAP
       // ui.Codec codec = await ui.instantiateImageCodec(
