@@ -115,7 +115,7 @@ class FetchFilesController extends GetxController {
       List<String> subStringsList = element.path.split('/');
       // ADDING LAST INDEX OF BROKEN DIRECTORY WHICH INCLUDES PROJECT NAME
       // EXCLUDING CSV FOLDER
-      if (subStringsList[subStringsList.length - 1] != 'csv') {
+      if (subStringsList[subStringsList.length - 1] != '.csv') {
         tempProjects.add(subStringsList[subStringsList.length - 1]);
       }
     }

@@ -45,7 +45,7 @@ class SensorController extends GetxController {
     String csv = const ListToCsvConverter().convert(rows);
     final String currProject = myCameraController.projectNameController.value.text;
 
-    Directory csvDirectory = await Directory(extDir!.path + "/csv/$currProject")
+    Directory csvDirectory = await Directory(extDir!.path + "/.csv/$currProject")
         .create(recursive: true);
     // SAVING CSV FILE
     File file = File(
