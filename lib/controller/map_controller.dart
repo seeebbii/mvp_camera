@@ -20,7 +20,7 @@ class MapController extends GetxController {
   late Stream<Position> _geoLocationStream;
   late GoogleMapController controller;
   var imageMarkers = <Marker>{}.obs;
-  late BitmapDescriptor bitmapDescriptor;
+
   Completer<GoogleMapController> googleMapController = Completer();
 
   // INITIALIZE DEFAULT VALUES
@@ -58,12 +58,12 @@ class MapController extends GetxController {
     initCurrentLocationCameraPosition();
   }
 
-  Future<void> createMarkers() async {
-    // ITERATING THROUGH THE FILE AND GETTING [LAT LNG] FROM THEIR INSTANCE VARIABLES FOR SETTING UP MARKERS
+  static Future<Set<Marker>> getMarkersInAnotherIsolate(List<FileDataModel> files) async{
+    print(files);
     Set<Marker> temp = {};
     int markerId = 0;
-    print(fetchFilesController.filesInCurrentProject.length);
-    for (var element in fetchFilesController.filesInCurrentProject) {
+    print(files.length);
+    for (var element in files) {
 
       // EDITING MARKER BITMAP
       // ui.Codec codec = await ui.instantiateImageCodec(
@@ -79,7 +79,7 @@ class MapController extends GetxController {
       markerId += 1;
       temp.add(
         Marker(
-            // icon: true ? BitmapDescriptor.defaultMarker : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          icon: true ? BitmapDescriptor.defaultMarker : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
             markerId: MarkerId('$markerId'),
             position: element.position,
             infoWindow: InfoWindow(
@@ -87,9 +87,14 @@ class MapController extends GetxController {
                 snippet: "${element.metaData['exif']['UserComment']}")),
       );
     }
-    imageMarkers.value = temp;
+    return temp;
+  }
+
+  Future<void> createMarkers() async {
+    // ITERATING THROUGH THE FILE AND GETTING [LAT LNG] FROM THEIR INSTANCE VARIABLES FOR SETTING UP MARKERS
+    final listOfFiles = fetchFilesController.filesInCurrentProject.value;
+    imageMarkers.value = await compute(getMarkersInAnotherIsolate, listOfFiles);
     navigationController.goBack();
-    // print(imageMarkers);
   }
 
   Future<bool> checkLocationPermission() async {
