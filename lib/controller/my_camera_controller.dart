@@ -112,5 +112,4 @@ class MyCameraController extends GetxController {
     PermissionStatus status = await Permission.camera.status;
     return status;
   }
-
 }
