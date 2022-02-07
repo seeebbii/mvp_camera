@@ -192,6 +192,7 @@ class _CameraScreenState extends State<CameraScreen>
           //   debugPrint("Image: $value");
           // });
 
+
           debugPrint(
               "TOTAL IMAGES CAPTURED: ${myCameraController.listOfCapturedImages.length}");
         } else if (Platform.isIOS) {
