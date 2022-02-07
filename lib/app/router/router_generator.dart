@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mvp_camera/view/QA/qa_root_screen.dart';
 import 'package:mvp_camera/view/camera/camera_screen.dart';
 import 'package:mvp_camera/view/camera/in_app_gallery.dart';
+import 'package:mvp_camera/view/settings/settings_screen.dart';
 import 'package:mvp_camera/view/welcome/select_interval_screen.dart';
 import 'package:mvp_camera/view/welcome/welcome_project_name.dart';
 import 'package:mvp_camera/view/welcome/welcome_splash_screen.dart';
@@ -14,6 +15,7 @@ const String selectIntervalScreen = '/select-interval-screen';
 const String cameraScreen = '/camera-screen';
 const String inAppGallery = '/in-app-gallery';
 const String qaRootScreen = '/qa-root-screen';
+const String settingsScreen = '/settings-screen';
 
 // ignore: todo
 // TODO : ROUTES GENERATOR CLASS THAT CONTROLS THE FLOW OF NAVIGATION/ROUTING
@@ -44,6 +46,9 @@ class RouteGenerator {
 
       case qaRootScreen:
         return _getPageRoute(const QaRootScreen());
+
+        case settingsScreen:
+        return _getPageRoute(const SettingsScreen());
 
       default:
         return _errorRoute();

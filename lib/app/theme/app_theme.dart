@@ -22,7 +22,7 @@ ThemeData myTheme = ThemeData(
       headline3: TextStyle(
         fontFamily: GoogleFonts.montserrat().fontFamily,
         fontSize: 18.sp,
-        color: Colors.red,
+        color: Colors.white,
         fontWeight: FontWeight.bold,
       ),
       bodyText1: TextStyle(

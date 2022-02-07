@@ -123,16 +123,27 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
       backgroundColor: backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: ElevatedButton(onPressed: () { navigationController.goBack(); },
-        child: Text("Back", style: Theme.of(context).textTheme.headline1?.copyWith(fontSize: 10.sp, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1),),
+        title: ElevatedButton(
+          onPressed: () {
+            navigationController.goBack();
+          },
+          child: Text(
+            "Back",
+            style: Theme.of(context).textTheme.headline1?.copyWith(
+                fontSize: 10.sp,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1),
+          ),
           style: ElevatedButton.styleFrom(
             onPrimary: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             primary: primaryColor,
-            shape: RoundedRectangleBorder( //to set border radius to button
-                borderRadius: BorderRadius.circular(12)
-            ),
-          ),),
+            shape: RoundedRectangleBorder(
+                //to set border radius to button
+                borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Form(

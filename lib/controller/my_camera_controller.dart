@@ -17,6 +17,8 @@ class MyCameraController extends GetxController {
   final projectNameController = TextEditingController().obs;
   Directory projectDirectory = Directory('');
 
+  Rx<bool> captureBeep = true.obs;
+
   var listOfImagesFromAlbum = <Medium>[].obs;
 
   Rx<int> intervalSeconds = 0.obs;
