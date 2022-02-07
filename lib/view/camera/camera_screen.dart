@@ -187,7 +187,6 @@ class _CameraScreenState extends State<CameraScreen>
             "AVAILABLE FREE DISK SPACE: ${fetchFilesController.freeDiskSpace}");
 
         if (Platform.isAndroid) {
-
           debugPrint(
               "TOTAL IMAGES CAPTURED: ${myCameraController.listOfCapturedImages.length}");
         } else if (Platform.isIOS) {
