@@ -94,7 +94,8 @@ class MapController extends GetxController {
   Future<void> createMarkers() async {
     // ITERATING THROUGH THE FILE AND GETTING [LAT LNG] FROM THEIR INSTANCE VARIABLES FOR SETTING UP MARKERS
     final listOfFiles = fetchFilesController.filesInCurrentProject.value;
-    imageMarkers.value = await compute(getMarkersInAnotherIsolate, listOfFiles);
+    // imageMarkers.value = await compute(getMarkersInAnotherIsolate, listOfFiles);
+    imageMarkers.value = await getMarkersInAnotherIsolate(listOfFiles);
     navigationController.goBack();
   }
 

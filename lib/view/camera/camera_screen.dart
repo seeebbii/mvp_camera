@@ -22,6 +22,7 @@ import 'package:mvp_camera/app/router/router_generator.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
 import 'package:mvp_camera/app/utils/dialogs.dart';
 import 'package:mvp_camera/app/utils/handle_file.dart';
+import 'package:mvp_camera/view/QA/qa_root_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
@@ -235,11 +236,13 @@ class _CameraScreenState extends State<CameraScreen>
           if (snap.hasData) {
             if (snap.data!.isGranted) {
               if (myCameraController.controller.value.value.isInitialized) {
+                // return Center(child: TextButton(onPressed: () { navigationController.navigateToNamed(qaRootScreen); }, child: Text("QA"),));
                 if (myCameraController.controller.value.description == myCameraController.cameras[0]) {
                   return landscapeCameraLeft(deviceRatio);
                 }else {
                   return landscapeCameraRight(deviceRatio);
                 }
+
                 // return OrientationBuilder(builder: (ctx, orientation){
                 //   if(orientation == DeviceOrientation.landscapeLeft){
                 //     return landscapeCameraLeft(deviceRatio);
@@ -281,7 +284,7 @@ class _CameraScreenState extends State<CameraScreen>
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  myCameraController.controller.value.buildPreview(),
+                  myCameraController.controller.value.value.isInitialized ?  myCameraController.controller.value.buildPreview() : const SizedBox.shrink(),
                   GestureDetector(
                     onTapUp: (TapUpDetails tapUpDetails) {
                       // TAP TO FOCUS
@@ -547,6 +550,7 @@ class _CameraScreenState extends State<CameraScreen>
                                 // stopCapturingImages();
                                 return;
                               }
+                              myCameraController.controller.value.dispose();
                               navigationController
                                   .navigateToNamed(qaRootScreen);
                             },
@@ -658,7 +662,7 @@ class _CameraScreenState extends State<CameraScreen>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              myCameraController.controller.value.buildPreview(),
+              myCameraController.controller.value.value.isInitialized ?  myCameraController.controller.value.buildPreview() : const SizedBox.shrink(),
               GestureDetector(
                 onTapUp: (TapUpDetails tapUpDetails) {
                   // TAP TO FOCUS

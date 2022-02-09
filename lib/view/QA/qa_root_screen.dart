@@ -26,15 +26,16 @@ class _QaRootScreenState extends State<QaRootScreen> {
     // FETCH TOTAL NUMBER OF FILES IN CURRENT DIRECTORY
     WidgetsBinding.instance?.addPostFrameCallback((duration) {
       Dialogs.showLoadingDialog(context);
+      Future.delayed(
+          const Duration(
+            seconds: 3,
+          ), () {
+        fetchFilesController.checkDirectoriesAndFetch(
+            myCameraController.projectNameController.value.text);
+      });
     });
 
-    Future.delayed(
-        const Duration(
-          seconds: 3,
-        ), () {
-      fetchFilesController.checkDirectoriesAndFetch(
-          myCameraController.projectNameController.value.text);
-    });
+
 
     super.initState();
   }
@@ -43,7 +44,9 @@ class _QaRootScreenState extends State<QaRootScreen> {
   void dispose() {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //     overlays: []);
+    myCameraController.getAvailableCameras();
 
+    mapController.controller.dispose();
     fetchFilesController.filesInCurrentProject.clear();
     super.dispose();
   }

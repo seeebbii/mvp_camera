@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:csv/csv.dart';
 import 'package:get/get.dart';
@@ -48,8 +49,9 @@ class SensorController extends GetxController {
     Directory csvDirectory = await Directory(extDir!.path + "/.csv/$currProject")
         .create(recursive: true);
     // SAVING CSV FILE
+    var rng = Random();
     File file = File(
-        csvDirectory.path + "/${DateTime.now().toUtc().toIso8601String()}.csv");
+        csvDirectory.path + "/${rng.nextInt(100)}.csv");
     file.writeAsStringSync(csv, mode: FileMode.append);
 
     // CLEARING DATA AFTER SAVING
