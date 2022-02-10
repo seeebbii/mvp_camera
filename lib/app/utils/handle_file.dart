@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:edit_exif/edit_exif.dart' as edt;
 import 'package:camera/camera.dart';
 import 'package:exif/exif.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +28,7 @@ class HandleFile {
     exifData = getExif(capturedFile.path);
   }
 
-  Future<void> setFileLatLong(File capturedFile, double latitude, double longitude) async {
+  Future<void> setFileLatLongForAndroid(File capturedFile, double latitude, double longitude) async {
     Get.lazyPut(() => SensorController());
     final sensorController = Get.find<SensorController>();
     exifData = getExif(capturedFile.path);
@@ -47,12 +47,41 @@ class HandleFile {
     exifData.saveAttributes();
   }
 
+  Future<void> setFileLatLongForIos(File capturedFile, double latitude, double longitude) async {
+    Get.lazyPut(() => SensorController());
+    final sensorController = Get.find<SensorController>();
+
+    print("LATITUDE: $latitude");
+    print("LONGITUDE: $longitude");
+
+    var exif = edt.FlutterExif(capturedFile.path);
+
+    Map<String, dynamic> location = {
+      "lat": latitude,
+      "lng" : longitude
+    };
+    exif.setGps(location);
+
+    print(sensorController.gyroscopeEvent.value);
+
+    Map<String, dynamic> comments = {
+      "comments": sensorController.gyroscopeEvent.value.toString()
+    };
+    exif.setExif(comments);
+
+    Map exifData = await exif.getExif('comments');
+  }
+
   Future<void> saveFile(File newFile, XFile fromFile) async {
     fromFile.saveTo(newFile.path);
   }
 
   FlutterExif getExif(String path) {
     return FlutterExif.fromPath(path);
+  }
+
+  edt.FlutterExif getExifForIos(String path){
+    return edt.FlutterExif(path);
   }
 
   Future<void> callReadExifFromFileMethod(File myFile) async {

@@ -11,6 +11,8 @@ import 'package:mvp_camera/view/components/custom_button.dart';
 import 'package:mvp_camera/view/components/custom_textfield.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../controller/map_controller.dart';
+
 class WelcomeProjectName extends StatefulWidget {
   const WelcomeProjectName({Key? key}) : super(key: key);
 

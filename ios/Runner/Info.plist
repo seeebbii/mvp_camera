@@ -2,24 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-    <key>LSSupportsOpeningDocumentsInPlace</key>
-    <true/>
-    <key>UIFileSharingEnabled</key>
-    <true/>
-    <key>NSCameraUsageDescription</key>
-    <string>Can I use the camera please?</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Can I use the mic please?</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>This app requires access to the photo library.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This application requires location services to work</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This application requires location services to work</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>Always permissions</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -40,18 +22,32 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSAllowsArbitraryLoads</key>
+	<true/>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Play using while you are hiking</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_dartobservatory._tcp</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Can I use the camera please?</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Always and when in use!</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Always permissions</string>
+	<string>Can I haz location always?</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Older devices need location.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This application requires location services to work</string>
+	<string>Need location when in use</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Can I use the mic please?</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to the photo library.</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

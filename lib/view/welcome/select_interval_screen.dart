@@ -61,7 +61,6 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
       // PhotoManager.requestPermission().then((value){
       //   print("PHOTO MANAGER: $value");
       // });
-      Get.put(MapController());
       Get.put(FetchFilesController()).fetchDirectories();
       navigationController.navigateToNamed(cameraScreen);
     }
@@ -81,6 +80,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
       Permission.locationWhenInUse.request().then((value) async {
         if (value.isGranted) {
           if (await Permission.locationAlways.isDenied) {
+            print("ALWAYS DENIED");
             Permission.locationAlways
                 .request()
                 .then((value) => debugPrint(value.toString()));

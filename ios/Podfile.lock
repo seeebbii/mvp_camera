@@ -18,10 +18,10 @@ PODS:
   - google_maps_flutter (0.0.1):
     - Flutter
     - GoogleMaps
-  - GoogleMaps (4.2.0):
-    - GoogleMaps/Maps (= 4.2.0)
-  - GoogleMaps/Base (4.2.0)
-  - GoogleMaps/Maps (4.2.0):
+  - GoogleMaps (6.0.1):
+    - GoogleMaps/Maps (= 6.0.1)
+  - GoogleMaps/Base (6.0.1)
+  - GoogleMaps/Maps (6.0.1):
     - GoogleMaps/Base
   - path_provider_ios (0.0.1):
     - Flutter
@@ -104,7 +104,7 @@ SPEC CHECKSUMS:
   gallery_saver: 9fc173c9f4fcc48af53b2a9ebea1b643255be542
   geolocator_apple: b741765c55dc21950e3e106e8b3584e55cf81ce5
   google_maps_flutter: abdb8dee6c52d4be36ad131ee6ebfacd14417c5a
-  GoogleMaps: eb03e327edfd70b06de1e6e321653f73712df7ad
+  GoogleMaps: c213fc2334b7374144cede914da779b99be0ab74
   path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   photo_gallery: 9f95e57747cd22c10676ece3660d1ffe6c603ee5

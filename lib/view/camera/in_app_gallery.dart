@@ -127,18 +127,5 @@ class _InAppGalleryState extends State<InAppGallery> {
     } else {
       print("Not Avaialable");
     }
-
-    // if (data.containsKey('JPEGThumbnail')) {
-    //   print('File has JPEG thumbnail');
-    //   data.remove('JPEGThumbnail');
-    // }
-    // if (data.containsKey('TIFFThumbnail')) {
-    //   print('File has TIFF thumbnail');
-    //   data.remove('TIFFThumbnail');
-    // }
-
-    // for (final entry in data.entries) {
-    //   print("${entry.key}: ${entry.value}");
-    // }
   }
 }

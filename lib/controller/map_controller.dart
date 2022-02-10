@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
@@ -40,9 +41,6 @@ class MapController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _geoLocationStream = Geolocator.getPositionStream(
-        locationSettings:
-            const LocationSettings(accuracy: LocationAccuracy.best));
     listenToUserLocation();
   }
 
@@ -51,9 +49,14 @@ class MapController extends GetxController {
     debugPrint("Location permission: $locationPermission");
 
     if (locationPermission) {
+      _geoLocationStream = Geolocator.getPositionStream(
+          locationSettings:
+          const LocationSettings(accuracy: LocationAccuracy.best));
       userLocation.bindStream(_geoLocationStream);
+      print("USER CURRENT LOCATION: ${userLocation.value}");
     } else {
-      await Geolocator.requestPermission();
+      await Permission.locationAlways.request();
+      await Permission.location.request();
     }
     initCurrentLocationCameraPosition();
   }
@@ -91,12 +94,58 @@ class MapController extends GetxController {
     return temp;
   }
 
+
+  static Future<Set<Marker>> getMarkersInAnotherIsolateForIos(List<FileDataModelForIos> files) async{
+    // print(files);
+    Set<Marker> temp = {};
+    int markerId = 0;
+    print(files.length);
+    for (var element in files) {
+
+
+      // EDITING MARKER BITMAP
+      // ui.Codec codec = await ui.instantiateImageCodec(
+      //     element.imageFile.readAsBytesSync(),
+      //     targetWidth: 100,
+      //     targetHeight: 100);
+      // ui.FrameInfo fi = await codec.getNextFrame();
+      // final Uint8List? markerImage =
+      //     (await fi.image.toByteData(format: ui.ImageByteFormat.png))
+      //         ?.buffer
+      //         .asUint8List();
+
+      markerId += 1;
+      temp.add(
+        Marker(
+            icon: true ? BitmapDescriptor.defaultMarker : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+            markerId: MarkerId('$markerId'),
+            position: element.position,
+            infoWindow: InfoWindow(
+                title: '${element.metaData}',
+                // snippet: "${element.metaData['exif']['UserComment']}"
+            )
+        ),
+      );
+    }
+    return temp;
+  }
+
+
   Future<void> createMarkers() async {
-    // ITERATING THROUGH THE FILE AND GETTING [LAT LNG] FROM THEIR INSTANCE VARIABLES FOR SETTING UP MARKERS
-    final listOfFiles = fetchFilesController.filesInCurrentProject.value;
-    // imageMarkers.value = await compute(getMarkersInAnotherIsolate, listOfFiles);
-    imageMarkers.value = await getMarkersInAnotherIsolate(listOfFiles);
-    navigationController.goBack();
+
+    if(Platform.isAndroid){
+      // ITERATING THROUGH THE FILE AND GETTING [LAT LNG] FROM THEIR INSTANCE VARIABLES FOR SETTING UP MARKERS
+      final listOfFiles = fetchFilesController.filesInCurrentProject.value;
+      // imageMarkers.value = await compute(getMarkersInAnotherIsolate, listOfFiles);
+      imageMarkers.value = await getMarkersInAnotherIsolate(listOfFiles);
+      navigationController.goBack();
+    }else{
+      // ITERATING THROUGH THE FILE AND GETTING [LAT LNG] FROM THEIR INSTANCE VARIABLES FOR SETTING UP MARKERS
+      final listOfFiles = fetchFilesController.filesInCurrentProjectForIos.value;
+      // imageMarkers.value = await compute(getMarkersInAnotherIsolate, listOfFiles);
+      imageMarkers.value = await getMarkersInAnotherIsolateForIos(listOfFiles);
+      navigationController.goBack();
+    }
   }
 
   Future<bool> checkLocationPermission() async {
@@ -119,7 +168,7 @@ class MapController extends GetxController {
             userLocation.value.latitude,
             userLocation.value.longitude,
           ),
-          zoom: 11.00));
+          zoom: 5.00));
     }
   }
 

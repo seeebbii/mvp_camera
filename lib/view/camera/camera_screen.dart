@@ -29,6 +29,7 @@ import 'package:photo_gallery/photo_gallery.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:wakelock/wakelock.dart';
 
+import '../../controller/map_controller.dart';
 import '../../controller/sensor_controller.dart';
 
 double calculateByteToMb(int bytes) {
@@ -165,6 +166,7 @@ class _CameraScreenState extends State<CameraScreen>
         if (myCameraController.captureBeep.value) {
           FlutterBeep.beep(true);
         }
+
         var xFile = await myCameraController.controller.value.takePicture();
         File newFile = File(
             "${myCameraController.projectDirectory.path}/${DateTime.now().toUtc().toIso8601String()}.jpeg");
@@ -175,15 +177,25 @@ class _CameraScreenState extends State<CameraScreen>
         // handleFile.initialize(newFile);
         print(newFile.path);
 
-        handleFile.setFileLatLong(
-            newFile,
-            mapController.userLocation.value.latitude,
-            mapController.userLocation.value.longitude);
+        if(Platform.isIOS){
+          handleFile.setFileLatLongForIos(
+              newFile,
+              mapController.userLocation.value.latitude,
+              mapController.userLocation.value.longitude);
+        }
+        if(Platform.isAndroid){
+          handleFile.setFileLatLongForAndroid(
+              newFile,
+              mapController.userLocation.value.latitude,
+              mapController.userLocation.value.longitude);
+        }
 
         myCameraController.listOfCapturedImages.add(newFile);
 
         double sizeOfFile = calculateByteToMb(newFile.lengthSync());
         fetchFilesController.freeDiskSpace -= sizeOfFile;
+
+
         print(
             "AVAILABLE FREE DISK SPACE: ${fetchFilesController.freeDiskSpace}");
 
@@ -191,12 +203,12 @@ class _CameraScreenState extends State<CameraScreen>
           debugPrint(
               "TOTAL IMAGES CAPTURED: ${myCameraController.listOfCapturedImages.length}");
         } else if (Platform.isIOS) {
-          GallerySaver.saveImage(newFile.path,
-                  albumName:
-                      myCameraController.projectNameController.value.text)
-              .then((value) {
-            debugPrint("Image: $value");
-          });
+          // GallerySaver.saveImage(newFile.path,
+          //         albumName:
+          //             myCameraController.projectNameController.value.text)
+          //     .then((value) {
+          //   debugPrint("Image: $value");
+          // });
           debugPrint(
               "TOTAL IMAGES CAPTURED: ${myCameraController.listOfCapturedImages.length}");
         }
@@ -1357,7 +1369,7 @@ class _CameraScreenState extends State<CameraScreen>
     // Fetching gallery album to check if the directory exists
     // If it exists simply load all of its media to our list
     // fetchGalleryImages();
-
+    Get.put(MapController());
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
@@ -1366,15 +1378,5 @@ class _CameraScreenState extends State<CameraScreen>
         overlays: []);
 
     super.initState();
-  }
-}
-
-Future<void> save(List<File> list) async {
-  for (var element in list) {
-    GallerySaver.saveImage(
-      element.path,
-    ).then((value) {
-      debugPrint("Image: $value");
-    });
   }
 }
