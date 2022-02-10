@@ -69,6 +69,7 @@ class SensorController extends GetxController {
     }
   }
 
+
   @override
   void onInit() {
     super.onInit();
