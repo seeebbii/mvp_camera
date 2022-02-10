@@ -76,6 +76,7 @@ class SensorController extends GetxController {
     initDirectory();
   }
 
+
   void listenToEvents() {
     accelerometerEvents.listen((AccelerometerEvent event) {
       accelerometerEvent.value = event;
