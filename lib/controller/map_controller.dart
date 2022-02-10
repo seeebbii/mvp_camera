@@ -130,7 +130,6 @@ class MapController extends GetxController {
     return temp;
   }
 
-
   Future<void> createMarkers() async {
 
     if(Platform.isAndroid){
