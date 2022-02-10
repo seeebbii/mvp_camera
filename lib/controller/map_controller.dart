@@ -161,7 +161,6 @@ class MapController extends GetxController {
   void onMapCreated(GoogleMapController controller) {
     if (!googleMapController.isCompleted) {
       googleMapController.complete(controller);
-
       animateCamera(CameraPosition(
           target: LatLng(
             userLocation.value.latitude,
