@@ -68,7 +68,6 @@ class SensorController extends GetxController {
       extDir = await getApplicationDocumentsDirectory();
     }
   }
-
   @override
   void onInit() {
     super.onInit();
