@@ -148,6 +148,14 @@ class _CameraScreenState extends State<CameraScreen>
                 .toInt());
     timer = Timer.periodic(duration, (thisTimer) async {
       if (isCapturingImages == true) {
+
+        // IF DEVICE IS LESS THAN 2 GB, STOP CAPTURING
+        if (fetchFilesController.freeDiskSpace <= 2048) {
+          Dialogs.openErrorSnackBar(context, 'Device low on storage!');
+          stopCapturingImages();
+          return;
+        }
+
         await myCameraController.controller.value.takePicture().then((xFile){
           File newFile = File(
               "${myCameraController.projectDirectory.path}/${DateTime.now().toUtc().toIso8601String()}.jpeg");
@@ -184,12 +192,6 @@ class _CameraScreenState extends State<CameraScreen>
         // SAVING INFO TO CSV FILE
         sensorController.createCsvFile();
 
-        // IF DEVICE IS LESS THAN 2 GB, STOP CAPTURING
-        if (fetchFilesController.freeDiskSpace <= 2048) {
-          Dialogs.openErrorSnackBar(context, 'Device low on storage!');
-          stopCapturingImages();
-          return;
-        }
       } else {
         timer?.cancel();
       }
