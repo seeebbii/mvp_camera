@@ -139,7 +139,7 @@ class _CameraScreenState extends State<CameraScreen>
     return LocationPermission.always == permission;
   }
 
-  void startCapturingImages() {
+  void startCapturingImages() async {
     Get.lazyPut(() => SensorController());
     final sensorController = Get.find<SensorController>();
     // INITIALIZING CSV FILE AND DEVICE TOTAL/FREE STORAGE
@@ -148,6 +148,7 @@ class _CameraScreenState extends State<CameraScreen>
     setState(() {
       isCapturingImages = true;
     });
+    bool locationPermission = await checkLocationPermission();
     // INITIALIZE DURATION FOR CAPTURING IMAGES
     Duration duration = Duration(
         milliseconds:
@@ -156,7 +157,7 @@ class _CameraScreenState extends State<CameraScreen>
                 .toInt());
     timer = Timer.periodic(duration, (thisTimer) async {
       if (isCapturingImages == true) {
-        bool locationPermission = await checkLocationPermission();
+
 
         // IF DEVICE IS LESS THAN 2 GB, STOP CAPTURING
         if (fetchFilesController.freeDiskSpace <= 2048) {
