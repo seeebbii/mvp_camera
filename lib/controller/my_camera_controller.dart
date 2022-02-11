@@ -95,6 +95,7 @@ class MyCameraController extends GetxController {
         isRearCameraSelected.value = true;
         controller.value.initialize().then((value) {
           debugPrint("CAMERA INIT SUCCESS");
+          controller.value.lockCaptureOrientation(DeviceOrientation.portraitUp);
           controller.value.setFlashMode(FlashMode.off);
           initializeZoom();
         });
