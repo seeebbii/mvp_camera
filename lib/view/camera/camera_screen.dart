@@ -157,8 +157,6 @@ class _CameraScreenState extends State<CameraScreen>
                 .toInt());
     timer = Timer.periodic(duration, (thisTimer) async {
       if (isCapturingImages == true) {
-
-
         // IF DEVICE IS LESS THAN 2 GB, STOP CAPTURING
         if (fetchFilesController.freeDiskSpace <= 2048) {
           Dialogs.openErrorSnackBar(context, 'Device low on storage!');
