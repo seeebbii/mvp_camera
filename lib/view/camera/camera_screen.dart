@@ -7,6 +7,7 @@ import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:exif/exif.dart';
 import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -86,9 +87,11 @@ class _CameraScreenState extends State<CameraScreen>
     if (mounted) {
       setState(() {
         myCameraController.controller.value = cameraController;
+        myCameraController.controller.value.lockCaptureOrientation(DeviceOrientation.portraitUp);
       });
     }
     myCameraController.isCameraInitialized.value = false;
+    myCameraController.isRearCameraSelected.value = false;
 
     // Update UI if controller updated
     cameraController.addListener(() {
@@ -131,6 +134,11 @@ class _CameraScreenState extends State<CameraScreen>
     }
   }
 
+  Future<bool> checkLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    return LocationPermission.always == permission;
+  }
+
   void startCapturingImages() {
     Get.lazyPut(() => SensorController());
     final sensorController = Get.find<SensorController>();
@@ -148,6 +156,7 @@ class _CameraScreenState extends State<CameraScreen>
                 .toInt());
     timer = Timer.periodic(duration, (thisTimer) async {
       if (isCapturingImages == true) {
+        bool locationPermission = await checkLocationPermission();
 
         // IF DEVICE IS LESS THAN 2 GB, STOP CAPTURING
         if (fetchFilesController.freeDiskSpace <= 2048) {
@@ -155,6 +164,18 @@ class _CameraScreenState extends State<CameraScreen>
           stopCapturingImages();
           return;
         }
+        if(connectionController.isOnline.value == false){
+          Dialogs.openErrorSnackBar(context, 'Device not connected to internet');
+          stopCapturingImages();
+          return;
+        }
+        if(locationPermission == false){
+          Dialogs.openErrorSnackBar(context, 'Allow application to access location always from settings');
+          stopCapturingImages();
+          return;
+        }
+
+
 
         await myCameraController.controller.value.takePicture().then((xFile){
           File newFile = File(
@@ -604,7 +625,6 @@ class _CameraScreenState extends State<CameraScreen>
                                   if (myCameraController.cameras.length > 0) {
                                     onNewCameraSelected(
                                         myCameraController.cameras[1]);
-
                                   }
                                 } else if (myCameraController
                                         .controller.value.description ==

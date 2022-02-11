@@ -39,7 +39,7 @@ class HandleFile {
   }
 
   Future<void> setFileLatLongForIos(File capturedFile, double latitude, double longitude) async {
-    // final sensorController = Get.find<SensorController>();
+    final sensorController = Get.find<SensorController>();
     var exif = edt.FlutterExif(capturedFile.path);
 
     Map<String, dynamic> location = {
@@ -47,8 +47,25 @@ class HandleFile {
       "lng" : longitude
     };
     exif.setGps(location);
+
+    Map map = await exif.getExif('');
+    Map iptcMap = map["{IPTC}"];
+    iptcMap['DigitalCreationTime'] = sensorController.gyroscopeEvent.value.x;
+    iptcMap['DigitalCreationDate'] = sensorController.gyroscopeEvent.value.y;
+    iptcMap['DateCreated'] = sensorController.gyroscopeEvent.value.z;
+
+    print("PRINTING {IPTC}: $iptcMap");
+
+    exif.setExif(map);
+
+    // print("PRINTING {IPTC} : ${map}");
+
+    Map updatedMap = await exif.getExif('{IPTC}');
+
+    print("\nUPDATING MAP\n${updatedMap['{IPTC}']}");
+
     // Map<String, dynamic> comments = {
-    //   "comments": sensorController.gyroscopeEvent.value.toString()
+    //   "{IPTC}": sensorController.gyroscopeEvent.value.toString()
     // };
     // exif.setExif(comments);
   }
