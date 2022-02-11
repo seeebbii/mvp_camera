@@ -23,7 +23,8 @@ class MyCameraController extends GetxController {
 
   Rx<int> intervalSeconds = 0.obs;
 
-  var listOfCapturedImages = <File>[].obs;
+  // var listOfCapturedImages = <File>[].obs;
+  Rx<int> totalImagesCaptured = 0.obs;
 
   var cameras = <CameraDescription>[].obs;
   late Rx<CameraController> controller;

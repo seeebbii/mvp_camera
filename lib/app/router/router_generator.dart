@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mvp_camera/view/QA/qa_root_screen.dart';
 import 'package:mvp_camera/view/camera/camera_screen.dart';
-import 'package:mvp_camera/view/camera/in_app_gallery.dart';
+// import 'package:mvp_camera/view/camera/in_app_gallery.dart';
 import 'package:mvp_camera/view/settings/settings_screen.dart';
 import 'package:mvp_camera/view/welcome/select_interval_screen.dart';
 import 'package:mvp_camera/view/welcome/welcome_project_name.dart';
@@ -41,8 +41,8 @@ class RouteGenerator {
       case cameraScreen:
         return _getPageRoute(const CameraScreen());
 
-      case inAppGallery:
-        return _getPageRoute(const InAppGallery());
+      // case inAppGallery:
+      //   return _getPageRoute(const InAppGallery());
 
       case qaRootScreen:
         return _getPageRoute(const QaRootScreen());

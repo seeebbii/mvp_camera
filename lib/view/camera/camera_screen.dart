@@ -32,10 +32,6 @@ import 'package:wakelock/wakelock.dart';
 import '../../controller/map_controller.dart';
 import '../../controller/sensor_controller.dart';
 
-double calculateByteToMb(int bytes) {
-  return bytes / pow(1024, 2);
-}
-
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key}) : super(key: key);
 
@@ -152,6 +148,39 @@ class _CameraScreenState extends State<CameraScreen>
                 .toInt());
     timer = Timer.periodic(duration, (thisTimer) async {
       if (isCapturingImages == true) {
+        await myCameraController.controller.value.takePicture().then((xFile){
+          File newFile = File(
+              "${myCameraController.projectDirectory.path}/${DateTime.now().toUtc().toIso8601String()}.jpeg");
+
+          xFile.saveTo(newFile.path).then((value){
+            if(Platform.isIOS){
+              handleFile.setFileLatLongForIos(
+                  newFile,
+                  mapController.userLocation.value.latitude,
+                  mapController.userLocation.value.longitude);
+            }
+            if(Platform.isAndroid){
+              handleFile.setFileLatLongForAndroid(
+                  newFile,
+                  mapController.userLocation.value.latitude,
+                  mapController.userLocation.value.longitude);
+            }
+            myCameraController.totalImagesCaptured.value += 1;
+
+            double sizeOfFile = calculateByteToMb(newFile.lengthSync());
+            fetchFilesController.freeDiskSpace -= sizeOfFile;
+          });
+        });
+
+
+        // SETTING BEEP TO TRUE EVERY TIME THE PICTURE IS CLICKED
+        if (myCameraController.captureBeep.value) {
+          FlutterBeep.beep(true);
+        }
+
+
+
+
         // SAVING INFO TO CSV FILE
         sensorController.createCsvFile();
 
@@ -160,57 +189,6 @@ class _CameraScreenState extends State<CameraScreen>
           Dialogs.openErrorSnackBar(context, 'Device low on storage!');
           stopCapturingImages();
           return;
-        }
-
-        // SETTING BEEP TO TRUE EVERY TIME THE PICTURE IS CLICKED
-        if (myCameraController.captureBeep.value) {
-          FlutterBeep.beep(true);
-        }
-
-        var xFile = await myCameraController.controller.value.takePicture();
-        File newFile = File(
-            "${myCameraController.projectDirectory.path}/${DateTime.now().toUtc().toIso8601String()}.jpeg");
-
-        // handleFile.saveFile(newFile, xFile);
-        xFile.saveTo(newFile.path);
-
-        // handleFile.initialize(newFile);
-        print(newFile.path);
-
-        if(Platform.isIOS){
-          handleFile.setFileLatLongForIos(
-              newFile,
-              mapController.userLocation.value.latitude,
-              mapController.userLocation.value.longitude);
-        }
-        if(Platform.isAndroid){
-          handleFile.setFileLatLongForAndroid(
-              newFile,
-              mapController.userLocation.value.latitude,
-              mapController.userLocation.value.longitude);
-        }
-
-        myCameraController.listOfCapturedImages.add(newFile);
-
-        double sizeOfFile = calculateByteToMb(newFile.lengthSync());
-        fetchFilesController.freeDiskSpace -= sizeOfFile;
-
-
-        print(
-            "AVAILABLE FREE DISK SPACE: ${fetchFilesController.freeDiskSpace}");
-
-        if (Platform.isAndroid) {
-          debugPrint(
-              "TOTAL IMAGES CAPTURED: ${myCameraController.listOfCapturedImages.length}");
-        } else if (Platform.isIOS) {
-          // GallerySaver.saveImage(newFile.path,
-          //         albumName:
-          //             myCameraController.projectNameController.value.text)
-          //     .then((value) {
-          //   debugPrint("Image: $value");
-          // });
-          debugPrint(
-              "TOTAL IMAGES CAPTURED: ${myCameraController.listOfCapturedImages.length}");
         }
       } else {
         timer?.cancel();
@@ -536,7 +514,7 @@ class _CameraScreenState extends State<CameraScreen>
                                       .sensorOrientation ~/
                                   120,
                           child: Text(
-                            '${myCameraController.listOfCapturedImages.length}',
+                            '${myCameraController.totalImagesCaptured.value}',
                             style: Theme.of(context)
                                 .textTheme
                                 .headline1
@@ -914,7 +892,7 @@ class _CameraScreenState extends State<CameraScreen>
                         .sensorOrientation ~/
                         360,
                 child: Text(
-                  '${myCameraController.listOfCapturedImages.length}',
+                  '${myCameraController.totalImagesCaptured.value}',
                   style: Theme.of(context)
                       .textTheme
                       .headline1
@@ -1243,7 +1221,7 @@ class _CameraScreenState extends State<CameraScreen>
                       )),
                   isCapturingImages
                       ? Text(
-                          '${myCameraController.listOfCapturedImages.length}',
+                          '${myCameraController.totalImagesCaptured.value}',
                           style: Theme.of(context)
                               .textTheme
                               .headline1
@@ -1356,11 +1334,17 @@ class _CameraScreenState extends State<CameraScreen>
         ));
   }
 
+
+  double calculateByteToMb(int bytes) {
+    return bytes / pow(1024, 2);
+  }
+
   @override
   void dispose() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
     // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    if(isCapturingImages){stopCapturingImages();}
     super.dispose();
   }
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -176,7 +178,7 @@ class _QaRootScreenState extends State<QaRootScreen> {
           Expanded(
               child: Obx(
             () => Text(
-              "${fetchFilesController.filesInCurrentProject.length}",
+              "${Platform.isAndroid ? fetchFilesController.filesInCurrentProject.length : fetchFilesController.filesInCurrentProjectForIos.length}",
               style: Theme.of(context)
                   .textTheme
                   .bodyText1

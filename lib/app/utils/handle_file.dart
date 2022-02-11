@@ -29,31 +29,17 @@ class HandleFile {
   }
 
   Future<void> setFileLatLongForAndroid(File capturedFile, double latitude, double longitude) async {
-    Get.lazyPut(() => SensorController());
+    // Get.lazyPut(() => SensorController());
     final sensorController = Get.find<SensorController>();
     exifData = getExif(capturedFile.path);
-    // exifData
-    //     .getRotationDegrees()
-    //     .then((value) => print("DEGREES ROTATION: $value"));
-
-    // setting latitude and longitude
-    print(
-        "<MY LATITUDE: ${mapController.userLocation.value.latitude}>, <MY LONGITUDE: ${mapController.userLocation.value.longitude}>");
-
     exifData.setLatLong(mapController.userLocation.value.latitude,
         mapController.userLocation.value.longitude);
     exifData.setAttribute("UserComment", "${sensorController.gyroscopeEvent.value}");
-
     exifData.saveAttributes();
   }
 
   Future<void> setFileLatLongForIos(File capturedFile, double latitude, double longitude) async {
-    Get.lazyPut(() => SensorController());
-    final sensorController = Get.find<SensorController>();
-
-    print("LATITUDE: $latitude");
-    print("LONGITUDE: $longitude");
-
+    // final sensorController = Get.find<SensorController>();
     var exif = edt.FlutterExif(capturedFile.path);
 
     Map<String, dynamic> location = {
@@ -61,15 +47,10 @@ class HandleFile {
       "lng" : longitude
     };
     exif.setGps(location);
-
-    print(sensorController.gyroscopeEvent.value);
-
-    Map<String, dynamic> comments = {
-      "comments": sensorController.gyroscopeEvent.value.toString()
-    };
-    exif.setExif(comments);
-
-    Map exifData = await exif.getExif('comments');
+    // Map<String, dynamic> comments = {
+    //   "comments": sensorController.gyroscopeEvent.value.toString()
+    // };
+    // exif.setExif(comments);
   }
 
   Future<void> saveFile(File newFile, XFile fromFile) async {
