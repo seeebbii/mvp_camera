@@ -370,6 +370,7 @@ class ConfirmationDialog extends StatelessWidget {
                                 .projectNameController.value.text);
                       });
                     }
+
                   },
                   child: const Text("Confirm"),
                   style: ElevatedButton.styleFrom(
