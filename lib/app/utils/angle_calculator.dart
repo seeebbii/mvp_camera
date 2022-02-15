@@ -9,6 +9,8 @@ class AngleCalculator{
   AngleCalculator({required this.roll, required this.yaw, required this.pitch});
 
 
-
+  static void calculateAngle(){
+    
+  }
 
 }
