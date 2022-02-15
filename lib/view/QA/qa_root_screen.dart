@@ -73,48 +73,56 @@ class _QaRootScreenState extends State<QaRootScreen> {
   }
 
   Widget buildStackedContainer() {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Positioned.fill(
-          child: Obx(() => GoogleMap(
-                mapType: MapType.normal,
-                markers: mapController.imageMarkers.value,
-                zoomControlsEnabled: false,
-                initialCameraPosition:
-                    mapController.currentLocationCameraPosition.value,
-                onMapCreated: mapController.onMapCreated,
-                myLocationButtonEnabled: true,
-                myLocationEnabled: true,
-              )),
-        ),
-        Positioned.fill(top: 0.8.sh.sm, child: modalBottomSheet()),
-        Positioned(
-          top: 3.sp,
-          left: 3.sp,
-          child: ElevatedButton(
-            onPressed: () {
-              navigationController.goBack();
-            },
-            child: Text(
-              "Back",
-              style: Theme.of(context).textTheme.headline1?.copyWith(
-                  fontSize: 10.sp,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1),
-            ),
-            style: ElevatedButton.styleFrom(
-              onPrimary: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-              primary: primaryColor,
-              shape: RoundedRectangleBorder(
-                  //to set border radius to button
-                  borderRadius: BorderRadius.circular(12)),
-            ),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              SizedBox(
+                height: 0.65.sh,
+                child: Obx(() => GoogleMap(
+                      mapType: MapType.normal,
+                      markers: mapController.imageMarkers.value,
+                      zoomControlsEnabled: false,
+                      initialCameraPosition:
+                          mapController.currentLocationCameraPosition.value,
+                      onMapCreated: mapController.onMapCreated,
+                      myLocationButtonEnabled: true,
+                      myLocationEnabled: true,
+                    )),
+              ),
+              Positioned(
+                top: 3.sp,
+                left: 3.sp,
+                child: ElevatedButton(
+                  onPressed: () {
+                    navigationController.goBack();
+                  },
+                  child: Text(
+                    "Back",
+                    style: Theme.of(context).textTheme.headline1?.copyWith(
+                        fontSize: 10.sp,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    onPrimary: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                    primary: primaryColor,
+                    shape: RoundedRectangleBorder(
+                      //to set border radius to button
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
+          // Positioned.fill(top: 0.8.sh.sm, child: modalBottomSheet()),
+          Text('HEY'),
+
+        ],
+      ),
     );
   }
 

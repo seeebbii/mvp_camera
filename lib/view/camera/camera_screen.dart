@@ -573,12 +573,12 @@ class _CameraScreenState extends State<CameraScreen>
                                   : primaryColor,
                               foregroundColor: primaryColor,
                               child: Text(
-                                "QA",
+                                "Export",
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline2
                                     ?.copyWith(
-                                        color: Colors.white, fontSize: 12.sp),
+                                        color: Colors.white, fontSize: 8.sp),
                               ),
                             ),
                           ),
@@ -949,12 +949,12 @@ class _CameraScreenState extends State<CameraScreen>
                               : primaryColor,
                           foregroundColor: primaryColor,
                           child: Text(
-                            "QA",
+                            "Export",
                             style: Theme.of(context)
                                 .textTheme
                                 .headline2
                                 ?.copyWith(
-                                color: Colors.white, fontSize: 12.sp),
+                                color: Colors.white, fontSize: 8.sp),
                           ),
                         ),
                       ),
@@ -1270,12 +1270,12 @@ class _CameraScreenState extends State<CameraScreen>
                                 isCapturingImages ? Colors.grey : primaryColor,
                             foregroundColor: primaryColor,
                             child: Text(
-                              "QA",
+                              "Export",
                               style: Theme.of(context)
                                   .textTheme
                                   .headline2
                                   ?.copyWith(
-                                      color: Colors.white, fontSize: 12.sp),
+                                      color: Colors.white, fontSize: 8.sp),
                             ),
                           ),
                         ),

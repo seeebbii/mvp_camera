@@ -56,6 +56,7 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName>
     // });
   }
 
+
   void callAppLockDialog() {
     showDialog(
         context: context, builder: (_) => WillPopScope(onWillPop: () async => false,
