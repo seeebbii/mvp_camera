@@ -37,8 +37,6 @@ class _QaRootScreenState extends State<QaRootScreen> {
       });
     });
 
-
-
     super.initState();
   }
 
@@ -67,7 +65,7 @@ class _QaRootScreenState extends State<QaRootScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: Colors.white,
+      backgroundColor: backgroundColor.withOpacity(1),
       body: buildStackedContainer(),
     );
   }
@@ -108,65 +106,46 @@ class _QaRootScreenState extends State<QaRootScreen> {
                   ),
                   style: ElevatedButton.styleFrom(
                     onPrimary: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 15),
                     primary: primaryColor,
                     shape: RoundedRectangleBorder(
-                      //to set border radius to button
+                        //to set border radius to button
                         borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
               ),
             ],
           ),
-          // Positioned.fill(top: 0.8.sh.sm, child: modalBottomSheet()),
-          Text('HEY'),
-
+          Container(
+            decoration: BoxDecoration(
+              color: backgroundColor.withOpacity(1),
+              // borderRadius: BorderRadius.only(
+              //   topLeft: Radius.circular(15.sm),
+              //   topRight: Radius.circular(15.sm),
+              // )
+            ),
+            child: Column(
+              children: [
+                _buildDropDown(),
+                SizedBox(
+                  height: 0.01.sh.sm,
+                ),
+                _buildTotalFiles(),
+                // SizedBox(
+                //   height: 0.01.sh.sm,
+                // ),
+                // _buildTotalGyro(),
+                SizedBox(
+                  height: 0.05.sh.sm,
+                ),
+                _buildActionButtons(),
+              ],
+            ),
+          ),
         ],
       ),
     );
-  }
-
-  Widget modalBottomSheet() {
-    return DraggableScrollableSheet(
-        initialChildSize: .3,
-        minChildSize: .2,
-        maxChildSize: 1,
-        builder: (BuildContext _, ScrollController scrollController) {
-          return SingleChildScrollView(
-            controller: scrollController,
-            child: Container(
-              decoration: BoxDecoration(
-                  color: backgroundColor.withOpacity(1),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15.sm),
-                    topRight: Radius.circular(15.sm),
-                  )),
-              child: Column(
-                children: [
-                  Center(
-                    child: Icon(
-                      Icons.maximize,
-                      size: 50.sm,
-                      color: Colors.white,
-                    ),
-                  ),
-                  _buildDropDown(),
-                  SizedBox(
-                    height: 0.01.sh.sm,
-                  ),
-                  _buildTotalFiles(),
-                  // SizedBox(
-                  //   height: 0.01.sh.sm,
-                  // ),
-                  // _buildTotalGyro(),
-                  SizedBox(
-                    height: 0.1.sh.sm,
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
   }
 
   Widget _buildTotalFiles() {
@@ -280,5 +259,133 @@ class _QaRootScreenState extends State<QaRootScreen> {
     );
   }
 
+  Widget _buildActionButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ElevatedButton(
+          onPressed: () {},
+          child: Text("Save", style: Theme.of(context)
+              .textTheme
+              .bodyText1
+              ?.copyWith(color: Colors.white, fontSize: 13.sp),),
+          style: ElevatedButton.styleFrom(
+            onPrimary: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+            primary: Colors.green,
+            shape: RoundedRectangleBorder(
+                //to set border radius to button
+                borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: _buildConfirmationDialog,
+          child: Text("Delete", style: Theme.of(context)
+              .textTheme
+              .bodyText1
+                  ?.copyWith(color: Colors.white, fontSize: 13.sp),),
+          style: ElevatedButton.styleFrom(
+            onPrimary: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+            primary: Colors.red,
+            shape: RoundedRectangleBorder(
+                //to set border radius to button
+                borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _buildConfirmationDialog() {
+    showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (_) => const ConfirmationDialog());
+  }
+
 //
+}
+
+class ConfirmationDialog extends StatelessWidget {
+  const ConfirmationDialog({Key? key}) : super(key: key);
+  final accentColor = backgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height / 5,
+        decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(15.0),
+            boxShadow: [
+              BoxShadow(
+                  offset: const Offset(12, 26),
+                  blurRadius: 50,
+                  spreadRadius: 0,
+                  color: Colors.grey.withOpacity(.1)),
+            ]),
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 0.sp, vertical: 15.sp),
+              child: ListTile(
+                title: Text(
+                  "Are you sure you want to delete this directory?",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline2
+                      ?.copyWith(fontSize: 16.sp),
+                ),
+              ),
+            ),
+            SizedBox(height: 0.01.sh,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                OutlinedButton(onPressed: ()=> navigationController.goBack(), child: const Text('Cancel')),
+                ElevatedButton(
+                  onPressed: (){
+                    // POPPING THE CURRENT DIALOG
+                    navigationController.goBack();
+                    // DELETING SELECTED DIRECTORY
+                    myCameraController.projectDirectory.deleteSync(recursive: true);
+                    // DELETING NAME OF PROJECT FROM OUR LIST OF AVAILABLE PROJECTS
+                    fetchFilesController.listOfAvailableProject.removeWhere((projectName) => projectName == myCameraController.projectNameController.value.text);
+                    // SWITCHING PROJECT TO ZERO th INDEX OF AVAILABLE PROJECTS
+                    if(fetchFilesController.listOfAvailableProject.isNotEmpty){
+                      Dialogs.showLoadingDialog(context);
+                      WidgetsBinding.instance?.addPostFrameCallback((duration) {
+                        myCameraController.projectNameController.value.text =
+                            fetchFilesController.listOfAvailableProject[0];
+                        fetchFilesController.checkDirectoriesAndFetch(
+                            myCameraController
+                                .projectNameController.value.text);
+                        myCameraController.changeProjectDirectory(
+                            myCameraController
+                                .projectNameController.value.text);
+                      });
+                    }
+                  },
+                  child: const Text("Confirm"),
+                  style: ElevatedButton.styleFrom(
+                    onPrimary: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    primary: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      //to set border radius to button
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }

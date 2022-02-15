@@ -53,6 +53,7 @@ class _MyAppState extends State<MyApp> {
 
     return ScreenUtilInit(
         builder: () => GetMaterialApp(
+          title: "Smart Surveyor",
           debugShowCheckedModeBanner: false,
           theme: myTheme,
           initialRoute: welcomeSplashScreen,
