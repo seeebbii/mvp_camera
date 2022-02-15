@@ -189,10 +189,10 @@ class _CameraScreenState extends State<CameraScreen>
             }
             if(Platform.isAndroid){
               handleFile.setFileLatLongForAndroid(
-                  newFile,
-                  mapController.userLocation.value.latitude,
-                  mapController.userLocation.value.longitude);
-            }
+                newFile,
+                mapController.userLocation.value.latitude,
+                mapController.userLocation.value.longitude);
+          }
             myCameraController.totalImagesCaptured.value += 1;
 
             double sizeOfFile = calculateByteToMb(newFile.lengthSync());

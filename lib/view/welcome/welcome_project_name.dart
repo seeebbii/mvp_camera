@@ -51,9 +51,9 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName>
   void initState() {
     Get.put(MyCameraController());
     super.initState();
-    Future.delayed(const Duration(milliseconds: 500), () {
-      callAppLockDialog();
-    });
+    // Future.delayed(const Duration(milliseconds: 500), () {
+    //   callAppLockDialog();
+    // });
   }
 
   void callAppLockDialog() {
