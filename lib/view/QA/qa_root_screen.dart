@@ -318,7 +318,7 @@ class ConfirmationDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Container(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height / 5,
+        height: MediaQuery.of(context).size.height * 0.3,
         decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(15.0),

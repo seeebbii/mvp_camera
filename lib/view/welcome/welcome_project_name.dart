@@ -56,18 +56,17 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName>
     // });
   }
 
-
   void callAppLockDialog() {
     showDialog(
-        context: context, builder: (_) => WillPopScope(onWillPop: () async => false,
-        child: MyDialog()));
+        context: context,
+        builder: (_) =>
+            WillPopScope(onWillPop: () async => false, child: MyDialog()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-
       backgroundColor: backgroundColor,
       body: SingleChildScrollView(
         child: Form(
@@ -188,9 +187,10 @@ class MyDialog extends StatelessWidget {
                   buttonText: "Verify",
                   onPressed: () {
                     if (passCodeController.text.trim() == "metaspatial" ||
-                        passCodeController.text.trim() == "Metaspatial" || passCodeController.text.trim() == "admin") {
+                        passCodeController.text.trim() == "Metaspatial" ||
+                        passCodeController.text.trim() == "admin") {
                       navigationController.goBack();
-                    }else{
+                    } else {
                       passCodeController.clear();
                     }
                   }),

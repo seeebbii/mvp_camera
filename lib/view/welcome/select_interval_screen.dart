@@ -123,6 +123,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
       backgroundColor: backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        centerTitle: false,
         title: ElevatedButton(
           onPressed: () {
             navigationController.goBack();
