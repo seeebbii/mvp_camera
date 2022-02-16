@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
 
 import '../../app/constant/controllers.dart';
+import '../../controller/sensor_controller.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -19,7 +20,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
-
     super.initState();
   }
 
@@ -32,6 +32,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Get.lazyPut(() => SensorController());
+    final sensorController = Get.find<SensorController>();
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -57,17 +60,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListTile(
             title: Text(
               'Capture Beep',
-              style: Theme.of(context).textTheme.headline3?.copyWith(fontWeight: FontWeight.normal),
+              style: Theme.of(context)
+                  .textTheme
+                  .headline3
+                  ?.copyWith(fontWeight: FontWeight.normal),
             ),
-            trailing: Obx(
-                ()=> CupertinoSwitch(
+            trailing: Obx(() => CupertinoSwitch(
                   onChanged: (bool value) {
                     myCameraController.captureBeep.value = value;
                   },
                   value: myCameraController.captureBeep.value,
-                )
+                )),
+          ),
+          ListTile(
+            title: Text(
+              'Gyroscope Events',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline3
+                  ?.copyWith(fontWeight: FontWeight.normal),
             ),
-          )
+            subtitle: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Obx(() => Text("X (Roll): ${sensorController.gyroscopeEvent.value.x.toStringAsFixed(2)}",style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),)),
+                Obx(() => Text("Y (Pitch): ${sensorController.gyroscopeEvent.value.y.toStringAsFixed(2)}",style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),)),
+                Obx(() => Text("Z (Yaw): ${sensorController.gyroscopeEvent.value.z.toStringAsFixed(2)}",style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),)),
+              ],
+            ),
+          ),
+          ListTile(
+            title: Text(
+              'Accelerometer Events',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline3
+                  ?.copyWith(fontWeight: FontWeight.normal),
+            ),
+            subtitle: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Obx(() => Text("X (Roll): ${sensorController.accelerometerEvent.value.x.toStringAsFixed(2)}",style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),)),
+                Obx(() => Text("Y (Pitch): ${sensorController.accelerometerEvent.value.y.toStringAsFixed(2)}",style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),)),
+                Obx(() => Text("Z (Yaw): ${sensorController.accelerometerEvent.value.z.toStringAsFixed(2)}",style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),)),
+              ],
+            ),
+          ),
         ],
       ),
     );

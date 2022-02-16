@@ -44,30 +44,31 @@ class HandleFile {
 
     Map<String, dynamic> location = {
       "lat": latitude,
-      "lng" : longitude
+      "lng" : longitude,
+      "alt" : 23
     };
+
     exif.setGps(location);
 
-    Map map = await exif.getExif('');
-    Map iptcMap = map["{IPTC}"];
-    iptcMap['DigitalCreationTime'] = sensorController.gyroscopeEvent.value.x;
-    iptcMap['DigitalCreationDate'] = sensorController.gyroscopeEvent.value.y;
-    iptcMap['DateCreated'] = sensorController.gyroscopeEvent.value.z;
 
-    print("PRINTING {IPTC}: $iptcMap");
-
-    exif.setExif(map);
-
-    // print("PRINTING {IPTC} : ${map}");
-
-    Map updatedMap = await exif.getExif('{IPTC}');
-
-    print("\nUPDATING MAP\n${updatedMap['{IPTC}']}");
 
     // Map<String, dynamic> comments = {
-    //   "{IPTC}": sensorController.gyroscopeEvent.value.toString()
+    //   "GYRO": {
+    //     "x": sensorController.gyroscopeEvent.value.z.toStringAsFixed(2),
+    //     "y": sensorController.gyroscopeEvent.value.y.toStringAsFixed(2),
+    //     "z": sensorController.gyroscopeEvent.value.z..toStringAsFixed(2),
+    //   }
     // };
-    // exif.setExif(comments);
+    //
+    // exif.setDate(jsonEncode(comments));
+
+
+    Map checkingNewMap = await exif.getExif('');
+
+    for(int i= 0; i < checkingNewMap.entries.length; i++){
+      print(checkingNewMap.values.elementAt(i));
+    }
+
   }
 
   Future<void> saveFile(File newFile, XFile fromFile) async {
