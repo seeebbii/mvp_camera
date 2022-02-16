@@ -29,43 +29,39 @@ class FetchFilesController extends GetxController {
   double totalDiskSpace = 0.0;
 
   Future<FileDataModel> createObject(String filePath) async {
-
-
-      HandleFile handleFile = HandleFile();
-
-      // CREATING FILE
-      File imageFile = File(filePath);
-
-      // READING FILE EXIF
-      FlutterExif fileData = handleFile.getExif(filePath);
-
-      // FETCHING LAT LONG FROM IMAGE
-      Float64List? imagePosition = await fileData.getLatLong();
-
-      // EXTRACTING IMAGE META DATA
-      var content = meta.MetaData.exifData(imageFile.readAsBytesSync());
-
-      // CHECKING IF LAT LNG IS NOT NULL
-      LatLng latLng = const LatLng(0.0, 0.0);
-      if (imagePosition != null) {
-        latLng = LatLng(imagePosition[0], imagePosition[1]);
-      }
-
-      // RETURN [FileDataModel] Object
-      return FileDataModel(
-          imageFile: imageFile,
-          fileData: fileData,
-          position: latLng,
-          metaData: content.exifData);
-
-  }
-
-  Future<FileDataModelForIos> createObjectForIos(String filePath) async{
     HandleFile handleFile = HandleFile();
 
     // CREATING FILE
     File imageFile = File(filePath);
 
+    // READING FILE EXIF
+    FlutterExif fileData = handleFile.getExif(filePath);
+
+    // FETCHING LAT LONG FROM IMAGE
+    Float64List? imagePosition = await fileData.getLatLong();
+
+    // EXTRACTING IMAGE META DATA
+    var content = meta.MetaData.exifData(imageFile.readAsBytesSync());
+
+    // CHECKING IF LAT LNG IS NOT NULL
+    LatLng latLng = const LatLng(0.0, 0.0);
+    if (imagePosition != null) {
+      latLng = LatLng(imagePosition[0], imagePosition[1]);
+    }
+
+    // RETURN [FileDataModel] Object
+    return FileDataModel(
+        imageFile: imageFile,
+        fileData: fileData,
+        position: latLng,
+        metaData: content.exifData);
+  }
+
+  Future<FileDataModelForIos> createObjectForIos(String filePath) async {
+    HandleFile handleFile = HandleFile();
+
+    // CREATING FILE
+    File imageFile = File(filePath);
 
     edt.FlutterExif fileData = handleFile.getExifForIos(imageFile.path);
     Map exifData = await fileData.getExif('GPS');
@@ -74,8 +70,11 @@ class FetchFilesController extends GetxController {
     latLng = LatLng(latLongData['Latitude'], latLongData['Longitude']);
     // return FileDataModel(imageFile: null);
 
-    return FileDataModelForIos(imageFile: imageFile, fileData: fileData, metaData: exifData, position: latLng);
-
+    return FileDataModelForIos(
+        imageFile: imageFile,
+        fileData: fileData,
+        metaData: exifData,
+        position: latLng);
   }
 
   Future<void> initializeDeviceStorageInfo() async {
@@ -120,19 +119,26 @@ class FetchFilesController extends GetxController {
     List<FileDataModel> files = <FileDataModel>[];
     List<FileDataModelForIos> iosFile = <FileDataModelForIos>[];
     await Future.wait(tempFiles.map((e) async {
-      if(Platform.isAndroid){
+      if (Platform.isAndroid) {
         FileDataModel obj = await createObject(e.path);
         files.add(obj);
-      }else{
+      } else {
         FileDataModelForIos obj = await createObjectForIos(e.path);
         iosFile.add(obj);
       }
-
     })).whenComplete(() async {
-      if(Platform.isAndroid){
+      if (Platform.isAndroid) {
         filesInCurrentProject.value = files;
-      }else{
+      } else {
         filesInCurrentProjectForIos.value = iosFile;
+        if (filesInCurrentProjectForIos.isNotEmpty) {
+          mapController.animateCamera(CameraPosition(
+              target: LatLng(
+                filesInCurrentProjectForIos[0].position.latitude,
+                filesInCurrentProjectForIos[0].position.longitude,
+              ),
+              zoom: 15.00));
+        }
       }
       mapController.createMarkers();
     });

@@ -47,6 +47,7 @@ dependencies:
   disk_space: ^0.2.1
   csv: ^5.0.1
   connectivity_plus: ^2.2.0
+  share_plus: ^3.0.4
 
 
   flutter_exif_plugin:

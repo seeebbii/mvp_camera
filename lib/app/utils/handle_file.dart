@@ -45,22 +45,19 @@ class HandleFile {
     Map<String, dynamic> location = {
       "lat": latitude,
       "lng" : longitude,
-      "alt" : 23
     };
 
     exif.setGps(location);
 
+    Map<String, dynamic> comments = {
+      // "kCGImagePropertyExifFocalPlaneResolutionUnit": {
+        "x": sensorController.gyroscopeEvent.value.z.toStringAsFixed(2),
+        "y": sensorController.gyroscopeEvent.value.y.toStringAsFixed(2),
+        "z": sensorController.gyroscopeEvent.value.z..toStringAsFixed(2),
+      // }
+    };
 
-
-    // Map<String, dynamic> comments = {
-    //   "GYRO": {
-    //     "x": sensorController.gyroscopeEvent.value.z.toStringAsFixed(2),
-    //     "y": sensorController.gyroscopeEvent.value.y.toStringAsFixed(2),
-    //     "z": sensorController.gyroscopeEvent.value.z..toStringAsFixed(2),
-    //   }
-    // };
-    //
-    // exif.setDate(jsonEncode(comments));
+    exif.setExif(comments);
 
 
     Map checkingNewMap = await exif.getExif('');

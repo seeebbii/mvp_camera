@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../app/constant/controllers.dart';
 import '../../app/utils/colors.dart';
@@ -264,11 +265,29 @@ class _QaRootScreenState extends State<QaRootScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton(
-          onPressed: () {},
-          child: Text("Save", style: Theme.of(context)
-              .textTheme
-              .bodyText1
-              ?.copyWith(color: Colors.white, fontSize: 13.sp),),
+          onPressed: () {
+            List<String> filesToBeShared = <String>[];
+            if (Platform.isIOS) {
+              filesToBeShared = fetchFilesController.filesInCurrentProjectForIos
+                  .map((element) => element.fileData.path)
+                  .toList();
+            }
+            if (Platform.isAndroid) {
+              filesToBeShared = fetchFilesController.filesInCurrentProject
+                  .map((element) => element.imageFile.path)
+                  .toList();
+            }
+            if (filesToBeShared.isNotEmpty) {
+              Share.shareFiles(filesToBeShared);
+            }
+          },
+          child: Text(
+            "Save",
+            style: Theme.of(context)
+                .textTheme
+                .bodyText1
+                ?.copyWith(color: Colors.white, fontSize: 13.sp),
+          ),
           style: ElevatedButton.styleFrom(
             onPrimary: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
@@ -280,10 +299,13 @@ class _QaRootScreenState extends State<QaRootScreen> {
         ),
         ElevatedButton(
           onPressed: _buildConfirmationDialog,
-          child: Text("Delete", style: Theme.of(context)
-              .textTheme
-              .bodyText1
-                  ?.copyWith(color: Colors.white, fontSize: 13.sp),),
+          child: Text(
+            "Delete",
+            style: Theme.of(context)
+                .textTheme
+                .bodyText1
+                ?.copyWith(color: Colors.white, fontSize: 13.sp),
+          ),
           style: ElevatedButton.styleFrom(
             onPrimary: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
@@ -343,21 +365,31 @@ class ConfirmationDialog extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 0.01.sh,),
+            SizedBox(
+              height: 0.01.sh,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                OutlinedButton(onPressed: ()=> navigationController.goBack(), child: const Text('Cancel')),
+                OutlinedButton(
+                    onPressed: () => navigationController.goBack(),
+                    child: const Text('Cancel')),
                 ElevatedButton(
-                  onPressed: (){
+                  onPressed: () {
                     // POPPING THE CURRENT DIALOG
                     navigationController.goBack();
                     // DELETING SELECTED DIRECTORY
-                    myCameraController.projectDirectory.deleteSync(recursive: true);
+                    myCameraController.projectDirectory
+                        .deleteSync(recursive: true);
                     // DELETING NAME OF PROJECT FROM OUR LIST OF AVAILABLE PROJECTS
-                    fetchFilesController.listOfAvailableProject.removeWhere((projectName) => projectName == myCameraController.projectNameController.value.text);
+                    fetchFilesController.listOfAvailableProject.removeWhere(
+                        (projectName) =>
+                            projectName ==
+                            myCameraController
+                                .projectNameController.value.text);
                     // SWITCHING PROJECT TO ZERO th INDEX OF AVAILABLE PROJECTS
-                    if(fetchFilesController.listOfAvailableProject.isNotEmpty){
+                    if (fetchFilesController
+                        .listOfAvailableProject.isNotEmpty) {
                       Dialogs.showLoadingDialog(context);
                       WidgetsBinding.instance?.addPostFrameCallback((duration) {
                         myCameraController.projectNameController.value.text =
@@ -374,10 +406,11 @@ class ConfirmationDialog extends StatelessWidget {
                   child: const Text("Confirm"),
                   style: ElevatedButton.styleFrom(
                     onPrimary: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
                     primary: Colors.red,
                     shape: RoundedRectangleBorder(
-                      //to set border radius to button
+                        //to set border radius to button
                         borderRadius: BorderRadius.circular(12)),
                   ),
                 )
