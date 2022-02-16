@@ -86,6 +86,7 @@ class _CameraScreenState extends State<CameraScreen>
     // Replace with the new controller
     if (mounted) {
       setState(() {
+        cameraController.setFlashMode(myCameraController.controller.value.value.flashMode);
         myCameraController.controller.value = cameraController;
         myCameraController.controller.value.lockCaptureOrientation(DeviceOrientation.portraitUp);
       });
