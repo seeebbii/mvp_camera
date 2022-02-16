@@ -49,22 +49,22 @@ class HandleFile {
 
     exif.setGps(location);
 
-    Map<String, dynamic> comments = {
-      // "kCGImagePropertyExifFocalPlaneResolutionUnit": {
-        "x": sensorController.gyroscopeEvent.value.z.toStringAsFixed(2),
-        "y": sensorController.gyroscopeEvent.value.y.toStringAsFixed(2),
-        "z": sensorController.gyroscopeEvent.value.z..toStringAsFixed(2),
-      // }
-    };
-
-    exif.setExif(comments);
-
-
-    Map checkingNewMap = await exif.getExif('');
-
-    for(int i= 0; i < checkingNewMap.entries.length; i++){
-      print(checkingNewMap.values.elementAt(i));
-    }
+    // Map<String, dynamic> comments = {
+    //   // "kCGImagePropertyExifFocalPlaneResolutionUnit": {
+    //     "x": sensorController.gyroscopeEvent.value.z.toStringAsFixed(2),
+    //     "y": sensorController.gyroscopeEvent.value.y.toStringAsFixed(2),
+    //     "z": sensorController.gyroscopeEvent.value.z..toStringAsFixed(2),
+    //   // }
+    // };
+    //
+    // exif.setExif(comments);
+    //
+    //
+    // Map checkingNewMap = await exif.getExif('');
+    //
+    // for(int i= 0; i < checkingNewMap.entries.length; i++){
+    //   print(checkingNewMap.values.elementAt(i));
+    // }
 
   }
 

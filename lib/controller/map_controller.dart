@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:isolate';
-import 'dart:typed_data';
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -61,14 +60,13 @@ class MapController extends GetxController {
     initCurrentLocationCameraPosition();
   }
 
-  static Future<Set<Marker>> getMarkersInAnotherIsolate(List<FileDataModel> files) async{
+  static Future<Set<Marker>> getMarkersInAnotherIsolate(
+      List<FileDataModel> files) async {
     // print(files);
     Set<Marker> temp = {};
     int markerId = 0;
     print(files.length);
     for (var element in files) {
-
-
       // EDITING MARKER BITMAP
       // ui.Codec codec = await ui.instantiateImageCodec(
       //     element.imageFile.readAsBytesSync(),
@@ -83,7 +81,8 @@ class MapController extends GetxController {
       markerId += 1;
       temp.add(
         Marker(
-          icon: true ? BitmapDescriptor.defaultMarker : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+            icon: true ? BitmapDescriptor.defaultMarker : BitmapDescriptor
+                .defaultMarkerWithHue(BitmapDescriptor.hueGreen),
             markerId: MarkerId('$markerId'),
             position: element.position,
             infoWindow: InfoWindow(
@@ -95,14 +94,12 @@ class MapController extends GetxController {
   }
 
 
-  static Future<Set<Marker>> getMarkersInAnotherIsolateForIos(List<FileDataModelForIos> files) async{
+  static Future<Set<Marker>> getMarkersInAnotherIsolateForIos(
+      List<FileDataModelForIos> files) async {
     // print(files);
     Set<Marker> temp = {};
-    int markerId = 0;
-    print(files.length);
-    for (var element in files) {
 
-
+    for (int i = 0; i < files.length; i++) {
       // EDITING MARKER BITMAP
       // ui.Codec codec = await ui.instantiateImageCodec(
       //     element.imageFile.readAsBytesSync(),
@@ -114,33 +111,36 @@ class MapController extends GetxController {
       //         ?.buffer
       //         .asUint8List();
 
-      markerId += 1;
+      // bool isRed = calculateImageAngle(files, i);
+
       temp.add(
         Marker(
-            icon: true ? BitmapDescriptor.defaultMarker : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-            markerId: MarkerId('$markerId'),
-            position: element.position,
+            icon: true ? BitmapDescriptor.defaultMarker : BitmapDescriptor
+                .defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+            markerId: MarkerId('$i'),
+            position: files[i].position,
             infoWindow: InfoWindow(
-                title: '${element.metaData}',
-                // snippet: "${element.metaData['exif']['UserComment']}"
+              title: '${files[i].gyroInfo}',
+              // snippet: "${element.metaData['exif']['UserComment']}"
             )
         ),
       );
     }
+
     return temp;
   }
 
   Future<void> createMarkers() async {
-
-    if(Platform.isAndroid){
+    if (Platform.isAndroid) {
       // ITERATING THROUGH THE FILE AND GETTING [LAT LNG] FROM THEIR INSTANCE VARIABLES FOR SETTING UP MARKERS
       final listOfFiles = fetchFilesController.filesInCurrentProject.value;
       // imageMarkers.value = await compute(getMarkersInAnotherIsolate, listOfFiles);
       imageMarkers.value = await getMarkersInAnotherIsolate(listOfFiles);
       navigationController.goBack();
-    }else{
+    } else {
       // ITERATING THROUGH THE FILE AND GETTING [LAT LNG] FROM THEIR INSTANCE VARIABLES FOR SETTING UP MARKERS
-      final listOfFiles = fetchFilesController.filesInCurrentProjectForIos.value;
+      final listOfFiles = fetchFilesController.filesInCurrentProjectForIos
+          .value;
       // imageMarkers.value = await compute(getMarkersInAnotherIsolate, listOfFiles);
       imageMarkers.value = await getMarkersInAnotherIsolateForIos(listOfFiles);
       navigationController.goBack();
@@ -174,4 +174,27 @@ class MapController extends GetxController {
     controller = await googleMapController.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(position));
   }
+
+  static bool calculateImageAngle(List<FileDataModelForIos> files, int currentIndex) {
+    // X reoresents ROLL
+    // Y represents PITCH
+    // Z represents YAW
+    print(currentIndex);
+
+    try{
+      if (double.parse(files[currentIndex-1].gyroInfo['y'].toString()).abs() - double.parse(files[currentIndex].gyroInfo['y'].toString()).abs() < 15 &&
+          double.parse(files[currentIndex-1].gyroInfo['x'].toString()).abs() - double.parse(files[currentIndex].gyroInfo['x'].toString()).abs() < 15 &&
+          double.parse(files[currentIndex-1].gyroInfo['z'].toString()).abs() - double.parse(files[currentIndex+1].gyroInfo['z'].toString()).abs() < 15){
+        print("RedBox");
+        return true;
+      }else{
+        print("GreenBox");
+        return false;
+      }
+    }catch(e){
+      print("ERROR FROM CALCULATION: $e");
+      return true;
+    }
+  }
+
 }

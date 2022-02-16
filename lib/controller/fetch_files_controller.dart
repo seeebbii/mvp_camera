@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:edit_exif/edit_exif.dart' as edt;
 import 'dart:typed_data';
@@ -48,13 +49,15 @@ class FetchFilesController extends GetxController {
     if (imagePosition != null) {
       latLng = LatLng(imagePosition[0], imagePosition[1]);
     }
+    // FETCHING GYRO INFO FROM NAME OF FILE
+    Map<String, dynamic> gyroInfo = splitStringFromPercentageForGyro(filePath);
+    Map<String, dynamic> accInfo = splitStringFromPercentageForAccelerometer(filePath);
 
-    // RETURN [FileDataModel] Object
     return FileDataModel(
         imageFile: imageFile,
         fileData: fileData,
         position: latLng,
-        metaData: content.exifData);
+        metaData: content.exifData, gyroInfo: gyroInfo, accelerometerInfo: accInfo);
   }
 
   Future<FileDataModelForIos> createObjectForIos(String filePath) async {
@@ -70,18 +73,21 @@ class FetchFilesController extends GetxController {
     latLng = LatLng(latLongData['Latitude'], latLongData['Longitude']);
     // return FileDataModel(imageFile: null);
 
+    // FETCHING GYRO INFO FROM NAME OF FILE
+    Map<String, dynamic> gyroInfo = splitStringFromPercentageForGyro(filePath);
+    Map<String, dynamic> accInfo = splitStringFromPercentageForAccelerometer(filePath);
+
     return FileDataModelForIos(
         imageFile: imageFile,
         fileData: fileData,
         metaData: exifData,
-        position: latLng);
+        position: latLng,
+        gyroInfo: gyroInfo, accelerometerInfo: accInfo);
   }
 
   Future<void> initializeDeviceStorageInfo() async {
     freeDiskSpace = (await DiskSpace.getFreeDiskSpace)!;
     totalDiskSpace = (await DiskSpace.getTotalDiskSpace)!;
-    print(freeDiskSpace);
-    print(totalDiskSpace);
   }
 
   @override
@@ -152,7 +158,7 @@ class FetchFilesController extends GetxController {
       List<String> subStringsList = element.path.split('/');
       // ADDING LAST INDEX OF BROKEN DIRECTORY WHICH INCLUDES PROJECT NAME
       // EXCLUDING CSV FOLDER
-      if (subStringsList[subStringsList.length - 1] != '.csv') {
+      if (subStringsList[subStringsList.length - 1] != 'csv') {
         tempProjects.add(subStringsList[subStringsList.length - 1]);
       }
     }
@@ -166,5 +172,35 @@ class FetchFilesController extends GetxController {
     } else {
       return await getApplicationDocumentsDirectory();
     }
+  }
+
+  Map<String, dynamic> splitStringFromPercentageForGyro(String path) {
+    String splittedPathName = path.split('/').last;
+    int indexOfPercentage = splittedPathName.indexOf('%');
+    int indexOfMimeTypeDot = splittedPathName.indexOf('.jpeg');
+
+    String info =
+        splittedPathName.substring(indexOfPercentage + 1, indexOfMimeTypeDot);
+
+    List<String> listOfPercentage = info.split('%');
+
+    Map<String, dynamic> gyroInfoDecoded = jsonDecode(listOfPercentage[0]);
+
+    return gyroInfoDecoded;
+  }
+
+  Map<String, dynamic> splitStringFromPercentageForAccelerometer(String path) {
+    String splittedPathName = path.split('/').last;
+    int indexOfPercentage = splittedPathName.indexOf('%');
+    int indexOfMimeTypeDot = splittedPathName.indexOf('.jpeg');
+
+    String info =
+    splittedPathName.substring(indexOfPercentage + 1, indexOfMimeTypeDot);
+
+    List<String> listOfPercentage = info.split('%');
+
+    Map<String, dynamic> acceleroMeterDecoded = jsonDecode(listOfPercentage[1]);
+
+    return acceleroMeterDecoded;
   }
 }
