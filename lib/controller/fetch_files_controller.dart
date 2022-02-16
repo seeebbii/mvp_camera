@@ -9,6 +9,7 @@ import 'package:metadata/metadata.dart' as meta;
 import 'package:flutter_exif_plugin/flutter_exif_plugin.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mvp_camera/app/utils/angle_calculator.dart';
 import 'package:mvp_camera/app/utils/handle_file.dart';
 import 'package:mvp_camera/controller/map_controller.dart';
 import 'package:mvp_camera/model/file_data_model.dart';
@@ -53,11 +54,13 @@ class FetchFilesController extends GetxController {
     Map<String, dynamic> gyroInfo = splitStringFromPercentageForGyro(filePath);
     Map<String, dynamic> accInfo = splitStringFromPercentageForAccelerometer(filePath);
 
+    AngleCalculator angleCalculations = AngleCalculator.calculateAngle(accInfo, gyroInfo);
+
     return FileDataModel(
         imageFile: imageFile,
         fileData: fileData,
         position: latLng,
-        metaData: content.exifData, gyroInfo: gyroInfo, accelerometerInfo: accInfo);
+        metaData: content.exifData, gyroInfo: gyroInfo, accelerometerInfo: accInfo, angleCalculations: angleCalculations);
   }
 
   Future<FileDataModelForIos> createObjectForIos(String filePath) async {
@@ -77,12 +80,14 @@ class FetchFilesController extends GetxController {
     Map<String, dynamic> gyroInfo = splitStringFromPercentageForGyro(filePath);
     Map<String, dynamic> accInfo = splitStringFromPercentageForAccelerometer(filePath);
 
+    AngleCalculator angleCalculations = AngleCalculator.calculateAngle(accInfo, gyroInfo);
+
     return FileDataModelForIos(
         imageFile: imageFile,
         fileData: fileData,
         metaData: exifData,
         position: latLng,
-        gyroInfo: gyroInfo, accelerometerInfo: accInfo);
+        gyroInfo: gyroInfo, accelerometerInfo: accInfo, angleCalculations: angleCalculations);
   }
 
   Future<void> initializeDeviceStorageInfo() async {

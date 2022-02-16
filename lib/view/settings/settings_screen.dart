@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
 
 import '../../app/constant/controllers.dart';
+import '../../app/utils/angle_calculator.dart';
 import '../../controller/sensor_controller.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -30,10 +31,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => SensorController());
     final sensorController = Get.find<SensorController>();
+
+    Map<String, dynamic> gyroScopeInfo = {
+      "x": sensorController.gyroscopeEvent.value.z.toStringAsFixed(3),
+      "y": sensorController.gyroscopeEvent.value.y.toStringAsFixed(3),
+      "z": sensorController.gyroscopeEvent.value.z.toStringAsFixed(3),
+    };
+
+    Map<String, dynamic> accelerometerInfo = {
+      "x": sensorController.accelerometerEvent.value.z.toStringAsFixed(3),
+      "y": sensorController.accelerometerEvent.value.y.toStringAsFixed(3),
+      "z": sensorController.accelerometerEvent.value.z.toStringAsFixed(3),
+    };
+
+
+    AngleCalculator calculations = AngleCalculator.calculateAngle(accelerometerInfo, gyroScopeInfo,);
+
 
     return Scaffold(
       backgroundColor: backgroundColor,

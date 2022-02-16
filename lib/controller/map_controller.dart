@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:image/image.dart' as img;
 import 'package:permission_handler/permission_handler.dart';
 
+import '../app/utils/angle_calculator.dart';
 import '../model/file_data_model.dart';
 
 class MapController extends GetxController {
@@ -111,11 +112,11 @@ class MapController extends GetxController {
       //         ?.buffer
       //         .asUint8List();
 
-      // bool isRed = calculateImageAngle(files, i);
-
+      bool isRed = calculateImageAngle(files, i);
+      print(isRed);
       temp.add(
         Marker(
-            icon: true ? BitmapDescriptor.defaultMarker : BitmapDescriptor
+            icon: isRed ? BitmapDescriptor.defaultMarker : BitmapDescriptor
                 .defaultMarkerWithHue(BitmapDescriptor.hueGreen),
             markerId: MarkerId('$i'),
             position: files[i].position,
@@ -175,22 +176,29 @@ class MapController extends GetxController {
     controller.animateCamera(CameraUpdate.newCameraPosition(position));
   }
 
-  static bool calculateImageAngle(List<FileDataModelForIos> files, int currentIndex) {
+  static bool calculateImageAngle(List<FileDataModelForIos> files, int currentIndex,) {
     // X reoresents ROLL
     // Y represents PITCH
     // Z represents YAW
     print(currentIndex);
 
     try{
-      if (double.parse(files[currentIndex-1].gyroInfo['y'].toString()).abs() - double.parse(files[currentIndex].gyroInfo['y'].toString()).abs() < 15 &&
-          double.parse(files[currentIndex-1].gyroInfo['x'].toString()).abs() - double.parse(files[currentIndex].gyroInfo['x'].toString()).abs() < 15 &&
-          double.parse(files[currentIndex-1].gyroInfo['z'].toString()).abs() - double.parse(files[currentIndex+1].gyroInfo['z'].toString()).abs() < 15){
-        print("RedBox");
-        return true;
-      }else{
-        print("GreenBox");
-        return false;
+      bool flag = false;
+      print("OUTTER LOOP: $currentIndex");
+      for(int j = currentIndex; j < files.length ; j++){
+        print("INNER LOOP: $j");
+        if (double.parse(files[currentIndex].angleCalculations.pitch.toString()).abs() - double.parse(files[j].angleCalculations.pitch.toString()).abs() < 15 &&
+            double.parse(files[currentIndex].angleCalculations.roll.toString()).abs() - double.parse(files[j].angleCalculations.roll.toString()).abs() < 15 &&
+            double.parse(files[currentIndex].angleCalculations.yaw.toString()).abs() - double.parse(files[j].angleCalculations.yaw.toString()).abs() < 15){
+          print("RedBox");
+          flag = true;
+        }else{
+          print("GreenBox");
+          flag = false;
+        }
       }
+      return flag;
+
     }catch(e){
       print("ERROR FROM CALCULATION: $e");
       return true;
