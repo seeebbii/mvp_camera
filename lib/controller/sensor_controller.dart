@@ -34,6 +34,7 @@ class SensorController extends GetxController {
     row.add("Time");
     row.add("Gyro-Sensor");
     row.add("Accelerometer");
+    row.add("Absolute Orientation");
     rows.add(row);
   }
 
@@ -46,6 +47,8 @@ class SensorController extends GetxController {
         "X: ${gyroscopeEvent.value.x}, Y: ${gyroscopeEvent.value.y}, Z: ${gyroscopeEvent.value.z}");
     row.add(
         "X: ${accelerometerEvent.value.x}, Y: ${accelerometerEvent.value.y}, Z: ${accelerometerEvent.value.z}");
+    row.add(
+        "Roll: ${absoluteOrientationEvent.value.roll}, Pitch: ${absoluteOrientationEvent.value.pitch}, Yaw: ${absoluteOrientationEvent.value.yaw}");
     rows.add(row);
   }
 
