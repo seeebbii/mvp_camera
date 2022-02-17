@@ -602,7 +602,7 @@ class _CameraScreenState extends State<CameraScreen>
                                 // stopCapturingImages();
                                 return;
                               }
-                              myCameraController.controller.value.dispose();
+                              // myCameraController.controller.value.dispose();
                               navigationController
                                   .navigateToNamed(qaRootScreen);
                             },
@@ -1005,6 +1005,7 @@ class _CameraScreenState extends State<CameraScreen>
                             // stopCapturingImages();
                             return;
                           }
+                          // myCameraController.controller.value.dispose();
                           navigationController
                               .navigateToNamed(qaRootScreen);
                         },

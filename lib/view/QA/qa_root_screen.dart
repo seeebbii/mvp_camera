@@ -45,7 +45,7 @@ class _QaRootScreenState extends State<QaRootScreen> {
   void dispose() {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //     overlays: []);
-    myCameraController.getAvailableCameras();
+    // myCameraController.getAvailableCameras();
 
     mapController.controller.dispose();
     fetchFilesController.filesInCurrentProject.clear();
