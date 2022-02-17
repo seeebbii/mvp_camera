@@ -79,6 +79,7 @@ class FetchFilesController extends GetxController {
     edt.FlutterExif fileData = handleFile.getExifForIos(imageFile.path);
     Map exifData = await fileData.getExif('GPS');
     dynamic latLongData = exifData["{GPS}"];
+    // print("LATLONGDATA FROM CREATE OBJECT FUNCTION IOS: $latLongData");
     LatLng latLng = const LatLng(0.0, 0.0);
     latLng = LatLng(latLongData['Latitude'], latLongData['Longitude']);
     // return FileDataModel(imageFile: null);
@@ -88,7 +89,7 @@ class FetchFilesController extends GetxController {
     Map<String, dynamic> absoluteOrientation =
         splitStringFromPercentageForAbsoluteOrientation(filePath);
 
-    print(absoluteOrientation);
+    // print(absoluteOrientation);
 
     AngleCalculator angleCalculations = AngleCalculator(
         yaw: double.parse(absoluteOrientation['yaw'].toString()),

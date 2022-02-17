@@ -36,18 +36,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Get.lazyPut(() => SensorController());
     final sensorController = Get.find<SensorController>();
 
-    Map<String, dynamic> gyroScopeInfo = {
-      "x": sensorController.gyroscopeEvent.value.z.toStringAsFixed(3),
-      "y": sensorController.gyroscopeEvent.value.y.toStringAsFixed(3),
-      "z": sensorController.gyroscopeEvent.value.z.toStringAsFixed(3),
-    };
-
-    Map<String, dynamic> accelerometerInfo = {
-      "x": sensorController.accelerometerEvent.value.z.toStringAsFixed(3),
-      "y": sensorController.accelerometerEvent.value.y.toStringAsFixed(3),
-      "z": sensorController.accelerometerEvent.value.z.toStringAsFixed(3),
-    };
-
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(

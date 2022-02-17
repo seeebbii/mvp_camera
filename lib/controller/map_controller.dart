@@ -115,18 +115,22 @@ class MapController extends GetxController {
 
       bool isRed = calculateImageAngle(files, i);
       print(isRed);
-      temp.add(
-        Marker(
-            icon: isRed ? BitmapDescriptor.defaultMarker : BitmapDescriptor
-                .defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-            markerId: MarkerId('$i'),
-            position: files[i].position,
-            infoWindow: InfoWindow(
-              title: '${files[i].gyroInfo}',
-              // snippet: "${element.metaData['exif']['UserComment']}"
-            )
-        ),
-      );
+
+      if(i != 0){
+        temp.add(
+          Marker(
+              icon: isRed ? BitmapDescriptor.defaultMarker : BitmapDescriptor
+                  .defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+              markerId: MarkerId('$i'),
+              position: files[i].position,
+              infoWindow: InfoWindow(
+                title: '${files[i].absoluteOrientation}',
+                // snippet: "${element.metaData['exif']['UserComment']}"
+              )
+          ),
+        );
+      }
+
     }
 
     return temp;
@@ -182,29 +186,46 @@ class MapController extends GetxController {
     // Y represents PITCH
     // Z represents YAW
     print(currentIndex);
-
+    int j = 0;
     try{
       bool flag = false;
-      print("OUTTER LOOP: $currentIndex");
+      // print("OUTTER LOOP: $currentIndex");
 
+      // WHEN THE I == 0 the J will also be 0 but no calculations will b performed
+      // WHEN THE I != 0  J will be I-1 i.e the image will be calculated with its previous image
+      j = currentIndex == 0 ? currentIndex : currentIndex-1;
+      // print("VALUE OF J: $j");
 
-      for(int j = 0; j < files.length ; j++){
-        print("INNER LOOP: $j");
-        if(j != currentIndex){
-          if (double.parse(files[currentIndex].angleCalculations.pitch.toString()).abs() - double.parse(files[j].angleCalculations.pitch.toString()).abs() < 15 &&
-              double.parse(files[currentIndex].angleCalculations.roll.toString()).abs() - double.parse(files[j].angleCalculations.roll.toString()).abs() < 15 &&
-              double.parse(files[currentIndex].angleCalculations.yaw.toString()).abs() - double.parse(files[j].angleCalculations.yaw.toString()).abs() < 15){
-            print("RedBox");
-            flag = true;
-          }else{
-            print("GreenBox");
-            flag = false;
-          }
-        }
+      if (files[currentIndex].angleCalculations.pitch - files[j].angleCalculations.pitch < 15 &&
+          files[currentIndex].angleCalculations.roll - files[j].angleCalculations.roll < 15 &&
+         files[currentIndex].angleCalculations.yaw - files[j].angleCalculations.yaw < 15){
+        // print("RedBox");
+        flag = true;
+      }else{
+        // print("GreenBox");
+        flag = false;
       }
       return flag;
+    }
 
-    }catch(e){
+
+      // for(int j = 0; j < files.length ; j++){
+      //   print("INNER LOOP: $j");
+      //   if(j != currentIndex){
+      //     if (double.parse(files[currentIndex].angleCalculations.pitch.toString()).abs() - double.parse(files[j].angleCalculations.pitch.toString()).abs() < 15 &&
+      //         double.parse(files[currentIndex].angleCalculations.roll.toString()).abs() - double.parse(files[j].angleCalculations.roll.toString()).abs() < 15 &&
+      //         double.parse(files[currentIndex].angleCalculations.yaw.toString()).abs() - double.parse(files[j].angleCalculations.yaw.toString()).abs() < 15){
+      //       print("RedBox");
+      //       flag = true;
+      //     }else{
+      //       print("GreenBox");
+      //       flag = false;
+      //     }
+      //   }
+      // }
+
+
+    catch(e){
       print("ERROR FROM CALCULATION: $e");
       return true;
     }
