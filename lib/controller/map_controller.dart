@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:image/image.dart' as img;
 import 'package:permission_handler/permission_handler.dart';
 
+import '../app/constant/image_paths.dart';
 import '../app/utils/angle_calculator.dart';
 import '../model/file_data_model.dart';
 
@@ -37,6 +40,14 @@ class MapController extends GetxController {
   ).obs;
   Rx<CameraPosition> currentLocationCameraPosition =
       const CameraPosition(target: LatLng(0.0, 0.0)).obs;
+
+
+  static Future<Uint8List?> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))?.buffer.asUint8List();
+  }
 
   @override
   void onInit() {
@@ -100,18 +111,11 @@ class MapController extends GetxController {
     // print(files);
     Set<Marker> temp = {};
 
-    for (int i = 0; i < files.length; i++) {
+    // EDITING MARKER BITMAP
+    final Uint8List? redBox = await getBytesFromAsset(ImagePaths.redBox, 35);
+    final Uint8List? greenBox = await getBytesFromAsset(ImagePaths.greenBox, 35);
 
-      // EDITING MARKER BITMAP
-      // ui.Codec codec = await ui.instantiateImageCodec(
-      //     element.imageFile.readAsBytesSync(),
-      //     targetWidth: 100,
-      //     targetHeight: 100);
-      // ui.FrameInfo fi = await codec.getNextFrame();
-      // final Uint8List? markerImage =
-      //     (await fi.image.toByteData(format: ui.ImageByteFormat.png))
-      //         ?.buffer
-      //         .asUint8List();
+    for (int i = 0; i < files.length; i++) {
 
       bool isRed = calculateImageAngle(files, i);
       print(isRed);
@@ -119,8 +123,7 @@ class MapController extends GetxController {
       if(i != 0){
         temp.add(
           Marker(
-              icon: isRed ? BitmapDescriptor.defaultMarker : BitmapDescriptor
-                  .defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+              icon: isRed ? BitmapDescriptor.fromBytes(redBox!) : BitmapDescriptor.fromBytes(greenBox!),
               markerId: MarkerId('$i'),
               position: files[i].position,
               infoWindow: InfoWindow(

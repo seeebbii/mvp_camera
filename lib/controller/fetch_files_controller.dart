@@ -156,6 +156,7 @@ class FetchFilesController extends GetxController {
     })).whenComplete(() async {
       if (Platform.isAndroid) {
         filesInCurrentProject.value = files;
+        myCameraController.totalImagesCaptured.value = files.length;
         if (filesInCurrentProject.isNotEmpty) {
           mapController.animateCamera(CameraPosition(
               target: LatLng(
@@ -166,6 +167,7 @@ class FetchFilesController extends GetxController {
         }
       } else {
         filesInCurrentProjectForIos.value = iosFile;
+        myCameraController.totalImagesCaptured.value = iosFile.length;
         if (filesInCurrentProjectForIos.isNotEmpty) {
           mapController.animateCamera(CameraPosition(
               target: LatLng(

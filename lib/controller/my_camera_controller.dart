@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mvp_camera/app/constant/controllers.dart';
+import 'package:mvp_camera/app/utils/angle_calculator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
@@ -40,6 +41,12 @@ class MyCameraController extends GetxController {
   Rx<double> currentExposureOffset = 0.0.obs;
 
   Rx<bool> isRearCameraSelected = false.obs;
+
+
+  // TEMPORARY VARIABLE FOR STORING ABSOLUTE ORIENTATION's ROLL PITCH AND YAW
+  // FOR DISPLAYING GREEN OR RED (INDICATOR) ON CAMERA SCREEN
+
+  Rx<AngleCalculator> tempAbsoluteOrientation = AngleCalculator(roll: 0, yaw: 0, pitch: 0).obs;
 
   Future<void> changeProjectDirectory(String project)async{
     if(Platform.isAndroid){
