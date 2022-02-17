@@ -52,15 +52,22 @@ class FetchFilesController extends GetxController {
     }
     // FETCHING GYRO INFO FROM NAME OF FILE
     Map<String, dynamic> gyroInfo = splitStringFromPercentageForGyro(filePath);
-    Map<String, dynamic> accInfo = splitStringFromPercentageForAccelerometer(filePath);
+    Map<String, dynamic> absoluteOrientation =
+        splitStringFromPercentageForAbsoluteOrientation(filePath);
 
-    AngleCalculator angleCalculations = AngleCalculator.calculateAngle(accInfo, gyroInfo);
+    AngleCalculator angleCalculations = AngleCalculator(
+        yaw: double.parse(absoluteOrientation['yaw'].toString()),
+        roll: double.parse(absoluteOrientation['roll'].toString()),
+        pitch: double.parse(absoluteOrientation['pitch'].toString()));
 
     return FileDataModel(
         imageFile: imageFile,
         fileData: fileData,
         position: latLng,
-        metaData: content.exifData, gyroInfo: gyroInfo, accelerometerInfo: accInfo, angleCalculations: angleCalculations);
+        metaData: content.exifData,
+        gyroInfo: gyroInfo,
+        absoluteOrientation: absoluteOrientation,
+        angleCalculations: angleCalculations);
   }
 
   Future<FileDataModelForIos> createObjectForIos(String filePath) async {
@@ -78,16 +85,24 @@ class FetchFilesController extends GetxController {
 
     // FETCHING GYRO INFO FROM NAME OF FILE
     Map<String, dynamic> gyroInfo = splitStringFromPercentageForGyro(filePath);
-    Map<String, dynamic> accInfo = splitStringFromPercentageForAccelerometer(filePath);
+    Map<String, dynamic> absoluteOrientation =
+        splitStringFromPercentageForAbsoluteOrientation(filePath);
 
-    AngleCalculator angleCalculations = AngleCalculator.calculateAngle(accInfo, gyroInfo);
+    print(absoluteOrientation);
+
+    AngleCalculator angleCalculations = AngleCalculator(
+        yaw: double.parse(absoluteOrientation['yaw'].toString()),
+        roll: double.parse(absoluteOrientation['roll'].toString()),
+        pitch: double.parse(absoluteOrientation['pitch'].toString()));
 
     return FileDataModelForIos(
         imageFile: imageFile,
         fileData: fileData,
         metaData: exifData,
         position: latLng,
-        gyroInfo: gyroInfo, accelerometerInfo: accInfo, angleCalculations: angleCalculations);
+        gyroInfo: gyroInfo,
+        absoluteOrientation: absoluteOrientation,
+        angleCalculations: angleCalculations);
   }
 
   Future<void> initializeDeviceStorageInfo() async {
@@ -140,6 +155,14 @@ class FetchFilesController extends GetxController {
     })).whenComplete(() async {
       if (Platform.isAndroid) {
         filesInCurrentProject.value = files;
+        if (filesInCurrentProject.isNotEmpty) {
+          mapController.animateCamera(CameraPosition(
+              target: LatLng(
+                filesInCurrentProject[0].position.latitude,
+                filesInCurrentProject[0].position.longitude,
+              ),
+              zoom: 15.00));
+        }
       } else {
         filesInCurrentProjectForIos.value = iosFile;
         if (filesInCurrentProjectForIos.isNotEmpty) {
@@ -194,13 +217,14 @@ class FetchFilesController extends GetxController {
     return gyroInfoDecoded;
   }
 
-  Map<String, dynamic> splitStringFromPercentageForAccelerometer(String path) {
+  Map<String, dynamic> splitStringFromPercentageForAbsoluteOrientation(
+      String path) {
     String splittedPathName = path.split('/').last;
     int indexOfPercentage = splittedPathName.indexOf('%');
     int indexOfMimeTypeDot = splittedPathName.indexOf('.jpeg');
 
     String info =
-    splittedPathName.substring(indexOfPercentage + 1, indexOfMimeTypeDot);
+        splittedPathName.substring(indexOfPercentage + 1, indexOfMimeTypeDot);
 
     List<String> listOfPercentage = info.split('%');
 

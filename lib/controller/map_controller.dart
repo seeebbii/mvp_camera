@@ -51,7 +51,7 @@ class MapController extends GetxController {
     if (locationPermission) {
       _geoLocationStream = Geolocator.getPositionStream(
           locationSettings:
-          const LocationSettings(accuracy: LocationAccuracy.best));
+          const LocationSettings(accuracy: LocationAccuracy.bestForNavigation));
       userLocation.bindStream(_geoLocationStream);
       print("USER CURRENT LOCATION: ${userLocation.value}");
     } else {
@@ -101,6 +101,7 @@ class MapController extends GetxController {
     Set<Marker> temp = {};
 
     for (int i = 0; i < files.length; i++) {
+
       // EDITING MARKER BITMAP
       // ui.Codec codec = await ui.instantiateImageCodec(
       //     element.imageFile.readAsBytesSync(),
@@ -185,9 +186,11 @@ class MapController extends GetxController {
     try{
       bool flag = false;
       print("OUTTER LOOP: $currentIndex");
+
+
       for(int j = 0; j < files.length ; j++){
         print("INNER LOOP: $j");
-        // if(j != currentIndex){
+        if(j != currentIndex){
           if (double.parse(files[currentIndex].angleCalculations.pitch.toString()).abs() - double.parse(files[j].angleCalculations.pitch.toString()).abs() < 15 &&
               double.parse(files[currentIndex].angleCalculations.roll.toString()).abs() - double.parse(files[j].angleCalculations.roll.toString()).abs() < 15 &&
               double.parse(files[currentIndex].angleCalculations.yaw.toString()).abs() - double.parse(files[j].angleCalculations.yaw.toString()).abs() < 15){
@@ -197,7 +200,7 @@ class MapController extends GetxController {
             print("GreenBox");
             flag = false;
           }
-        // }
+        }
       }
       return flag;
 

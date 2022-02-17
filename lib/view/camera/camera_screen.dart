@@ -181,17 +181,18 @@ class _CameraScreenState extends State<CameraScreen>
           "z": sensorController.gyroscopeEvent.value.z.toStringAsFixed(3),
         };
 
-        Map<String, dynamic> accelerometerInfo = {
-          "x": sensorController.accelerometerEvent.value.z.toStringAsFixed(3),
-          "y": sensorController.accelerometerEvent.value.y.toStringAsFixed(3),
-          "z": sensorController.accelerometerEvent.value.z.toStringAsFixed(3),
+
+        Map<String, dynamic> absoluteOrientation = {
+          "roll": sensorController.absoluteOrientationEvent.value.roll.toStringAsFixed(3),
+          "pitch": sensorController.absoluteOrientationEvent.value.pitch.toStringAsFixed(3),
+          "yaw": sensorController.absoluteOrientationEvent.value.yaw.toStringAsFixed(3),
         };
 
 
 
         await myCameraController.controller.value.takePicture().then((xFile){
           File newFile = File(
-              "${myCameraController.projectDirectory.path}/${DateTime.now()}%${jsonEncode(gyroScopeInfo)}%${jsonEncode(accelerometerInfo)}.jpeg");
+              "${myCameraController.projectDirectory.path}/${DateTime.now()}%${jsonEncode(gyroScopeInfo)}%${jsonEncode(absoluteOrientation)}.jpeg");
 
           xFile.saveTo(newFile.path).then((value){
             if(Platform.isIOS){

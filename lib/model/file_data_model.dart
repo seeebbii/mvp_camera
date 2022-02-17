@@ -11,10 +11,10 @@ class FileDataModel {
   Map<dynamic, dynamic> metaData;
   LatLng position;
   Map<String, dynamic> gyroInfo;
-  Map<String, dynamic> accelerometerInfo;
+  Map<String, dynamic> absoluteOrientation;
   AngleCalculator angleCalculations;
 
-  FileDataModel({ required this.imageFile, required this.fileData, required this.metaData, required this.position,required this.gyroInfo, required this.accelerometerInfo, required this.angleCalculations });
+  FileDataModel({ required this.imageFile, required this.fileData, required this.metaData, required this.position,required this.gyroInfo, required this.absoluteOrientation, required this.angleCalculations });
 
   // Map<String, dynamic> toJson() => {'id':id, 'name':name };
 }
@@ -27,9 +27,9 @@ class FileDataModelForIos {
   Map<dynamic, dynamic> metaData;
   LatLng position;
   Map<String, dynamic> gyroInfo;
-  Map<String, dynamic> accelerometerInfo;
+  Map<String, dynamic> absoluteOrientation;
   AngleCalculator angleCalculations;
 
-  FileDataModelForIos({ required this.imageFile, required this.fileData, required this.metaData, required this.position, required this.gyroInfo, required this.accelerometerInfo, required this.angleCalculations});
+  FileDataModelForIos({ required this.imageFile, required this.fileData, required this.metaData, required this.position, required this.gyroInfo, required this.absoluteOrientation, required this.angleCalculations});
 // Map<String, dynamic> toJson() => {'id':id, 'name':name };
 }

@@ -31,7 +31,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => SensorController());
@@ -48,10 +47,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       "y": sensorController.accelerometerEvent.value.y.toStringAsFixed(3),
       "z": sensorController.accelerometerEvent.value.z.toStringAsFixed(3),
     };
-
-
-    AngleCalculator calculations = AngleCalculator.calculateAngle(accelerometerInfo, gyroScopeInfo,);
-
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -92,38 +87,167 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ListTile(
             title: Text(
-              'Gyroscope Events',
+              'Show dev logs',
               style: Theme.of(context)
                   .textTheme
                   .headline3
                   ?.copyWith(fontWeight: FontWeight.normal),
             ),
-            subtitle: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Obx(() => Text("X (Roll): ${sensorController.gyroscopeEvent.value.x.toStringAsFixed(2)}",style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),)),
-                Obx(() => Text("Y (Pitch): ${sensorController.gyroscopeEvent.value.y.toStringAsFixed(2)}",style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),)),
-                Obx(() => Text("Z (Yaw): ${sensorController.gyroscopeEvent.value.z.toStringAsFixed(2)}",style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),)),
-              ],
-            ),
+            trailing: Obx(() => CupertinoSwitch(
+                  onChanged: (bool value) {
+                    myCameraController.devLogs.value = value;
+                  },
+                  value: myCameraController.devLogs.value,
+                )),
           ),
-          ListTile(
-            title: Text(
-              'Accelerometer Events',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline3
-                  ?.copyWith(fontWeight: FontWeight.normal),
-            ),
-            subtitle: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Obx(() => Text("X (Roll): ${sensorController.accelerometerEvent.value.x.toStringAsFixed(2)}",style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),)),
-                Obx(() => Text("Y (Pitch): ${sensorController.accelerometerEvent.value.y.toStringAsFixed(2)}",style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),)),
-                Obx(() => Text("Z (Yaw): ${sensorController.accelerometerEvent.value.z.toStringAsFixed(2)}",style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white),)),
-              ],
-            ),
-          ),
+          Obx(() => myCameraController.devLogs.value
+              ? ListTile(
+                  title: Text(
+                    'Gyroscope Events',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline3
+                        ?.copyWith(fontWeight: FontWeight.normal),
+                  ),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Obx(() => Text(
+                            "X: ${sensorController.gyroscopeEvent.value.x.toStringAsFixed(2)}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: Colors.white),
+                          )),
+                      Obx(() => Text(
+                            "Y: ${sensorController.gyroscopeEvent.value.y.toStringAsFixed(2)}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: Colors.white),
+                          )),
+                      Obx(() => Text(
+                            "Z: ${sensorController.gyroscopeEvent.value.z.toStringAsFixed(2)}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: Colors.white),
+                          )),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink()),
+          Obx(() => myCameraController.devLogs.value
+              ? ListTile(
+                  title: Text(
+                    'Accelerometer Events',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline3
+                        ?.copyWith(fontWeight: FontWeight.normal),
+                  ),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Obx(() => Text(
+                            "X: ${sensorController.accelerometerEvent.value.x.toStringAsFixed(2)}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: Colors.white),
+                          )),
+                      Obx(() => Text(
+                            "Y: ${sensorController.accelerometerEvent.value.y.toStringAsFixed(2)}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: Colors.white),
+                          )),
+                      Obx(() => Text(
+                            "Z: ${sensorController.accelerometerEvent.value.z.toStringAsFixed(2)}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: Colors.white),
+                          )),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink()),
+          Obx(() => myCameraController.devLogs.value
+              ? ListTile(
+                  title: Text(
+                    'Orientation',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline3
+                        ?.copyWith(fontWeight: FontWeight.normal),
+                  ),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Obx(() => Text(
+                            "X (Roll): ${sensorController.orientationEvent.value.roll.toStringAsFixed(2)}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: Colors.white),
+                          )),
+                      Obx(() => Text(
+                            "Y (Pitch): ${sensorController.orientationEvent.value.pitch.toStringAsFixed(2)}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: Colors.white),
+                          )),
+                      Obx(() => Text(
+                            "Z (Yaw): ${sensorController.orientationEvent.value.yaw.toStringAsFixed(2)}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: Colors.white),
+                          )),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink()),
+          Obx(() => myCameraController.devLogs.value
+              ? ListTile(
+                  title: Text(
+                    'Absolute Orientation',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline3
+                        ?.copyWith(fontWeight: FontWeight.normal),
+                  ),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Obx(() => Text(
+                            "X (Roll): ${sensorController.absoluteOrientationEvent.value.roll.toStringAsFixed(2)}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: Colors.white),
+                          )),
+                      Obx(() => Text(
+                            "Y (Pitch): ${sensorController.absoluteOrientationEvent.value.pitch.toStringAsFixed(2)}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: Colors.white),
+                          )),
+                      Obx(() => Text(
+                            "Z (Yaw): ${sensorController.absoluteOrientationEvent.value.yaw.toStringAsFixed(2)}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: Colors.white),
+                          )),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink()),
         ],
       ),
     );

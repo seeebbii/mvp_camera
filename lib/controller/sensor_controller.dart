@@ -4,18 +4,26 @@ import 'dart:math';
 import 'package:csv/csv.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:motion_sensors/motion_sensors.dart';
 import 'package:mvp_camera/app/constant/controllers.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sensors_plus/sensors_plus.dart';
+import 'package:sensors_plus/sensors_plus.dart' as sensorPlus;
 
 class SensorController extends GetxController {
-  late Rx<AccelerometerEvent> accelerometerEvent =
-      AccelerometerEvent(0, 0, 0).obs;
-  late Rx<UserAccelerometerEvent> userAccelerometerEvent =
-      UserAccelerometerEvent(0, 0, 0).obs;
-  late Rx<GyroscopeEvent> gyroscopeEvent = GyroscopeEvent(0, 0, 0).obs;
-  late Rx<MagnetometerEvent> magnetometerEvent = MagnetometerEvent(0, 0, 0).obs;
 
+  // OLD PACKAGE VARIABLES
+  late Rx<sensorPlus.AccelerometerEvent> accelerometerEvent =
+      sensorPlus.AccelerometerEvent(0, 0, 0).obs;
+  late Rx<sensorPlus.UserAccelerometerEvent> userAccelerometerEvent =
+      sensorPlus.UserAccelerometerEvent(0, 0, 0).obs;
+  late Rx<sensorPlus.GyroscopeEvent> gyroscopeEvent =
+      sensorPlus.GyroscopeEvent(0, 0, 0).obs;
+  late Rx<sensorPlus.MagnetometerEvent> magnetometerEvent =
+      sensorPlus.MagnetometerEvent(0, 0, 0).obs;
+
+  // NEW PACKAGE VARIABLES
+  late Rx<OrientationEvent> orientationEvent = OrientationEvent(0, 0, 0).obs;
+  late Rx<AbsoluteOrientationEvent> absoluteOrientationEvent = AbsoluteOrientationEvent(0, 0, 0).obs;
   // CSV FILE DATA
   Directory? extDir;
   List<List<dynamic>> rows = [];
@@ -44,14 +52,14 @@ class SensorController extends GetxController {
   void saveCsvFile() async {
     // CONVERTING LIST TO CSV ROWS
     String csv = const ListToCsvConverter().convert(rows);
-    final String currProject = myCameraController.projectNameController.value.text;
+    final String currProject =
+        myCameraController.projectNameController.value.text;
 
     Directory csvDirectory = await Directory(extDir!.path + "/csv/$currProject")
         .create(recursive: true);
     // SAVING CSV FILE
     var rng = Random();
-    File file = File(
-        csvDirectory.path + "/${rng.nextInt(100)}.csv");
+    File file = File(csvDirectory.path + "/${rng.nextInt(100)}.csv");
     file.writeAsStringSync(csv, mode: FileMode.append);
 
     // CLEARING DATA AFTER SAVING
@@ -77,21 +85,40 @@ class SensorController extends GetxController {
   }
 
   void listenToEvents() {
-    accelerometerEvents.listen((AccelerometerEvent event) {
+
+    // NEW PACKAGE FOR GETTING SENSORS INFO
+
+    sensorPlus.accelerometerEvents.listen((sensorPlus.AccelerometerEvent event) {
       accelerometerEvent.value = event;
     });
 
-    userAccelerometerEvents.listen((UserAccelerometerEvent event) {
+    sensorPlus.userAccelerometerEvents.listen((sensorPlus.UserAccelerometerEvent event) {
       userAccelerometerEvent.value = event;
     });
 
-    gyroscopeEvents.listen((GyroscopeEvent event) {
+    sensorPlus.gyroscopeEvents.listen((sensorPlus.GyroscopeEvent event) {
       gyroscopeEvent.value = event;
       // print(event);
     });
 
-    magnetometerEvents.listen((MagnetometerEvent event) {
+    sensorPlus.magnetometerEvents.listen((sensorPlus.MagnetometerEvent event) {
       magnetometerEvent.value = event;
     });
+
+    // OLD PACKAGE TO GET ROLL < YAW < PITCH
+
+    motionSensors.isOrientationAvailable().then((available) {
+      if (available) {
+        motionSensors.orientation.listen((OrientationEvent event) {
+          orientationEvent.value = event;
+        });
+      }
+    });
+
+    motionSensors.absoluteOrientation.listen((AbsoluteOrientationEvent event) {
+      absoluteOrientationEvent.value = event;
+    });
+
+
   }
 }
