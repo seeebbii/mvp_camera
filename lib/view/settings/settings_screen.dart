@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -175,21 +177,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Obx(() => Text(
-                            "X (Roll): ${sensorController.orientationEvent.value.roll.toStringAsFixed(2)}",
+                            "X (Roll): ${(sensorController.orientationEvent.value.roll* 180 / pi).toStringAsFixed(0)}",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1
                                 ?.copyWith(color: Colors.white),
                           )),
                       Obx(() => Text(
-                            "Y (Pitch): ${sensorController.orientationEvent.value.pitch.toStringAsFixed(2)}",
+                            "Y (Pitch): ${(sensorController.orientationEvent.value.pitch* 180 / pi).toStringAsFixed(0)}",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1
                                 ?.copyWith(color: Colors.white),
                           )),
                       Obx(() => Text(
-                            "Z (Yaw): ${sensorController.orientationEvent.value.yaw.toStringAsFixed(2)}",
+                            "Z (Yaw): ${(sensorController.orientationEvent.value.yaw* 180 / pi).toStringAsFixed(0)}",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1
@@ -212,21 +214,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Obx(() => Text(
-                            "X (Roll): ${sensorController.absoluteOrientationEvent.value.roll.toStringAsFixed(2)}",
+                            "X (Roll): ${(sensorController.absoluteOrientationEvent.value.roll* 180 /pi).toStringAsFixed(0)}",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1
                                 ?.copyWith(color: Colors.white),
                           )),
                       Obx(() => Text(
-                            "Y (Pitch): ${sensorController.absoluteOrientationEvent.value.pitch.toStringAsFixed(2)}",
+                            "Y (Pitch): ${(sensorController.absoluteOrientationEvent.value.pitch * 180 / pi).toStringAsFixed(0)}",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1
                                 ?.copyWith(color: Colors.white),
                           )),
                       Obx(() => Text(
-                            "Z (Yaw): ${sensorController.absoluteOrientationEvent.value.yaw.toStringAsFixed(2)}",
+                            "Z (Yaw): ${(sensorController.absoluteOrientationEvent.value.yaw * 180 / pi).toStringAsFixed(0)}",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1

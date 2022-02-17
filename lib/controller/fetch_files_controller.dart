@@ -92,7 +92,7 @@ class FetchFilesController extends GetxController {
     // print(absoluteOrientation);
 
     AngleCalculator angleCalculations = AngleCalculator(
-        yaw: double.parse(absoluteOrientation['yaw'].toString()),
+        yaw: double.parse(absoluteOrientation['yaw']),
         roll: double.parse(absoluteOrientation['roll'].toString()),
         pitch: double.parse(absoluteOrientation['pitch'].toString()));
 

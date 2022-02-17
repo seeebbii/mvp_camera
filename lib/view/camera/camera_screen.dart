@@ -184,9 +184,9 @@ class _CameraScreenState extends State<CameraScreen>
 
 
         Map<String, dynamic> absoluteOrientation = {
-          "roll": sensorController.absoluteOrientationEvent.value.roll.toStringAsFixed(3),
-          "pitch": sensorController.absoluteOrientationEvent.value.pitch.toStringAsFixed(3),
-          "yaw": sensorController.absoluteOrientationEvent.value.yaw.toStringAsFixed(3),
+          "roll": (sensorController.absoluteOrientationEvent.value.roll * 180 /pi).toStringAsFixed(0),
+          "pitch": (sensorController.absoluteOrientationEvent.value.pitch * 180 /pi).toStringAsFixed(0),
+          "yaw": (sensorController.absoluteOrientationEvent.value.yaw * 180 / pi).toStringAsFixed(0),
         };
 
 
