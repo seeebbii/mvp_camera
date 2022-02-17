@@ -196,9 +196,9 @@ class MapController extends GetxController {
       j = currentIndex == 0 ? currentIndex : currentIndex-1;
       // print("VALUE OF J: $j");
 
-      if (files[currentIndex].angleCalculations.pitch - files[j].angleCalculations.pitch < 15 &&
-          files[currentIndex].angleCalculations.roll - files[j].angleCalculations.roll < 15 &&
-         files[currentIndex].angleCalculations.yaw - files[j].angleCalculations.yaw < 15){
+      if (files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() < 15 &&
+          files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() < 15 &&
+         files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() < 15){
         // print("RedBox");
         flag = true;
       }else{
@@ -207,24 +207,6 @@ class MapController extends GetxController {
       }
       return flag;
     }
-
-
-      // for(int j = 0; j < files.length ; j++){
-      //   print("INNER LOOP: $j");
-      //   if(j != currentIndex){
-      //     if (double.parse(files[currentIndex].angleCalculations.pitch.toString()).abs() - double.parse(files[j].angleCalculations.pitch.toString()).abs() < 15 &&
-      //         double.parse(files[currentIndex].angleCalculations.roll.toString()).abs() - double.parse(files[j].angleCalculations.roll.toString()).abs() < 15 &&
-      //         double.parse(files[currentIndex].angleCalculations.yaw.toString()).abs() - double.parse(files[j].angleCalculations.yaw.toString()).abs() < 15){
-      //       print("RedBox");
-      //       flag = true;
-      //     }else{
-      //       print("GreenBox");
-      //       flag = false;
-      //     }
-      //   }
-      // }
-
-
     catch(e){
       print("ERROR FROM CALCULATION: $e");
       return true;
