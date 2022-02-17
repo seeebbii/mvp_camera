@@ -61,8 +61,8 @@ class SensorController extends GetxController {
     Directory csvDirectory = await Directory(extDir!.path + "/csv/$currProject")
         .create(recursive: true);
     // SAVING CSV FILE
-    var rng = Random();
-    File file = File(csvDirectory.path + "/${rng.nextInt(100)}.csv");
+    // var rng = Random();
+    File file = File(csvDirectory.path + "/${DateFormat('MM:dd:yyyy').format(DateTime.now()).toString()}-${DateFormat('hh:mm:ss').format(DateTime.now()).toString()}.csv");
     file.writeAsStringSync(csv, mode: FileMode.append);
 
     // CLEARING DATA AFTER SAVING

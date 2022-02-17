@@ -17,6 +17,7 @@ import 'package:flutter_exif_plugin/flutter_exif_plugin.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:metadata/metadata.dart' as meta;
 import 'package:mvp_camera/app/constant/controllers.dart';
 import 'package:mvp_camera/app/router/router_generator.dart';
@@ -192,7 +193,7 @@ class _CameraScreenState extends State<CameraScreen>
 
         await myCameraController.controller.value.takePicture().then((xFile){
           File newFile = File(
-              "${myCameraController.projectDirectory.path}/${DateTime.now()}%${jsonEncode(gyroScopeInfo)}%${jsonEncode(absoluteOrientation)}.jpeg");
+              "${myCameraController.projectDirectory.path}/${DateFormat('MM:dd:yyyy').format(DateTime.now()).toString()}-${DateFormat('hh:mm:ss').format(DateTime.now()).toString()}%${jsonEncode(gyroScopeInfo)}%${jsonEncode(absoluteOrientation)}.jpeg");
 
           xFile.saveTo(newFile.path).then((value){
             if(Platform.isIOS){
