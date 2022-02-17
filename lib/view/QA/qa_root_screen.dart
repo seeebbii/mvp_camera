@@ -10,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../app/constant/controllers.dart';
+import '../../app/utils/angle_calculator.dart';
 import '../../app/utils/colors.dart';
 import '../../app/utils/dialogs.dart';
 
@@ -224,6 +225,10 @@ class _QaRootScreenState extends State<QaRootScreen> {
                         return;
                       }
                       Dialogs.showLoadingDialog(context);
+
+                      // REMOVING THE DATA OF PREVIOUS FILE CAPTURED
+                      myCameraController.tempAbsoluteOrientation.value = AngleCalculator(roll: 0, yaw: 0, pitch: 0);
+
                       WidgetsBinding.instance?.addPostFrameCallback((duration) {
                         myCameraController.projectNameController.value.text =
                             value;

@@ -1431,6 +1431,10 @@ class _CameraScreenState extends State<CameraScreen>
         overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
     // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     if(isCapturingImages){stopCapturingImages();}
+
+    // REMOVING THE DATA OF PREVIOUS FILE CAPTURED
+    myCameraController.tempAbsoluteOrientation.value = AngleCalculator(roll: 0, yaw: 0, pitch: 0);
+
     super.dispose();
   }
 
