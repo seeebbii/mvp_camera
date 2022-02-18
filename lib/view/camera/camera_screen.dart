@@ -435,14 +435,13 @@ class _CameraScreenState extends State<CameraScreen>
                           Container(
                             padding: EdgeInsets.all(10.r),
                             decoration: BoxDecoration(
-                              color: myCameraController.redGreenIndicatorCurrentImage.value ? Colors.red.shade700 : Colors.green.shade700,
+                              color: checkIndicatorColor(myCameraController.redGreenIndicatorCurrentImage.value),
                               border: Border.all(color: Colors.black54),
                               borderRadius: BorderRadius.circular(15),
                             ),
                           ),
-
                           SizedBox(width: 0.01.sw,),
-                          Text(myCameraController.redGreenIndicatorCurrentImage.value ?  'Stop' : "Pass", style: Theme.of(context).textTheme.headline1?.copyWith(color: Colors.white, fontSize: 17.sp),),
+                          // Text(myCameraController.redGreenIndicatorCurrentImage.value ?  'Stop' : "Pass", style: Theme.of(context).textTheme.headline1?.copyWith(color: Colors.white, fontSize: 17.sp),),
 
                         ],
                       )),
@@ -838,15 +837,13 @@ class _CameraScreenState extends State<CameraScreen>
                       Container(
                         padding: EdgeInsets.all(10.r),
                         decoration: BoxDecoration(
-                          color: myCameraController.redGreenIndicatorCurrentImage.value ? Colors.red.shade700 : Colors.green.shade700,
+                          color: checkIndicatorColor(myCameraController.redGreenIndicatorCurrentImage.value),
                           border: Border.all(color: Colors.black54),
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-
                       SizedBox(width: 0.01.sw,),
-                      Text( myCameraController.redGreenIndicatorCurrentImage.value ?  'Stop' : "Pass", style: Theme.of(context).textTheme.headline1?.copyWith(color: Colors.white, fontSize: 17.sp),),
-
+                      // Text( myCameraController.redGreenIndicatorCurrentImage.value ?  'Stop' : "Pass", style: Theme.of(context).textTheme.headline1?.copyWith(color: Colors.white, fontSize: 17.sp),),
                     ],
                   )),
                 ),
@@ -1463,26 +1460,48 @@ class _CameraScreenState extends State<CameraScreen>
   }
 
   // CALCULATE WHETHER THE CAPTURED IMAGE WAS GREEN OR RED
-  static bool calculateImageAngle(AngleCalculator previousImage, AngleCalculator currentImage) {
+  static String calculateImageAngle(AngleCalculator previousImage, AngleCalculator currentImage) {
 
     try{
-      bool flag = false;
+      String flag = 'green';
 
       if (currentImage.pitch.abs() - previousImage.pitch.abs() < 15 &&
           currentImage.roll.abs() - previousImage.roll.abs() < 15 &&
           currentImage.yaw.abs() - previousImage.yaw.abs() < 15){
         // print("RedBox");
-        flag = true;
-      }else{
+        flag = "green";
+      }else if(currentImage.pitch.abs() - previousImage.pitch.abs() >=15 || currentImage.pitch.abs() - previousImage.pitch.abs() <=25  &&
+          currentImage.roll.abs() - previousImage.roll.abs() >=15 || currentImage.roll.abs() - previousImage.roll.abs() <=25 &&
+          currentImage.yaw.abs() - previousImage.yaw.abs() >=15|| currentImage.yaw.abs() - previousImage.yaw.abs() <=25){
         // print("GreenBox");
-        flag = false;
+        flag = "yellow";
+      }else if(currentImage.pitch.abs() - previousImage.pitch.abs() > 25 &&
+          currentImage.roll.abs() - previousImage.roll.abs() > 25 &&
+          currentImage.yaw.abs() - previousImage.yaw.abs() > 25){
+        flag = "red";
       }
       return flag;
     }
     catch(e){
       print("ERROR FROM CALCULATION: $e");
-      return true;
+      return 'red';
     }
+  }
+
+  Color checkIndicatorColor(String calculationResult){
+    Color currentColor = Colors.green.shade800;
+    switch(calculationResult){
+      case "green":
+        currentColor = Colors.green.shade800;
+        break;
+      case "yellow":
+        currentColor = Colors.yellow.shade800;
+        break;
+      case "red":
+        currentColor = Colors.red.shade800;
+        break;
+    }
+    return currentColor;
   }
 
   // }
