@@ -226,6 +226,14 @@ class _CameraScreenState extends State<CameraScreen>
           });
         });
 
+        AngleCalculator currentImage = AngleCalculator(roll: double.parse(sensorController.absoluteOrientationEvent.value.roll.toStringAsFixed(0)) * 180 /pi,
+            yaw: double.parse(sensorController.absoluteOrientationEvent.value.yaw.toStringAsFixed(0)) * 180 /pi, pitch: double.parse(sensorController.absoluteOrientationEvent.value.pitch.toStringAsFixed(0)) * 180 /pi);
+
+        myCameraController.redGreenIndicatorCurrentImage.value = calculateImageAngle(myCameraController.tempAbsoluteOrientation.value, currentImage);
+
+        print("PREVIOUS ABSOLUTE ORIENTATION: ${myCameraController.tempAbsoluteOrientation.value}");
+        print("CURRENT ABSOLUTE ORIENTATION: $currentImage");
+        print("INDICATOR: ${ myCameraController.redGreenIndicatorCurrentImage.value}");
 
         // SETTING BEEP TO TRUE EVERY TIME THE PICTURE IS CLICKED
         if (myCameraController.captureBeep.value) {
@@ -427,14 +435,14 @@ class _CameraScreenState extends State<CameraScreen>
                           Container(
                             padding: EdgeInsets.all(10.r),
                             decoration: BoxDecoration(
-                              color: calculateImageAngle(myCameraController.tempAbsoluteOrientation.value) ? Colors.red.shade700 : Colors.green.shade700,
+                              color: myCameraController.redGreenIndicatorCurrentImage.value ? Colors.red.shade700 : Colors.green.shade700,
                               border: Border.all(color: Colors.black54),
                               borderRadius: BorderRadius.circular(15),
                             ),
                           ),
 
                           SizedBox(width: 0.01.sw,),
-                          Text(calculateImageAngle(myCameraController.tempAbsoluteOrientation.value) ?  'Stop' : "Pass", style: Theme.of(context).textTheme.headline1?.copyWith(color: Colors.white, fontSize: 17.sp),),
+                          Text(myCameraController.redGreenIndicatorCurrentImage.value ?  'Stop' : "Pass", style: Theme.of(context).textTheme.headline1?.copyWith(color: Colors.white, fontSize: 17.sp),),
 
                         ],
                       )),
@@ -830,14 +838,14 @@ class _CameraScreenState extends State<CameraScreen>
                       Container(
                         padding: EdgeInsets.all(10.r),
                         decoration: BoxDecoration(
-                          color: calculateImageAngle(myCameraController.tempAbsoluteOrientation.value) ? Colors.red.shade700 : Colors.green.shade700,
+                          color: myCameraController.redGreenIndicatorCurrentImage.value ? Colors.red.shade700 : Colors.green.shade700,
                           border: Border.all(color: Colors.black54),
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
 
                       SizedBox(width: 0.01.sw,),
-                      Text(calculateImageAngle(myCameraController.tempAbsoluteOrientation.value) ?  'Stop' : "Pass", style: Theme.of(context).textTheme.headline1?.copyWith(color: Colors.white, fontSize: 17.sp),),
+                      Text( myCameraController.redGreenIndicatorCurrentImage.value ?  'Stop' : "Pass", style: Theme.of(context).textTheme.headline1?.copyWith(color: Colors.white, fontSize: 17.sp),),
 
                     ],
                   )),
@@ -1455,12 +1463,7 @@ class _CameraScreenState extends State<CameraScreen>
   }
 
   // CALCULATE WHETHER THE CAPTURED IMAGE WAS GREEN OR RED
-  static bool calculateImageAngle(AngleCalculator previousImage) {
-    Get.lazyPut(() => SensorController());
-    final sensorController = Get.find<SensorController>();
-
-    AngleCalculator currentImage = AngleCalculator(roll: sensorController.absoluteOrientationEvent.value.roll * 180 /pi,
-        yaw: sensorController.absoluteOrientationEvent.value.yaw * 180 /pi, pitch: sensorController.absoluteOrientationEvent.value.pitch * 180 /pi);
+  static bool calculateImageAngle(AngleCalculator previousImage, AngleCalculator currentImage) {
 
     try{
       bool flag = false;

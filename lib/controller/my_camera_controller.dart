@@ -47,6 +47,7 @@ class MyCameraController extends GetxController {
   // FOR DISPLAYING GREEN OR RED (INDICATOR) ON CAMERA SCREEN
 
   Rx<AngleCalculator> tempAbsoluteOrientation = AngleCalculator(roll: 0, yaw: 0, pitch: 0).obs;
+  Rx<bool> redGreenIndicatorCurrentImage = false.obs;
 
   Future<void> changeProjectDirectory(String project)async{
     if(Platform.isAndroid){
