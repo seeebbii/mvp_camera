@@ -114,6 +114,7 @@ class MapController extends GetxController {
     // EDITING MARKER BITMAP
     final Uint8List? redBox = await getBytesFromAsset(ImagePaths.redBox, 35);
     final Uint8List? greenBox = await getBytesFromAsset(ImagePaths.greenBox, 35);
+    final Uint8List? yellowBox = await getBytesFromAsset(ImagePaths.yellowBox, 35);
 
     for (int i = 0; i < files.length; i++) {
 
@@ -199,6 +200,24 @@ class MapController extends GetxController {
       j = currentIndex == 0 ? currentIndex : currentIndex-1;
       // print("VALUE OF J: $j");
 
+      // TODO :: NEW CALCULATION
+      // if (files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() < 15 &&
+      //     files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() < 15 &&
+      //     files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() < 15){
+      //   // print("RedBox");
+      //   flag = "green";
+      // }else if(files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() >=15 || files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() <=25  &&
+      //     files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() >=15 || files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() <=25 &&
+      //     files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() >=15|| files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() <=25){
+      //   // print("GreenBox");
+      //   flag = "yellow";
+      // }else if(files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() > 25 &&
+      //     files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() > 25 &&
+      //     files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() > 25){
+      //   flag = "red";
+      // }
+
+      // TODO :: OLD CALCULATION
       if (files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() < 15 &&
           files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() < 15 &&
          files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() < 15){
@@ -212,7 +231,7 @@ class MapController extends GetxController {
     }
     catch(e){
       print("ERROR FROM CALCULATION: $e");
-      return true;
+      return false;
     }
   }
 

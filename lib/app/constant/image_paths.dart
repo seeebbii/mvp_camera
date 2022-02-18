@@ -10,6 +10,7 @@ class ImagePaths {
   static const String boxLogo = "$ICON_PATH/box.png";
   static const String redBox = "$ICON_PATH/red.png";
   static const String greenBox = "$ICON_PATH/green.png";
+  static const String yellowBox = "$ICON_PATH/yellow.png";
 
 // TODO :: IMAGES
   static const String mainSplash = "$IMAGES_PATH/";
