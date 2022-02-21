@@ -48,16 +48,11 @@ class _CameraScreenState extends State<CameraScreen>
   // final emptyAlbum = Album.fromJson(
   //     const {'id': 'null', 'count': 0, 'mediumType': 'image', 'name': 'null'});
 
-  // EMPTY LIST FOR STORING TWO FILES ONLY
-
-
   double _currentScale = 1.0;
   double _baseScale = 1.0;
   late PermissionStatus status;
   Timer? timer;
-
   bool isCapturingImages = false;
-
   int flashIndex = 0;
   List<Icon> listOfFlashButtons = [
     Icon(
@@ -77,7 +72,7 @@ class _CameraScreenState extends State<CameraScreen>
     ),
   ];
 
-  // SINGLETON CLASS OBJECT
+  // SINGLETON CLASS OBJECT FOR HANDLING FILE (ADDING EXIF DATA)
   final HandleFile handleFile = HandleFile();
 
   void onNewCameraSelected(CameraDescription cameraDescription) async {
