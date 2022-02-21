@@ -208,12 +208,14 @@ class _CameraScreenState extends State<CameraScreen>
             myCameraController.tempAbsoluteOrientation.value = AngleCalculator(roll: double.parse(absoluteOrientation['roll']), yaw: double.parse(absoluteOrientation['yaw']), pitch: double.parse(absoluteOrientation['pitch']));
 
             if(Platform.isIOS){
+              // ADD EXIF DATA FOR IMAGES ON IOS PLATFORM
               handleFile.setFileLatLongForIos(
                   newFile,
                   mapController.userLocation.value.latitude,
                   mapController.userLocation.value.longitude);
             }
             if(Platform.isAndroid){
+              // ADD EXIF DATA FOR IMAGES ON ANDROID PLATFORM
               handleFile.setFileLatLongForAndroid(
                 newFile,
                 mapController.userLocation.value.latitude,
@@ -1464,7 +1466,6 @@ class _CameraScreenState extends State<CameraScreen>
 
     try{
       String flag = 'green';
-
       if (currentImage.pitch.abs() - previousImage.pitch.abs() < 15 &&
           currentImage.roll.abs() - previousImage.roll.abs() < 15 &&
           currentImage.yaw.abs() - previousImage.yaw.abs() < 15){
