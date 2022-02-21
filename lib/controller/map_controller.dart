@@ -118,13 +118,25 @@ class MapController extends GetxController {
 
     for (int i = 0; i < files.length; i++) {
 
-      bool isRed = calculateImageAngle(files, i);
-      print(isRed);
+      String calcColor = calculateImageAngle(files, i);
+      Uint8List? decidedColor;
+      switch(calcColor){
+        case "green":
+          decidedColor = greenBox;
+          break;
+        case "yellow":
+          decidedColor = yellowBox;
+          break;
+        case "red":
+          decidedColor = redBox;
+          break;
+      }
 
       if(i != 0){
         temp.add(
           Marker(
-              icon: isRed ? BitmapDescriptor.fromBytes(redBox!) : BitmapDescriptor.fromBytes(greenBox!),
+              // icon: isRed ? BitmapDescriptor.fromBytes(redBox!) : BitmapDescriptor.fromBytes(greenBox!),
+            icon: BitmapDescriptor.fromBytes(decidedColor!),
               markerId: MarkerId('$i'),
               position: files[i].position,
               infoWindow: InfoWindow(
@@ -185,14 +197,14 @@ class MapController extends GetxController {
     controller.animateCamera(CameraUpdate.newCameraPosition(position));
   }
 
-  static bool calculateImageAngle(List<FileDataModelForIos> files, int currentIndex,) {
+  static String calculateImageAngle(List<FileDataModelForIos> files, int currentIndex,) {
     // X reoresents ROLL
     // Y represents PITCH
     // Z represents YAW
     print(currentIndex);
     int j = 0;
     try{
-      bool flag = false;
+      String flag = "green";
       // print("OUTTER LOOP: $currentIndex");
 
       // WHEN THE I == 0 the J will also be 0 but no calculations will b performed
@@ -201,37 +213,37 @@ class MapController extends GetxController {
       // print("VALUE OF J: $j");
 
       // TODO :: NEW CALCULATION
-      // if (files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() < 15 &&
-      //     files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() < 15 &&
-      //     files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() < 15){
-      //   // print("RedBox");
-      //   flag = "green";
-      // }else if(files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() >=15 || files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() <=25  &&
-      //     files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() >=15 || files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() <=25 &&
-      //     files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() >=15|| files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() <=25){
-      //   // print("GreenBox");
-      //   flag = "yellow";
-      // }else if(files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() > 25 &&
-      //     files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() > 25 &&
-      //     files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() > 25){
-      //   flag = "red";
-      // }
-
-      // TODO :: OLD CALCULATION
       if (files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() < 15 &&
           files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() < 15 &&
-         files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() < 15){
+          files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() < 15){
         // print("RedBox");
-        flag = true;
-      }else{
+        flag = "green";
+      }else if(files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() >=15 || files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() <=25  &&
+          files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() >=15 || files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() <=25 &&
+          files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() >=15|| files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() <=25){
         // print("GreenBox");
-        flag = false;
+        flag = "yellow";
+      }else if(files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() > 25 &&
+          files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() > 25 &&
+          files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() > 25){
+        flag = "red";
       }
+
+      // TODO :: OLD CALCULATION
+      // if (files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() < 15 &&
+      //     files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() < 15 &&
+      //    files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() < 15){
+      //   // print("RedBox");
+      //   flag = true;
+      // }else{
+      //   // print("GreenBox");
+      //   flag = false;
+      // }
       return flag;
     }
     catch(e){
       print("ERROR FROM CALCULATION: $e");
-      return false;
+      return "green";
     }
   }
 

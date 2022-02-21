@@ -1472,7 +1472,7 @@ class _CameraScreenState extends State<CameraScreen>
         flag = "green";
       }else if(currentImage.pitch.abs() - previousImage.pitch.abs() >=15 || currentImage.pitch.abs() - previousImage.pitch.abs() <=25  &&
           currentImage.roll.abs() - previousImage.roll.abs() >=15 || currentImage.roll.abs() - previousImage.roll.abs() <=25 &&
-          currentImage.yaw.abs() - previousImage.yaw.abs() >=15|| currentImage.yaw.abs() - previousImage.yaw.abs() <=25){
+          currentImage.yaw.abs() - previousImage.yaw.abs() >=15 || currentImage.yaw.abs() - previousImage.yaw.abs() <=25){
         // print("GreenBox");
         flag = "yellow";
       }else if(currentImage.pitch.abs() - previousImage.pitch.abs() > 25 &&
