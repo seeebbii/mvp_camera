@@ -226,8 +226,8 @@ class _CameraScreenState extends State<CameraScreen>
           });
         });
 
-        AngleCalculator currentImage = AngleCalculator(roll: double.parse(sensorController.absoluteOrientationEvent.value.roll.toStringAsFixed(0)) * 180 /pi,
-            yaw: double.parse(sensorController.absoluteOrientationEvent.value.yaw.toStringAsFixed(0)) * 180 /pi, pitch: double.parse(sensorController.absoluteOrientationEvent.value.pitch.toStringAsFixed(0)) * 180 /pi);
+        AngleCalculator currentImage = AngleCalculator(roll: double.parse((sensorController.absoluteOrientationEvent.value.roll * 180 /pi).toStringAsFixed(0)),
+            yaw: double.parse((sensorController.absoluteOrientationEvent.value.yaw * 180 /pi).toStringAsFixed(0)), pitch: double.parse((sensorController.absoluteOrientationEvent.value.pitch * 180 /pi).toStringAsFixed(0)));
 
         myCameraController.redGreenIndicatorCurrentImage.value = calculateImageAngle(myCameraController.tempAbsoluteOrientation.value, currentImage);
 
