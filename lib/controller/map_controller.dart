@@ -67,7 +67,6 @@ class MapController extends GetxController {
               accuracy: LocationAccuracy.bestForNavigation));
 
       userLocation.bindStream(_geoLocationStream);
-      print(_geoLocationStream.asBroadcastStream());
       print("USER CURRENT LOCATION: ${userLocation.value}");
     } else {
       await Permission.locationAlways.request();
