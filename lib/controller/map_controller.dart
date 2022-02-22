@@ -41,12 +41,14 @@ class MapController extends GetxController {
   Rx<CameraPosition> currentLocationCameraPosition =
       const CameraPosition(target: LatLng(0.0, 0.0)).obs;
 
-
   static Future<Uint8List?> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))?.buffer.asUint8List();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))
+        ?.buffer
+        .asUint8List();
   }
 
   @override
@@ -61,9 +63,11 @@ class MapController extends GetxController {
 
     if (locationPermission) {
       _geoLocationStream = Geolocator.getPositionStream(
-          locationSettings:
-          const LocationSettings(accuracy: LocationAccuracy.bestForNavigation));
+          locationSettings: const LocationSettings(
+              accuracy: LocationAccuracy.bestForNavigation));
+
       userLocation.bindStream(_geoLocationStream);
+      print(_geoLocationStream.asBroadcastStream());
       print("USER CURRENT LOCATION: ${userLocation.value}");
     } else {
       await Permission.locationAlways.request();
@@ -93,8 +97,10 @@ class MapController extends GetxController {
       markerId += 1;
       temp.add(
         Marker(
-            icon: true ? BitmapDescriptor.defaultMarker : BitmapDescriptor
-                .defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+            icon: true
+                ? BitmapDescriptor.defaultMarker
+                : BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueGreen),
             markerId: MarkerId('$markerId'),
             position: element.position,
             infoWindow: InfoWindow(
@@ -105,7 +111,6 @@ class MapController extends GetxController {
     return temp;
   }
 
-
   static Future<Set<Marker>> getMarkersInAnotherIsolateForIos(
       List<FileDataModelForIos> files) async {
     // print(files);
@@ -113,14 +118,15 @@ class MapController extends GetxController {
 
     // EDITING MARKER BITMAP
     final Uint8List? redBox = await getBytesFromAsset(ImagePaths.redBox, 35);
-    final Uint8List? greenBox = await getBytesFromAsset(ImagePaths.greenBox, 35);
-    final Uint8List? yellowBox = await getBytesFromAsset(ImagePaths.yellowBox, 35);
+    final Uint8List? greenBox =
+        await getBytesFromAsset(ImagePaths.greenBox, 35);
+    final Uint8List? yellowBox =
+        await getBytesFromAsset(ImagePaths.yellowBox, 35);
 
     for (int i = 0; i < files.length; i++) {
-
       String calcColor = calculateImageAngle(files, i);
       Uint8List? decidedColor;
-      switch(calcColor){
+      switch (calcColor) {
         case "green":
           decidedColor = greenBox;
           break;
@@ -132,21 +138,19 @@ class MapController extends GetxController {
           break;
       }
 
-      if(i != 0){
+      if (i != 0) {
         temp.add(
           Marker(
               // icon: isRed ? BitmapDescriptor.fromBytes(redBox!) : BitmapDescriptor.fromBytes(greenBox!),
-            icon: BitmapDescriptor.fromBytes(decidedColor!),
+              icon: BitmapDescriptor.fromBytes(decidedColor!),
               markerId: MarkerId('$i'),
               position: files[i].position,
               infoWindow: InfoWindow(
                 title: '${files[i].absoluteOrientation}',
                 // snippet: "${element.metaData['exif']['UserComment']}"
-              )
-          ),
+              )),
         );
       }
-
     }
 
     return temp;
@@ -161,8 +165,8 @@ class MapController extends GetxController {
       navigationController.goBack();
     } else {
       // ITERATING THROUGH THE FILE AND GETTING [LAT LNG] FROM THEIR INSTANCE VARIABLES FOR SETTING UP MARKERS
-      final listOfFiles = fetchFilesController.filesInCurrentProjectForIos
-          .value;
+      final listOfFiles =
+          fetchFilesController.filesInCurrentProjectForIos.value;
       // imageMarkers.value = await compute(getMarkersInAnotherIsolate, listOfFiles);
       imageMarkers.value = await getMarkersInAnotherIsolateForIos(listOfFiles);
       navigationController.goBack();
@@ -197,35 +201,65 @@ class MapController extends GetxController {
     controller.animateCamera(CameraUpdate.newCameraPosition(position));
   }
 
-  static String calculateImageAngle(List<FileDataModelForIos> files, int currentIndex,) {
+  static String calculateImageAngle(
+    List<FileDataModelForIos> files,
+    int currentIndex,
+  ) {
     // X reoresents ROLL
     // Y represents PITCH
     // Z represents YAW
     print(currentIndex);
     int j = 0;
-    try{
+    try {
       String flag = "green";
       // print("OUTTER LOOP: $currentIndex");
 
       // WHEN THE I == 0 the J will also be 0 but no calculations will b performed
       // WHEN THE I != 0  J will be I-1 i.e the image will be calculated with its previous image
-      j = currentIndex == 0 ? currentIndex : currentIndex-1;
+      j = currentIndex == 0 ? currentIndex : currentIndex - 1;
       // print("VALUE OF J: $j");
 
       // TODO :: NEW CALCULATION
-      if (files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() < 15 &&
-          files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() < 15 &&
-          files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() < 15){
+      if (files[currentIndex].angleCalculations.pitch.abs() -
+                  files[j].angleCalculations.pitch.abs() <
+              15 &&
+          files[currentIndex].angleCalculations.roll.abs() -
+                  files[j].angleCalculations.roll.abs() <
+              15 &&
+          files[currentIndex].angleCalculations.yaw.abs() -
+                  files[j].angleCalculations.yaw.abs() <
+              15) {
         // print("RedBox");
         flag = "green";
-      }else if(files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() >=15 || files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() <=25  &&
-          files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() >=15 || files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() <=25 &&
-          files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() >=15|| files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() <=25){
+      } else if (files[currentIndex].angleCalculations.pitch.abs() -
+                  files[j].angleCalculations.pitch.abs() >=
+              15 ||
+          files[currentIndex].angleCalculations.pitch.abs() -
+                      files[j].angleCalculations.pitch.abs() <=
+                  25 &&
+              files[currentIndex].angleCalculations.roll.abs() -
+                      files[j].angleCalculations.roll.abs() >=
+                  15 ||
+          files[currentIndex].angleCalculations.roll.abs() -
+                      files[j].angleCalculations.roll.abs() <=
+                  25 &&
+              files[currentIndex].angleCalculations.yaw.abs() -
+                      files[j].angleCalculations.yaw.abs() >=
+                  15 ||
+          files[currentIndex].angleCalculations.yaw.abs() -
+                  files[j].angleCalculations.yaw.abs() <=
+              25) {
         // print("GreenBox");
         flag = "yellow";
-      }else if(files[currentIndex].angleCalculations.pitch.abs() - files[j].angleCalculations.pitch.abs() > 25 &&
-          files[currentIndex].angleCalculations.roll.abs() - files[j].angleCalculations.roll.abs() > 25 &&
-          files[currentIndex].angleCalculations.yaw.abs() - files[j].angleCalculations.yaw.abs() > 25){
+      } else if (files[currentIndex].angleCalculations.pitch.abs() -
+                  files[j].angleCalculations.pitch.abs() >
+              25 &&
+          files[currentIndex].angleCalculations.roll.abs() -
+                  files[j].angleCalculations.roll.abs() >
+              25 &&
+          files[currentIndex].angleCalculations.yaw.abs() -
+                  files[j].angleCalculations.yaw.abs() >
+              25) {
         flag = "red";
       }
 
@@ -240,11 +274,9 @@ class MapController extends GetxController {
       //   flag = false;
       // }
       return flag;
-    }
-    catch(e){
+    } catch (e) {
       print("ERROR FROM CALCULATION: $e");
       return "green";
     }
   }
-
 }

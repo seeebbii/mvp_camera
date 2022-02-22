@@ -42,6 +42,8 @@ class HandleFile {
     final sensorController = Get.find<SensorController>();
     var exif = edt.FlutterExif(capturedFile.path);
 
+    print("CURRENT USERS LOCATION: $latitude : $longitude");
+
     Map<String, dynamic> location = {
       "lat": latitude,
       "lng" : longitude,

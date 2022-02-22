@@ -238,6 +238,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 )
               : const SizedBox.shrink()),
+          Obx(() => myCameraController.devLogs.value
+              ? ListTile(
+            title: Text(
+              'Current User Location: ',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline3
+                  ?.copyWith(fontWeight: FontWeight.normal),
+            ),
+            subtitle: Obx(() => Text(
+              "${mapController.userLocation.value}",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  ?.copyWith(color: Colors.white),
+            )),
+          )
+              : const SizedBox.shrink()),
         ],
       ),
     );
