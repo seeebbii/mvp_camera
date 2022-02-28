@@ -81,25 +81,19 @@ class MapController extends GetxController {
     Set<Marker> temp = {};
     int markerId = 0;
     print(files.length);
-    for (var element in files) {
-      // EDITING MARKER BITMAP
-      // ui.Codec codec = await ui.instantiateImageCodec(
-      //     element.imageFile.readAsBytesSync(),
-      //     targetWidth: 100,
-      //     targetHeight: 100);
-      // ui.FrameInfo fi = await codec.getNextFrame();
-      // final Uint8List? markerImage =
-      //     (await fi.image.toByteData(format: ui.ImageByteFormat.png))
-      //         ?.buffer
-      //         .asUint8List();
 
+    // EDITING MARKER BITMAP
+    final Uint8List? redBox = await getBytesFromAsset(ImagePaths.redBox, 35);
+    final Uint8List? greenBox =
+    await getBytesFromAsset(ImagePaths.greenBox, 35);
+    final Uint8List? yellowBox =
+    await getBytesFromAsset(ImagePaths.yellowBox, 35);
+
+    for (var element in files) {
       markerId += 1;
       temp.add(
         Marker(
-            icon: true
-                ? BitmapDescriptor.defaultMarker
-                : BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueGreen),
+            icon: BitmapDescriptor.fromBytes(greenBox!),
             markerId: MarkerId('$markerId'),
             position: element.position,
             infoWindow: InfoWindow(
