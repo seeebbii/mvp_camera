@@ -81,7 +81,25 @@ class FetchFilesController extends GetxController {
     dynamic latLongData = exifData["{GPS}"];
     // print("LATLONGDATA FROM CREATE OBJECT FUNCTION IOS: $latLongData");
     LatLng latLng = const LatLng(0.0, 0.0);
+
+    String latitudeRef = latLongData['LatitudeRef'];
+    String longitudeRef = latLongData['LongitudeRef'];
+
     latLng = LatLng(latLongData['Latitude'], latLongData['Longitude']);
+
+    if(latitudeRef == "S"){
+      latLng = LatLng(0 - double.parse(latLongData['Latitude'].toString()), latLongData['Longitude']);
+    }
+
+    if(latitudeRef == "W"){
+      latLng = LatLng(latLongData['Latitude'], 0 - double.parse(latLongData['Longitude'].toString()));
+    }
+
+
+    // print(latLongData);
+    // print(latLng);
+
+
     // return FileDataModel(imageFile: null);
 
     // FETCHING GYRO INFO FROM NAME OF FILE
@@ -103,7 +121,9 @@ class FetchFilesController extends GetxController {
         position: latLng,
         gyroInfo: gyroInfo,
         absoluteOrientation: absoluteOrientation,
-        angleCalculations: angleCalculations);
+        angleCalculations: angleCalculations,
+        latitudeRef: latitudeRef,
+        longitudeRef: longitudeRef);
   }
 
   Future<void> initializeDeviceStorageInfo() async {
@@ -146,11 +166,13 @@ class FetchFilesController extends GetxController {
     List<FileDataModel> files = <FileDataModel>[];
     List<FileDataModelForIos> iosFile = <FileDataModelForIos>[];
     await Future.wait(tempFiles.map((e) async {
+      print(e);
       if (Platform.isAndroid) {
         FileDataModel obj = await createObject(e.path);
         files.add(obj);
       } else {
         FileDataModelForIos obj = await createObjectForIos(e.path);
+
         iosFile.add(obj);
       }
     })).whenComplete(() async {

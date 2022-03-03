@@ -29,7 +29,9 @@ class FileDataModelForIos {
   Map<String, dynamic> gyroInfo;
   Map<String, dynamic> absoluteOrientation;
   AngleCalculator angleCalculations;
+  String latitudeRef;
+  String longitudeRef;
 
-  FileDataModelForIos({ required this.imageFile, required this.fileData, required this.metaData, required this.position, required this.gyroInfo, required this.absoluteOrientation, required this.angleCalculations});
+  FileDataModelForIos({ required this.imageFile, required this.fileData, required this.metaData, required this.position, required this.gyroInfo, required this.absoluteOrientation, required this.angleCalculations, required this.latitudeRef, required this.longitudeRef});
 // Map<String, dynamic> toJson() => {'id':id, 'name':name };
 }
