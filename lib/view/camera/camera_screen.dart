@@ -166,11 +166,14 @@ class _CameraScreenState extends State<CameraScreen>
           return;
         }
         // INTERNET CONNECTION STATUS
-        if(connectionController.isOnline.value == false){
-          Dialogs.openErrorSnackBar(context, 'Device not connected to internet');
-          stopCapturingImages();
-          return;
-        }
+        // NOT REQUIRED
+
+        // if(connectionController.isOnline.value == false){
+        //   Dialogs.openErrorSnackBar(context, 'Device not connected to internet');
+        //   stopCapturingImages();
+        //   return;
+        // }
+
         // LOCATION ALWAYS STATUS CHECK
         if(locationPermission == false){
           Dialogs.openErrorSnackBar(context, 'Allow application to access location always from settings');
