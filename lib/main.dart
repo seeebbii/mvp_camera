@@ -10,6 +10,7 @@ import 'package:wakelock/wakelock.dart';
 import 'app/constant/image_paths.dart';
 import 'app/router/router_generator.dart';
 import 'app/theme/app_theme.dart';
+import 'app/utils/shared_pref.dart';
 import 'controller/connection_controller.dart';
 import 'controller/my_camera_controller.dart';
 import 'controller/sensor_controller.dart';
@@ -23,7 +24,7 @@ void main() async {
     AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
   }
   Get.put(ConnectionController()).startMonitoring();
-
+  await SharedPref.init();
   runApp(const MyApp());
 }
 

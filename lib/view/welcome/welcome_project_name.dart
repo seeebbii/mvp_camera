@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mvp_camera/app/constant/controllers.dart';
@@ -71,7 +72,6 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: backgroundColor,
       body: SingleChildScrollView(
         child: Form(

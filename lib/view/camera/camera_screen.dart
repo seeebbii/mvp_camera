@@ -25,6 +25,7 @@ import 'package:mvp_camera/app/utils/angle_calculator.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
 import 'package:mvp_camera/app/utils/dialogs.dart';
 import 'package:mvp_camera/app/utils/handle_file.dart';
+import 'package:mvp_camera/app/utils/shared_pref.dart';
 import 'package:mvp_camera/view/QA/qa_root_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -229,7 +230,9 @@ class _CameraScreenState extends State<CameraScreen>
         AngleCalculator currentImage = AngleCalculator(roll: double.parse((sensorController.absoluteOrientationEvent.value.roll * 180 /pi).toStringAsFixed(0)),
             yaw: double.parse((sensorController.absoluteOrientationEvent.value.yaw * 180 /pi).toStringAsFixed(0)), pitch: double.parse((sensorController.absoluteOrientationEvent.value.pitch * 180 /pi).toStringAsFixed(0)));
 
-        myCameraController.redGreenIndicatorCurrentImage.value = calculateImageAngle(myCameraController.tempAbsoluteOrientation.value, currentImage);
+        if(myCameraController.angleCalculator.value){
+          myCameraController.redGreenIndicatorCurrentImage.value = calculateImageAngle(myCameraController.tempAbsoluteOrientation.value, currentImage);
+        }
 
         print("PREVIOUS ABSOLUTE ORIENTATION: ${myCameraController.tempAbsoluteOrientation.value}");
         print("CURRENT ABSOLUTE ORIENTATION: $currentImage");
@@ -432,6 +435,7 @@ class _CameraScreenState extends State<CameraScreen>
                               120,
                       child: Obx(()=>Row(
                         children: [
+                          myCameraController.angleCalculator.value ?
                           Container(
                             padding: EdgeInsets.all(10.r),
                             decoration: BoxDecoration(
@@ -439,7 +443,7 @@ class _CameraScreenState extends State<CameraScreen>
                               border: Border.all(color: Colors.black54),
                               borderRadius: BorderRadius.circular(15),
                             ),
-                          ),
+                          ) : const SizedBox.shrink(),
                           SizedBox(width: 0.01.sw,),
                           // Text(myCameraController.redGreenIndicatorCurrentImage.value ?  'Stop' : "Pass", style: Theme.of(context).textTheme.headline1?.copyWith(color: Colors.white, fontSize: 17.sp),),
 
@@ -834,6 +838,7 @@ class _CameraScreenState extends State<CameraScreen>
                           360,
                   child: Obx(()=>Row(
                     children: [
+                      myCameraController.angleCalculator.value ?
                       Container(
                         padding: EdgeInsets.all(10.r),
                         decoration: BoxDecoration(
@@ -841,7 +846,7 @@ class _CameraScreenState extends State<CameraScreen>
                           border: Border.all(color: Colors.black54),
                           borderRadius: BorderRadius.circular(15),
                         ),
-                      ),
+                      ) : const SizedBox.shrink(),
                       SizedBox(width: 0.01.sw,),
                       // Text( myCameraController.redGreenIndicatorCurrentImage.value ?  'Stop' : "Pass", style: Theme.of(context).textTheme.headline1?.copyWith(color: Colors.white, fontSize: 17.sp),),
                     ],
@@ -1454,6 +1459,9 @@ class _CameraScreenState extends State<CameraScreen>
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
         overlays: []);
+
+    myCameraController.captureBeep.value = SharedPref().pref.getBool('beep') ?? true;
+    myCameraController.angleCalculator.value = SharedPref().pref.getBool('calculate') ?? false;
 
     super.initState();
   }

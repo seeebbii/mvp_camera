@@ -19,7 +19,8 @@ class MyCameraController extends GetxController {
   Directory projectDirectory = Directory('');
 
   Rx<bool> captureBeep = true.obs;
-  Rx<bool> devLogs = false.obs;
+  Rx<bool> angleCalculator = true.obs;
+  // Rx<bool> devLogs = false.obs;
 
   var listOfImagesFromAlbum = <Medium>[].obs;
 

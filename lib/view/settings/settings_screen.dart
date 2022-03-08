@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
+import 'package:mvp_camera/app/utils/shared_pref.dart';
 
 import '../../app/constant/controllers.dart';
 import '../../app/utils/angle_calculator.dart';
@@ -19,6 +20,9 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+
+
+
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
@@ -35,8 +39,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Get.lazyPut(() => SensorController());
-    final sensorController = Get.find<SensorController>();
+    // Get.lazyPut(() => SensorController());
+    // final sensorController = Get.find<SensorController>();
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -71,191 +75,208 @@ class _SettingsScreenState extends State<SettingsScreen> {
             trailing: Obx(() => CupertinoSwitch(
                   onChanged: (bool value) {
                     myCameraController.captureBeep.value = value;
+                    SharedPref().pref.setBool('beep', value);
                   },
                   value: myCameraController.captureBeep.value,
                 )),
           ),
           ListTile(
             title: Text(
-              'Show dev logs',
+              'Calculate Angle',
               style: Theme.of(context)
                   .textTheme
                   .headline3
                   ?.copyWith(fontWeight: FontWeight.normal),
             ),
             trailing: Obx(() => CupertinoSwitch(
-                  onChanged: (bool value) {
-                    myCameraController.devLogs.value = value;
-                  },
-                  value: myCameraController.devLogs.value,
-                )),
-          ),
-          Obx(() => myCameraController.devLogs.value
-              ? ListTile(
-                  title: Text(
-                    'Gyroscope Events',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline3
-                        ?.copyWith(fontWeight: FontWeight.normal),
-                  ),
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Obx(() => Text(
-                            "X: ${sensorController.gyroscopeEvent.value.x.toStringAsFixed(2)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: Colors.white),
-                          )),
-                      Obx(() => Text(
-                            "Y: ${sensorController.gyroscopeEvent.value.y.toStringAsFixed(2)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: Colors.white),
-                          )),
-                      Obx(() => Text(
-                            "Z: ${sensorController.gyroscopeEvent.value.z.toStringAsFixed(2)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: Colors.white),
-                          )),
-                    ],
-                  ),
-                )
-              : const SizedBox.shrink()),
-          Obx(() => myCameraController.devLogs.value
-              ? ListTile(
-                  title: Text(
-                    'Accelerometer Events',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline3
-                        ?.copyWith(fontWeight: FontWeight.normal),
-                  ),
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Obx(() => Text(
-                            "X: ${sensorController.accelerometerEvent.value.x.toStringAsFixed(2)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: Colors.white),
-                          )),
-                      Obx(() => Text(
-                            "Y: ${sensorController.accelerometerEvent.value.y.toStringAsFixed(2)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: Colors.white),
-                          )),
-                      Obx(() => Text(
-                            "Z: ${sensorController.accelerometerEvent.value.z.toStringAsFixed(2)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: Colors.white),
-                          )),
-                    ],
-                  ),
-                )
-              : const SizedBox.shrink()),
-          Obx(() => myCameraController.devLogs.value
-              ? ListTile(
-                  title: Text(
-                    'Orientation',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline3
-                        ?.copyWith(fontWeight: FontWeight.normal),
-                  ),
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Obx(() => Text(
-                            "X (Roll): ${(sensorController.orientationEvent.value.roll* 180 / pi).toStringAsFixed(0)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: Colors.white),
-                          )),
-                      Obx(() => Text(
-                            "Y (Pitch): ${(sensorController.orientationEvent.value.pitch* 180 / pi).toStringAsFixed(0)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: Colors.white),
-                          )),
-                      Obx(() => Text(
-                            "Z (Yaw): ${(sensorController.orientationEvent.value.yaw* 180 / pi).toStringAsFixed(0)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: Colors.white),
-                          )),
-                    ],
-                  ),
-                )
-              : const SizedBox.shrink()),
-          Obx(() => myCameraController.devLogs.value
-              ? ListTile(
-                  title: Text(
-                    'Absolute Orientation',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline3
-                        ?.copyWith(fontWeight: FontWeight.normal),
-                  ),
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Obx(() => Text(
-                            "X (Roll): ${(sensorController.absoluteOrientationEvent.value.roll* 180 /pi).toStringAsFixed(0)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: Colors.white),
-                          )),
-                      Obx(() => Text(
-                            "Y (Pitch): ${(sensorController.absoluteOrientationEvent.value.pitch * 180 / pi).toStringAsFixed(0)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: Colors.white),
-                          )),
-                      Obx(() => Text(
-                            "Z (Yaw): ${(sensorController.absoluteOrientationEvent.value.yaw * 180 / pi).toStringAsFixed(0)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: Colors.white),
-                          )),
-                    ],
-                  ),
-                )
-              : const SizedBox.shrink()),
-          Obx(() => myCameraController.devLogs.value
-              ? ListTile(
-            title: Text(
-              'Current User Location: ',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline3
-                  ?.copyWith(fontWeight: FontWeight.normal),
-            ),
-            subtitle: Obx(() => Text(
-              "${mapController.userLocation.value}",
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1
-                  ?.copyWith(color: Colors.white),
+              onChanged: (bool value) {
+                myCameraController.angleCalculator.value = value;
+                SharedPref().pref.setBool('calculate', value);
+              },
+              value: myCameraController.angleCalculator.value,
             )),
-          )
-              : const SizedBox.shrink()),
+          ),
+          // ListTile(
+          //   title: Text(
+          //     'Show dev logs',
+          //     style: Theme.of(context)
+          //         .textTheme
+          //         .headline3
+          //         ?.copyWith(fontWeight: FontWeight.normal),
+          //   ),
+          //   trailing: Obx(() => CupertinoSwitch(
+          //         onChanged: (bool value) {
+          //           myCameraController.devLogs.value = value;
+          //         },
+          //         value: myCameraController.devLogs.value,
+          //       )),
+          // ),
+          // Obx(() => myCameraController.devLogs.value
+          //     ? ListTile(
+          //         title: Text(
+          //           'Gyroscope Events',
+          //           style: Theme.of(context)
+          //               .textTheme
+          //               .headline3
+          //               ?.copyWith(fontWeight: FontWeight.normal),
+          //         ),
+          //         subtitle: Row(
+          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //           children: [
+          //             Obx(() => Text(
+          //                   "X: ${sensorController.gyroscopeEvent.value.x.toStringAsFixed(2)}",
+          //                   style: Theme.of(context)
+          //                       .textTheme
+          //                       .bodyText1
+          //                       ?.copyWith(color: Colors.white),
+          //                 )),
+          //             Obx(() => Text(
+          //                   "Y: ${sensorController.gyroscopeEvent.value.y.toStringAsFixed(2)}",
+          //                   style: Theme.of(context)
+          //                       .textTheme
+          //                       .bodyText1
+          //                       ?.copyWith(color: Colors.white),
+          //                 )),
+          //             Obx(() => Text(
+          //                   "Z: ${sensorController.gyroscopeEvent.value.z.toStringAsFixed(2)}",
+          //                   style: Theme.of(context)
+          //                       .textTheme
+          //                       .bodyText1
+          //                       ?.copyWith(color: Colors.white),
+          //                 )),
+          //           ],
+          //         ),
+          //       )
+          //     : const SizedBox.shrink()),
+          // Obx(() => myCameraController.devLogs.value
+          //     ? ListTile(
+          //         title: Text(
+          //           'Accelerometer Events',
+          //           style: Theme.of(context)
+          //               .textTheme
+          //               .headline3
+          //               ?.copyWith(fontWeight: FontWeight.normal),
+          //         ),
+          //         subtitle: Row(
+          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //           children: [
+          //             Obx(() => Text(
+          //                   "X: ${sensorController.accelerometerEvent.value.x.toStringAsFixed(2)}",
+          //                   style: Theme.of(context)
+          //                       .textTheme
+          //                       .bodyText1
+          //                       ?.copyWith(color: Colors.white),
+          //                 )),
+          //             Obx(() => Text(
+          //                   "Y: ${sensorController.accelerometerEvent.value.y.toStringAsFixed(2)}",
+          //                   style: Theme.of(context)
+          //                       .textTheme
+          //                       .bodyText1
+          //                       ?.copyWith(color: Colors.white),
+          //                 )),
+          //             Obx(() => Text(
+          //                   "Z: ${sensorController.accelerometerEvent.value.z.toStringAsFixed(2)}",
+          //                   style: Theme.of(context)
+          //                       .textTheme
+          //                       .bodyText1
+          //                       ?.copyWith(color: Colors.white),
+          //                 )),
+          //           ],
+          //         ),
+          //       )
+          //     : const SizedBox.shrink()),
+          // Obx(() => myCameraController.devLogs.value
+          //     ? ListTile(
+          //         title: Text(
+          //           'Orientation',
+          //           style: Theme.of(context)
+          //               .textTheme
+          //               .headline3
+          //               ?.copyWith(fontWeight: FontWeight.normal),
+          //         ),
+          //         subtitle: Row(
+          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //           children: [
+          //             Obx(() => Text(
+          //                   "X (Roll): ${(sensorController.orientationEvent.value.roll* 180 / pi).toStringAsFixed(0)}",
+          //                   style: Theme.of(context)
+          //                       .textTheme
+          //                       .bodyText1
+          //                       ?.copyWith(color: Colors.white),
+          //                 )),
+          //             Obx(() => Text(
+          //                   "Y (Pitch): ${(sensorController.orientationEvent.value.pitch* 180 / pi).toStringAsFixed(0)}",
+          //                   style: Theme.of(context)
+          //                       .textTheme
+          //                       .bodyText1
+          //                       ?.copyWith(color: Colors.white),
+          //                 )),
+          //             Obx(() => Text(
+          //                   "Z (Yaw): ${(sensorController.orientationEvent.value.yaw* 180 / pi).toStringAsFixed(0)}",
+          //                   style: Theme.of(context)
+          //                       .textTheme
+          //                       .bodyText1
+          //                       ?.copyWith(color: Colors.white),
+          //                 )),
+          //           ],
+          //         ),
+          //       )
+          //     : const SizedBox.shrink()),
+          // Obx(() => myCameraController.devLogs.value
+          //     ? ListTile(
+          //         title: Text(
+          //           'Absolute Orientation',
+          //           style: Theme.of(context)
+          //               .textTheme
+          //               .headline3
+          //               ?.copyWith(fontWeight: FontWeight.normal),
+          //         ),
+          //         subtitle: Row(
+          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //           children: [
+          //             Obx(() => Text(
+          //                   "X (Roll): ${(sensorController.absoluteOrientationEvent.value.roll* 180 /pi).toStringAsFixed(0)}",
+          //                   style: Theme.of(context)
+          //                       .textTheme
+          //                       .bodyText1
+          //                       ?.copyWith(color: Colors.white),
+          //                 )),
+          //             Obx(() => Text(
+          //                   "Y (Pitch): ${(sensorController.absoluteOrientationEvent.value.pitch * 180 / pi).toStringAsFixed(0)}",
+          //                   style: Theme.of(context)
+          //                       .textTheme
+          //                       .bodyText1
+          //                       ?.copyWith(color: Colors.white),
+          //                 )),
+          //             Obx(() => Text(
+          //                   "Z (Yaw): ${(sensorController.absoluteOrientationEvent.value.yaw * 180 / pi).toStringAsFixed(0)}",
+          //                   style: Theme.of(context)
+          //                       .textTheme
+          //                       .bodyText1
+          //                       ?.copyWith(color: Colors.white),
+          //                 )),
+          //           ],
+          //         ),
+          //       )
+          //     : const SizedBox.shrink()),
+          // Obx(() => myCameraController.devLogs.value
+          //     ? ListTile(
+          //   title: Text(
+          //     'Current User Location: ',
+          //     style: Theme.of(context)
+          //         .textTheme
+          //         .headline3
+          //         ?.copyWith(fontWeight: FontWeight.normal),
+          //   ),
+          //   subtitle: Obx(() => Text(
+          //     "${mapController.userLocation.value}",
+          //     style: Theme.of(context)
+          //         .textTheme
+          //         .bodyText1
+          //         ?.copyWith(color: Colors.white),
+          //   )),
+          // )
+          //     : const SizedBox.shrink()),
         ],
       ),
     );
