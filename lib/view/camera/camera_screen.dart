@@ -31,6 +31,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../../controller/map_controller.dart';
@@ -129,7 +130,7 @@ class _CameraScreenState extends State<CameraScreen>
 
     if (state == AppLifecycleState.inactive) {
       // Free up memory when camera not active
-      print("CAMERA SCREEN INACTIVE LIFE CYCLE");
+      debugPrint("CAMERA SCREEN INACTIVE LIFE CYCLE");
       myCameraController.controller.value.dispose();
     } else if (state == AppLifecycleState.resumed) {
       // Reinitialize the camera with same properties
@@ -143,6 +144,13 @@ class _CameraScreenState extends State<CameraScreen>
   }
 
   void startCapturingImages() async {
+
+    // dimming the brightness of screen
+    if(myCameraController.autoDimmer.value){
+      ScreenBrightness().setScreenBrightness(0.0);
+    }
+
+
     Get.lazyPut(() => SensorController());
     final sensorController = Get.find<SensorController>();
     // INITIALIZING CSV FILE AND DEVICE TOTAL/FREE STORAGE
@@ -234,9 +242,9 @@ class _CameraScreenState extends State<CameraScreen>
           myCameraController.redGreenIndicatorCurrentImage.value = calculateImageAngle(myCameraController.tempAbsoluteOrientation.value, currentImage);
         }
 
-        print("PREVIOUS ABSOLUTE ORIENTATION: ${myCameraController.tempAbsoluteOrientation.value}");
-        print("CURRENT ABSOLUTE ORIENTATION: $currentImage");
-        print("INDICATOR: ${ myCameraController.redGreenIndicatorCurrentImage.value}");
+        debugPrint("PREVIOUS ABSOLUTE ORIENTATION: ${myCameraController.tempAbsoluteOrientation.value}");
+        debugPrint("CURRENT ABSOLUTE ORIENTATION: $currentImage");
+        debugPrint("INDICATOR: ${ myCameraController.redGreenIndicatorCurrentImage.value}");
 
         // SETTING BEEP TO TRUE EVERY TIME THE PICTURE IS CLICKED
         if (myCameraController.captureBeep.value) {
@@ -262,6 +270,9 @@ class _CameraScreenState extends State<CameraScreen>
       isCapturingImages = false;
     });
     timer?.cancel();
+    if(myCameraController.autoDimmer.value){
+      ScreenBrightness().resetScreenBrightness();
+    }
   }
 
   // TAP TO FOCS AND SHOW FOCUS CIRCLE
@@ -343,7 +354,7 @@ class _CameraScreenState extends State<CameraScreen>
                           double yp = y / cameraHeight;
 
                           Offset point = Offset(xp, yp);
-                          print("point : $point");
+                          debugPrint("point : $point");
 
                           // Manually focus
                           myCameraController.controller.value
@@ -368,7 +379,7 @@ class _CameraScreenState extends State<CameraScreen>
                       }
                     },
                     onLongPress: () {
-                      print("Auto focus Enabled");
+                      debugPrint("Auto focus Enabled");
                       setState(() {
                         focusModeAuto = true;
                         myCameraController.controller.value
@@ -746,7 +757,7 @@ class _CameraScreenState extends State<CameraScreen>
                       double yp = y / cameraHeight;
 
                       Offset point = Offset(xp, yp);
-                      print("point : $point");
+                      debugPrint("point : $point");
 
                       // Manually focus
                       myCameraController.controller.value
@@ -771,7 +782,7 @@ class _CameraScreenState extends State<CameraScreen>
                   }
                 },
                 onLongPress: () {
-                  print("Auto focus Enabled");
+                  debugPrint("Auto focus Enabled");
                   setState(() {
                     focusModeAuto = true;
                     myCameraController.controller.value
@@ -1445,6 +1456,7 @@ class _CameraScreenState extends State<CameraScreen>
     // REMOVING THE DATA OF PREVIOUS FILE CAPTURED
     myCameraController.tempAbsoluteOrientation.value = AngleCalculator(roll: 0, yaw: 0, pitch: 0);
     super.dispose();
+
   }
 
   @override
@@ -1460,8 +1472,11 @@ class _CameraScreenState extends State<CameraScreen>
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
         overlays: []);
 
+    // GETTING SETTINGS DATA FROM LOCAL STORAGE
     myCameraController.captureBeep.value = SharedPref().pref.getBool('beep') ?? true;
     myCameraController.angleCalculator.value = SharedPref().pref.getBool('calculate') ?? false;
+    myCameraController.angleCalculator.value = SharedPref().pref.getBool('wakelock') ?? false;
+    myCameraController.angleCalculator.value = SharedPref().pref.getBool('dimmer') ?? true;
 
     super.initState();
   }
@@ -1489,7 +1504,7 @@ class _CameraScreenState extends State<CameraScreen>
       return flag;
     }
     catch(e){
-      print("ERROR FROM CALCULATION: $e");
+      debugPrint("ERROR FROM CALCULATION: $e");
       return 'red';
     }
   }

@@ -20,6 +20,8 @@ class MyCameraController extends GetxController {
 
   Rx<bool> captureBeep = true.obs;
   Rx<bool> angleCalculator = true.obs;
+  Rx<bool> wakeLock = false.obs;
+  Rx<bool> autoDimmer = true.obs;
   // Rx<bool> devLogs = false.obs;
 
   var listOfImagesFromAlbum = <Medium>[].obs;

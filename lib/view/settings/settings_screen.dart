@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
 import 'package:mvp_camera/app/utils/shared_pref.dart';
+import 'package:wakelock/wakelock.dart';
 
 import '../../app/constant/controllers.dart';
 import '../../app/utils/angle_calculator.dart';
@@ -94,6 +95,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SharedPref().pref.setBool('calculate', value);
               },
               value: myCameraController.angleCalculator.value,
+            )),
+          ),
+          ListTile(
+            title: Text(
+              'Auto Lock',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline3
+                  ?.copyWith(fontWeight: FontWeight.normal),
+            ),
+            trailing: Obx(() => CupertinoSwitch(
+              onChanged: (bool value) {
+                myCameraController.wakeLock.value = value;
+                SharedPref().pref.setBool('wakelock', value);
+                if(value == false){
+                  Wakelock.enable();
+                }else{
+                  Wakelock.disable();
+                }
+              },
+              value: myCameraController.wakeLock.value,
+            )),
+          ),
+          ListTile(
+            title: Text(
+              'Auto dim brightness',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline3
+                  ?.copyWith(fontWeight: FontWeight.normal),
+            ),
+            trailing: Obx(() => CupertinoSwitch(
+              onChanged: (bool value) {
+                myCameraController.autoDimmer.value = value;
+                SharedPref().pref.setBool('dimmer', value);
+              },
+              value: myCameraController.autoDimmer.value,
             )),
           ),
           // ListTile(
