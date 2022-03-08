@@ -33,13 +33,18 @@ class _WelcomeProjectNameState extends State<WelcomeProjectName>
       if (await Permission.photos.isDenied ||
           await Permission.storage.isDenied ||
           await Permission.accessMediaLocation.isDenied) {
-        Permission.photos.request().then((value) {
-          Permission.storage.request().then((value) {
-            Permission.accessMediaLocation
-                .request()
-                .then((value) => debugPrint(value.toString()));
-          });
+
+        [Permission.photos, Permission.storage].request().then((value){
+          print(value);
         });
+
+        // Permission.photos.request().then((value) {
+        //   Permission.storage.request().then((value) {
+        //     Permission.accessMediaLocation
+        //         .request()
+        //         .then((value) => debugPrint(value.toString()));
+        //   });
+        // });
       }
       debugPrint("HEY PROJECT: " +
           myCameraController.projectNameController.value.text);

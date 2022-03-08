@@ -136,9 +136,9 @@ class _CameraScreenState extends State<CameraScreen>
     }
   }
 
-  Future<bool> checkLocationPermission() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-    return LocationPermission.always == permission;
+  Future<PermissionStatus> checkLocationPermission() async {
+    PermissionStatus permissionStatus = await Permission.locationWhenInUse.request();
+    return permissionStatus;
   }
 
   void startCapturingImages() async {
@@ -150,7 +150,7 @@ class _CameraScreenState extends State<CameraScreen>
     setState(() {
       isCapturingImages = true;
     });
-    bool locationPermission = await checkLocationPermission();
+    PermissionStatus locationPermission = await checkLocationPermission();
     // INITIALIZE DURATION FOR CAPTURING IMAGES
     Duration duration = Duration(
         milliseconds:
@@ -174,9 +174,9 @@ class _CameraScreenState extends State<CameraScreen>
         //   return;
         // }
 
-        // LOCATION ALWAYS STATUS CHECK
-        if(locationPermission == false){
-          Dialogs.openErrorSnackBar(context, 'Allow application to access location always from settings');
+        // LOCATION STATUS CHECK
+        if(locationPermission != PermissionStatus.granted){
+          Dialogs.openErrorSnackBar(context, 'Allow application to access location from settings');
           stopCapturingImages();
           return;
         }
@@ -1439,7 +1439,6 @@ class _CameraScreenState extends State<CameraScreen>
 
     // REMOVING THE DATA OF PREVIOUS FILE CAPTURED
     myCameraController.tempAbsoluteOrientation.value = AngleCalculator(roll: 0, yaw: 0, pitch: 0);
-
     super.dispose();
   }
 

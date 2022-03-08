@@ -56,7 +56,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
         myCameraController.projectDirectory = myImgDir;
       }
 
-      getLocationPermission();
+      // getLocationPermission();
 
       // PhotoManager.requestPermission().then((value){
       //   print("PHOTO MANAGER: $value");

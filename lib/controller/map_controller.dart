@@ -21,9 +21,11 @@ import '../model/file_data_model.dart';
 class MapController extends GetxController {
   static MapController instance = Get.find();
 
-  late Stream<Position> _geoLocationStream;
+
   late GoogleMapController controller;
   var imageMarkers = <Marker>{}.obs;
+
+  late Stream<Position> _geoLocationStream;
 
   Completer<GoogleMapController> googleMapController = Completer();
 
@@ -58,21 +60,27 @@ class MapController extends GetxController {
   }
 
   Future<void> listenToUserLocation() async {
-    bool locationPermission = await checkLocationPermission();
-    debugPrint("Location permission: $locationPermission");
+    await checkLocationPermission().then((permissionStatus) {
+      if (permissionStatus == PermissionStatus.granted) {
+        debugPrint("Location permission: $permissionStatus");
 
-    if (locationPermission) {
-      _geoLocationStream = Geolocator.getPositionStream(
-          locationSettings: const LocationSettings(
-              accuracy: LocationAccuracy.bestForNavigation));
+        Geolocator.isLocationServiceEnabled().then((geoPermission) async {
+          if(geoPermission){
+            _geoLocationStream = Geolocator.getPositionStream(
+                locationSettings: const LocationSettings(
+                    accuracy: LocationAccuracy.bestForNavigation));
+            userLocation.bindStream(_geoLocationStream);
+            userLocation.value = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation);
+            print(userLocation);
+          }
+        });
 
-      userLocation.bindStream(_geoLocationStream);
-      print("USER CURRENT LOCATION: ${userLocation.value}");
-    } else {
-      await Permission.locationAlways.request();
-      await Permission.location.request();
-    }
-    initCurrentLocationCameraPosition();
+      }else{
+        listenToUserLocation();
+      }
+      initCurrentLocationCameraPosition();
+    });
+
   }
 
   static Future<Set<Marker>> getMarkersInAnotherIsolate(
@@ -85,9 +93,9 @@ class MapController extends GetxController {
     // EDITING MARKER BITMAP
     final Uint8List? redBox = await getBytesFromAsset(ImagePaths.redBox, 35);
     final Uint8List? greenBox =
-    await getBytesFromAsset(ImagePaths.greenBox, 35);
+        await getBytesFromAsset(ImagePaths.greenBox, 35);
     final Uint8List? yellowBox =
-    await getBytesFromAsset(ImagePaths.yellowBox, 35);
+        await getBytesFromAsset(ImagePaths.yellowBox, 35);
 
     for (var element in files) {
       markerId += 1;
@@ -166,9 +174,12 @@ class MapController extends GetxController {
     }
   }
 
-  Future<bool> checkLocationPermission() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-    return LocationPermission.always == permission;
+  Future<PermissionStatus> checkLocationPermission() async {
+    // LocationPermission permission = await Geolocator.checkPermission();
+    PermissionStatus permissionStatus =
+        await Permission.location.request();
+    // print("Location permission: $permission");
+    return permissionStatus;
   }
 
   Future<void> initCurrentLocationCameraPosition() async {
