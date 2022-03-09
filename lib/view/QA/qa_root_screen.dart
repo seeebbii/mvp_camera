@@ -269,39 +269,39 @@ class _QaRootScreenState extends State<QaRootScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        ElevatedButton(
-          onPressed: () {
-            List<String> filesToBeShared = <String>[];
-            if (Platform.isIOS) {
-              filesToBeShared = fetchFilesController.filesInCurrentProjectForIos
-                  .map((element) => element.fileData.path)
-                  .toList();
-            }
-            if (Platform.isAndroid) {
-              filesToBeShared = fetchFilesController.filesInCurrentProject
-                  .map((element) => element.imageFile.path)
-                  .toList();
-            }
-            if (filesToBeShared.isNotEmpty) {
-              Share.shareFiles(filesToBeShared);
-            }
-          },
-          child: Text(
-            "Save",
-            style: Theme.of(context)
-                .textTheme
-                .bodyText1
-                ?.copyWith(color: Colors.white, fontSize: 13.sp),
-          ),
-          style: ElevatedButton.styleFrom(
-            onPrimary: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
-            primary: Colors.green,
-            shape: RoundedRectangleBorder(
-                //to set border radius to button
-                borderRadius: BorderRadius.circular(12)),
-          ),
-        ),
+        // ElevatedButton(
+        //   onPressed: () {
+        //     List<String> filesToBeShared = <String>[];
+        //     if (Platform.isIOS) {
+        //       filesToBeShared = fetchFilesController.filesInCurrentProjectForIos
+        //           .map((element) => element.fileData.path)
+        //           .toList();
+        //     }
+        //     if (Platform.isAndroid) {
+        //       filesToBeShared = fetchFilesController.filesInCurrentProject
+        //           .map((element) => element.imageFile.path)
+        //           .toList();
+        //     }
+        //     if (filesToBeShared.isNotEmpty) {
+        //       Share.shareFiles(filesToBeShared);
+        //     }
+        //   },
+        //   child: Text(
+        //     "Save",
+        //     style: Theme.of(context)
+        //         .textTheme
+        //         .bodyText1
+        //         ?.copyWith(color: Colors.white, fontSize: 13.sp),
+        //   ),
+        //   style: ElevatedButton.styleFrom(
+        //     onPrimary: Colors.white,
+        //     padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+        //     primary: Colors.green,
+        //     shape: RoundedRectangleBorder(
+        //         //to set border radius to button
+        //         borderRadius: BorderRadius.circular(12)),
+        //   ),
+        // ),
         ElevatedButton(
           onPressed: _buildConfirmationDialog,
           child: Text(
