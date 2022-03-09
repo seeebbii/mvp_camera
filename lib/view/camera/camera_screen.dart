@@ -631,8 +631,14 @@ class _CameraScreenState extends State<CameraScreen>
                                 return;
                               }
                               // myCameraController.controller.value.dispose();
-                              navigationController
+                              if(Platform.isAndroid){
+                                myCameraController.controller.value.dispose();
+                                navigationController
                                   .navigateToNamed(qaRootScreen);
+                              }else{
+                                navigationController
+                                    .navigateToNamed(qaRootScreen);
+                              }
                             },
                             child: CircleAvatar(
                               maxRadius: 20.r,
@@ -1033,8 +1039,14 @@ class _CameraScreenState extends State<CameraScreen>
                             return;
                           }
                           // myCameraController.controller.value.dispose();
-                          navigationController
-                              .navigateToNamed(qaRootScreen);
+                          if(Platform.isAndroid){
+                            myCameraController.controller.value.dispose();
+                            navigationController
+                                .navigateToNamed(qaRootScreen);
+                          }else{
+                            navigationController
+                                .navigateToNamed(qaRootScreen);
+                          }
                         },
                         child: CircleAvatar(
                           maxRadius: 20.r,

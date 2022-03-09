@@ -39,17 +39,27 @@ class FetchFilesController extends GetxController {
     // READING FILE EXIF
     FlutterExif fileData = handleFile.getExif(filePath);
 
+
     // FETCHING LAT LONG FROM IMAGE
     Float64List? imagePosition = await fileData.getLatLong();
 
+
     // EXTRACTING IMAGE META DATA
     var content = meta.MetaData.exifData(imageFile.readAsBytesSync());
+
 
     // CHECKING IF LAT LNG IS NOT NULL
     LatLng latLng = const LatLng(0.0, 0.0);
     if (imagePosition != null) {
       latLng = LatLng(imagePosition[0], imagePosition[1]);
     }
+
+    print("LAT LONG BEFORE: $latLng");
+
+
+    String latitudeRef = content.exifData['gps']['GPSLatitudeRef'];
+    String longitudeRef =  content.exifData['gps']['GPSLongitudeRef'];
+
     // FETCHING GYRO INFO FROM NAME OF FILE
     Map<String, dynamic> gyroInfo = splitStringFromPercentageForGyro(filePath);
     Map<String, dynamic> absoluteOrientation =
@@ -67,7 +77,7 @@ class FetchFilesController extends GetxController {
         metaData: content.exifData,
         gyroInfo: gyroInfo,
         absoluteOrientation: absoluteOrientation,
-        angleCalculations: angleCalculations);
+        angleCalculations: angleCalculations, latitudeRef:latitudeRef, longitudeRef: longitudeRef);
   }
 
   Future<FileDataModelForIos> createObjectForIos(String filePath) async {
@@ -91,7 +101,7 @@ class FetchFilesController extends GetxController {
       latLng = LatLng(0 - double.parse(latLongData['Latitude'].toString()), latLongData['Longitude']);
     }
 
-    if(latitudeRef == "W"){
+    if(longitudeRef == "W"){
       latLng = LatLng(latLongData['Latitude'], 0 - double.parse(latLongData['Longitude'].toString()));
     }
 

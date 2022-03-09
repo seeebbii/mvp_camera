@@ -29,12 +29,9 @@ class HandleFile {
   }
 
   Future<void> setFileLatLongForAndroid(File capturedFile, double latitude, double longitude) async {
-    // Get.lazyPut(() => SensorController());
-    final sensorController = Get.find<SensorController>();
     exifData = getExif(capturedFile.path);
     exifData.setLatLong(mapController.userLocation.value.latitude,
         mapController.userLocation.value.longitude);
-    exifData.setAttribute("UserComment", "${sensorController.gyroscopeEvent.value}");
     exifData.saveAttributes();
   }
 

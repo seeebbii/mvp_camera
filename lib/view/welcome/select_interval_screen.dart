@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_new
 
 import 'dart:io' as io;
-import 'package:image/image.dart' as img;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -11,12 +11,8 @@ import 'package:mvp_camera/app/router/router_generator.dart';
 import 'package:mvp_camera/app/utils/colors.dart';
 import 'package:mvp_camera/controller/fetch_files_controller.dart';
 import 'package:mvp_camera/view/components/custom_button.dart';
-import 'package:mvp_camera/view/components/custom_textfield.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:photo_manager/photo_manager.dart';
-
-import '../../controller/map_controller.dart';
 
 class SelectIntervalScreen extends StatefulWidget {
   const SelectIntervalScreen({Key? key}) : super(key: key);
