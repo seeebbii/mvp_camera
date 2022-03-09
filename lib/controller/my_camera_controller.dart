@@ -35,6 +35,8 @@ class MyCameraController extends GetxController {
   late Rx<CameraController> controller;
   Rx<bool> isCameraInitialized = false.obs;
 
+  Rx<bool> cameraDisposeCheck = true.obs;
+
   Rx<double> minAvailableZoom = 1.0.obs;
   Rx<double> maxAvailableZoom = 1.0.obs;
   Rx<double> currentZoomLevel = 1.0.obs;

@@ -632,7 +632,10 @@ class _CameraScreenState extends State<CameraScreen>
                               }
                               // myCameraController.controller.value.dispose();
                               if(Platform.isAndroid){
-                                myCameraController.controller.value.dispose();
+                                setState(() {
+
+                                });
+                                // myCameraController.controller.value.dispose();
                                 navigationController
                                   .navigateToNamed(qaRootScreen);
                               }else{

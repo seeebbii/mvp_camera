@@ -54,8 +54,6 @@ class FetchFilesController extends GetxController {
       latLng = LatLng(imagePosition[0], imagePosition[1]);
     }
 
-    print("LAT LONG BEFORE: $latLng");
-
 
     String latitudeRef = content.exifData['gps']['GPSLatitudeRef'];
     String longitudeRef =  content.exifData['gps']['GPSLongitudeRef'];
@@ -176,7 +174,6 @@ class FetchFilesController extends GetxController {
     List<FileDataModel> files = <FileDataModel>[];
     List<FileDataModelForIos> iosFile = <FileDataModelForIos>[];
     await Future.wait(tempFiles.map((e) async {
-      print(e);
       if (Platform.isAndroid) {
         FileDataModel obj = await createObject(e.path);
         files.add(obj);

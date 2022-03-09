@@ -297,7 +297,7 @@ class MapController extends GetxController {
     // X represents ROLL
     // Y represents PITCH
     // Z represents YAW
-    print(currentIndex);
+    debugPrint(currentIndex.toString());
     int j = 0;
     try {
       String flag = "green";
