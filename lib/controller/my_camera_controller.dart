@@ -14,7 +14,7 @@ class MyCameraController extends GetxController {
   static MyCameraController instance = Get.find();
 
   // DATA VARIABLES
-  Rx<TextEditingController> intervalController = TextEditingController().obs;
+  Rx<TextEditingController> intervalController = TextEditingController(text: "1").obs;
   final projectNameController = TextEditingController().obs;
   Directory projectDirectory = Directory('');
 
@@ -107,7 +107,7 @@ class MyCameraController extends GetxController {
         isRearCameraSelected.value = true;
         controller.value.initialize().then((value) {
           debugPrint("CAMERA INIT SUCCESS");
-          // controller.value.lockCaptureOrientation(DeviceOrientation.landscapeRight);
+          controller.value.lockCaptureOrientation(DeviceOrientation.portraitUp);
           controller.value.setFlashMode(FlashMode.off);
           initializeZoom();
         });

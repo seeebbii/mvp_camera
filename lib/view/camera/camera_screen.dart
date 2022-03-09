@@ -88,24 +88,30 @@ class _CameraScreenState extends State<CameraScreen>
 
     // Replace with the new controller
     if (mounted) {
+
       setState(() {
-        cameraController.setFlashMode(FlashMode.off);
-        myCameraController.controller.value = cameraController;
-        myCameraController.controller.value.lockCaptureOrientation(DeviceOrientation.portraitUp);
+        // cameraController.setFlashMode(FlashMode.off);
+        // myCameraController.controller.value = cameraController;
+        // myCameraController.controller.value.lockCaptureOrientation(DeviceOrientation.portraitUp);
       });
     }
+    cameraController.setFlashMode(FlashMode.off);
+    myCameraController.controller.value = cameraController;
     myCameraController.isCameraInitialized.value = false;
     myCameraController.isRearCameraSelected.value = false;
 
     // Update UI if controller updated
     cameraController.addListener(() {
-      if (mounted) setState(() {});
+      if (mounted) setState(() {
+        print("MOUNTED FROM CAMERA SCREEN");
+      });
     });
 
     // Initialize controller
     try {
       await cameraController.initialize().then((value) {
         debugPrint("CONTROLLER INITIALIZED");
+        cameraController.lockCaptureOrientation(DeviceOrientation.portraitUp);
       });
     } on CameraException catch (e) {
       debugPrint('Error initializing camera: $e');
