@@ -293,36 +293,12 @@ class _CameraScreenState extends State<CameraScreen>
     final size = MediaQuery.of(context).size;
     final deviceRatio = size.width / size.height;
     return Scaffold(
-      body: FutureBuilder(
-        future: myCameraController.checkCameraPermission(),
-        builder: (ctx, AsyncSnapshot<PermissionStatus> snap) {
-          if (snap.hasData) {
-            if (snap.data!.isGranted) {
-              if (myCameraController.controller.value.value.isInitialized) {
-                // return Center(child: TextButton(onPressed: () { navigationController.navigateToNamed(qaRootScreen); }, child: Text("QA"),));
-                if (myCameraController.controller.value.description == myCameraController.cameras[0]) {
-                  return landscapeCameraLeft(deviceRatio);
-                }else {
-                  return landscapeCameraRight(deviceRatio);
-                }
-
-              } else {
-                return Container(
-                  height: size.height,
-                  width: size.width,
-                  color: Colors.black,
-                );
-              }
-            } else {
-              return const Center(
-                  child: Text(
-                      "Please allow required permissions and restart our app"));
-            }
-          } else {
-            return const Center(child: Text("Cannot Initialize Camera"));
-          }
-        },
-      ),
+      body: myCameraController.controller.value.value.isInitialized ? myCameraController.controller.value.description == myCameraController.cameras[0] ?
+      landscapeCameraLeft(deviceRatio) : landscapeCameraRight(deviceRatio) : Container(
+        color: Colors.black,
+        height: size.height,
+        width: size.width,
+      )
     );
   }
 
@@ -630,14 +606,8 @@ class _CameraScreenState extends State<CameraScreen>
                                 // stopCapturingImages();
                                 return;
                               }
-                              // myCameraController.controller.value.dispose();
                               if(Platform.isAndroid){
-                                setState(() {
-
-                                });
-                                // myCameraController.controller.value.dispose();
-                                navigationController
-                                  .navigateToNamed(qaRootScreen);
+                                navigationController.getOff(qaRootScreen);
                               }else{
                                 navigationController
                                     .navigateToNamed(qaRootScreen);
@@ -1043,9 +1013,8 @@ class _CameraScreenState extends State<CameraScreen>
                           }
                           // myCameraController.controller.value.dispose();
                           if(Platform.isAndroid){
-                            myCameraController.controller.value.dispose();
-                            navigationController
-                                .navigateToNamed(qaRootScreen);
+                            navigationController.getOff(qaRootScreen);
+
                           }else{
                             navigationController
                                 .navigateToNamed(qaRootScreen);

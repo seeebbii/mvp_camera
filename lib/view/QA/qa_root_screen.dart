@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mvp_camera/app/router/router_generator.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../app/constant/controllers.dart';
@@ -47,8 +48,7 @@ class _QaRootScreenState extends State<QaRootScreen> {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //     overlays: []);
 
-
-    if(Platform.isAndroid){
+    if (Platform.isAndroid) {
       myCameraController.getAvailableCameras();
     }
 
@@ -100,7 +100,18 @@ class _QaRootScreenState extends State<QaRootScreen> {
                 left: 3.sp,
                 child: ElevatedButton(
                   onPressed: () {
-                    navigationController.goBack();
+                    if (Platform.isAndroid) {
+                      if (myCameraController
+                          .controller.value.value.isInitialized) {
+                        myCameraController.getAvailableCameras().then((value) {
+                          navigationController.getOff(cameraScreen);
+                        });
+                      }else{
+                        print("CAMERA IS: ${myCameraController.controller.value.value.isInitialized}");
+                      }
+                    } else {
+                      navigationController.goBack();
+                    }
                   },
                   child: Text(
                     "Back",
@@ -231,7 +242,8 @@ class _QaRootScreenState extends State<QaRootScreen> {
                       Dialogs.showLoadingDialog(context);
 
                       // REMOVING THE DATA OF PREVIOUS FILE CAPTURED
-                      myCameraController.tempAbsoluteOrientation.value = AngleCalculator(roll: 0, yaw: 0, pitch: 0);
+                      myCameraController.tempAbsoluteOrientation.value =
+                          AngleCalculator(roll: 0, yaw: 0, pitch: 0);
 
                       WidgetsBinding.instance?.addPostFrameCallback((duration) {
                         myCameraController.projectNameController.value.text =

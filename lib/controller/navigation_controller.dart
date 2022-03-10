@@ -14,6 +14,9 @@ class NavigationController extends GetxController {
   Future<dynamic>? getOffAll(String routeName) {
     return Get.offAllNamed(routeName);
   }
+  Future<dynamic>? getOff(String routeName) {
+    return Get.offNamed(routeName);
+  }
 
   goBack() => Get.back();
 }

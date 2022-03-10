@@ -98,7 +98,7 @@ class MyCameraController extends GetxController {
     debugPrint("${controller.value}");
   }
 
- getAvailableCameras() async {
+ Future getAvailableCameras() async {
     if(Platform.isIOS){
       PermissionStatus status = await checkCameraPermission();
       if(status.isDenied){

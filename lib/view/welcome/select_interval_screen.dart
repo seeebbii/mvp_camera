@@ -1,4 +1,3 @@
-// ignore_for_file: unnecessary_new
 
 import 'dart:io' as io;
 
@@ -52,13 +51,14 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
         myCameraController.projectDirectory = myImgDir;
       }
 
-      // getLocationPermission();
-
-      // PhotoManager.requestPermission().then((value){
-      //   print("PHOTO MANAGER: $value");
-      // });
       Get.put(FetchFilesController()).fetchDirectories();
-      navigationController.navigateToNamed(cameraScreen);
+
+      PermissionStatus cameraPer = await Permission.camera.status;
+      if(cameraPer == PermissionStatus.granted){
+        navigationController.navigateToNamed(cameraScreen);
+      }else{
+        Permission.camera.request();
+      }
     }
   }
 
