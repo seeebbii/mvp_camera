@@ -154,8 +154,8 @@ class FetchFilesController extends GetxController {
   }
 
   Future<void> checkDirectoriesAndFetch(String project) async {
-    print(myCameraController.projectNameController.value.text);
-    print(project);
+    debugPrint(myCameraController.projectNameController.value.text);
+    debugPrint(project);
     if (Platform.isAndroid) {
       final dir = await getExternalStorageDirectory();
       Directory newDir =

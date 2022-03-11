@@ -53,6 +53,16 @@ class MapController extends GetxController {
         .asUint8List();
   }
 
+  static Future<Uint8List?> getBytesFromAssetInAnotherIsolate(AssetBundle rootBundle, String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))
+        ?.buffer
+        .asUint8List();
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -83,17 +93,18 @@ class MapController extends GetxController {
 
   }
 
-  static Future<Set<Marker>> getMarkersInAnotherIsolate(
-      List<FileDataModel> files) async {
+  static Future<Set<Marker>> getMarkersInAnotherIsolate(Map<String, dynamic> params) async {
     // print(files);
     Set<Marker> temp = {};
 
+    List<FileDataModel> files = params['files'] as List<FileDataModel>;
+
     // EDITING MARKER BITMAP
-    final Uint8List? redBox = await getBytesFromAsset(ImagePaths.redBox, 35);
-    final Uint8List? greenBox =
-    await getBytesFromAsset(ImagePaths.greenBox, 35);
-    final Uint8List? yellowBox =
-    await getBytesFromAsset(ImagePaths.yellowBox, 35);
+
+
+    final Uint8List? redBox = params['redBox'] as Uint8List;
+    final Uint8List? greenBox = params['greenBox'] as Uint8List;
+    final Uint8List? yellowBox = params['yellowBox'] as Uint8List;
 
     for (int i = 0; i < files.length; i++) {
       String calcColor = calculateImageAngle(files, i);
@@ -178,7 +189,21 @@ class MapController extends GetxController {
       // ITERATING THROUGH THE FILE AND GETTING [LAT LNG] FROM THEIR INSTANCE VARIABLES FOR SETTING UP MARKERS
       final listOfFiles = fetchFilesController.filesInCurrentProject.value;
       // imageMarkers.value = await compute(getMarkersInAnotherIsolate, listOfFiles);
-      imageMarkers.value = await getMarkersInAnotherIsolate(listOfFiles);
+
+      final Uint8List? redBox = await getBytesFromAsset(ImagePaths.redBox, 35);
+      final Uint8List? greenBox =
+      await getBytesFromAsset( ImagePaths.greenBox, 35);
+      final Uint8List? yellowBox =
+      await getBytesFromAsset(ImagePaths.yellowBox, 35);
+
+      Map<String, dynamic> params = {
+        "files" : listOfFiles,
+        'redBox' : redBox,
+        'greenBox' : greenBox,
+        'yellowBox' : yellowBox,
+      };
+
+      imageMarkers.value = await compute(getMarkersInAnotherIsolate, params);
       navigationController.goBack();
     } else {
       // ITERATING THROUGH THE FILE AND GETTING [LAT LNG] FROM THEIR INSTANCE VARIABLES FOR SETTING UP MARKERS

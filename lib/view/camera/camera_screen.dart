@@ -1163,7 +1163,7 @@ class _CameraScreenState extends State<CameraScreen>
     if(Platform.isAndroid){
       if(myCameraController.controller.value.value.isInitialized){
         myCameraController.getAvailableCameras().then((_) {
-          Future.delayed(const Duration(seconds: 1), (){
+          Future.delayed(const Duration(milliseconds: 1000), (){
             setState(() {});
           });
         });
