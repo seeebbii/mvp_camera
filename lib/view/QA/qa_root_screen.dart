@@ -49,7 +49,10 @@ class _QaRootScreenState extends State<QaRootScreen> {
     //     overlays: []);
 
     if (Platform.isAndroid) {
-      myCameraController.getAvailableCameras();
+      // Future.delayed(const Duration(seconds: 2), (){
+      //   print("AFTER TO SECONDS");
+      //   myCameraController.getAvailableCameras();
+      // });
     }
 
     mapController.controller.dispose();
@@ -101,14 +104,8 @@ class _QaRootScreenState extends State<QaRootScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (Platform.isAndroid) {
-                      if (myCameraController
-                          .controller.value.value.isInitialized) {
-                        myCameraController.getAvailableCameras().then((value) {
-                          navigationController.getOff(cameraScreen);
-                        });
-                      }else{
-                        print("CAMERA IS: ${myCameraController.controller.value.value.isInitialized}");
-                      }
+
+                      navigationController.getOff(cameraScreen);
                     } else {
                       navigationController.goBack();
                     }
