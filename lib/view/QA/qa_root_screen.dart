@@ -48,12 +48,6 @@ class _QaRootScreenState extends State<QaRootScreen> {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //     overlays: []);
 
-    if (Platform.isAndroid) {
-      // Future.delayed(const Duration(seconds: 2), (){
-      //   print("AFTER TO SECONDS");
-      //   myCameraController.getAvailableCameras();
-      // });
-    }
 
     mapController.controller.dispose();
     fetchFilesController.filesInCurrentProject.clear();
