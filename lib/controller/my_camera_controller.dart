@@ -18,7 +18,7 @@ class MyCameraController extends GetxController {
   final projectNameController = TextEditingController().obs;
   Directory projectDirectory = Directory('');
 
-  Rx<bool> captureBeep = true.obs;
+  Rx<bool> captureBeep = false.obs;
   Rx<bool> angleCalculator = true.obs;
   Rx<bool> wakeLock = false.obs;
   Rx<bool> autoDimmer = true.obs;
@@ -105,7 +105,7 @@ class MyCameraController extends GetxController {
         Permission.camera.request();
       }else if(status.isGranted){
         cameras.value = await availableCameras();
-        controller = CameraController(cameras[0], ResolutionPreset.max, imageFormatGroup: ImageFormatGroup.bgra8888).obs;
+        controller = CameraController(cameras[0], ResolutionPreset.ultraHigh, imageFormatGroup: ImageFormatGroup.bgra8888).obs;
         isRearCameraSelected.value = true;
         controller.value.initialize().then((value) {
           debugPrint("CAMERA INIT SUCCESS");
@@ -117,7 +117,7 @@ class MyCameraController extends GetxController {
     }if(Platform.isAndroid){
       cameras.value = await availableCameras();
       print("Available Cameras: $cameras");
-      controller = CameraController(cameras[0], ResolutionPreset.max).obs;
+      controller = CameraController(cameras[0], ResolutionPreset.ultraHigh).obs;
       isRearCameraSelected.value = true;
       controller.value.initialize().then((value) {
         controller.value.lockCaptureOrientation(DeviceOrientation.portraitUp);

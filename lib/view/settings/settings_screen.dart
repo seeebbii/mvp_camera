@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,9 +22,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-
-
-
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
@@ -90,12 +88,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ?.copyWith(fontWeight: FontWeight.normal),
             ),
             trailing: Obx(() => CupertinoSwitch(
-              onChanged: (bool value) {
-                myCameraController.angleCalculator.value = value;
-                SharedPref().pref.setBool('calculate', value);
-              },
-              value: myCameraController.angleCalculator.value,
-            )),
+                  onChanged: (bool value) {
+                    myCameraController.angleCalculator.value = value;
+                    SharedPref().pref.setBool('calculate', value);
+                  },
+                  value: myCameraController.angleCalculator.value,
+                )),
           ),
           ListTile(
             title: Text(
@@ -106,17 +104,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ?.copyWith(fontWeight: FontWeight.normal),
             ),
             trailing: Obx(() => CupertinoSwitch(
-              onChanged: (bool value) {
-                myCameraController.wakeLock.value = value;
-                SharedPref().pref.setBool('wakelock', value);
-                if(value == false){
-                  Wakelock.enable();
-                }else{
-                  Wakelock.disable();
-                }
-              },
-              value: myCameraController.wakeLock.value,
-            )),
+                  onChanged: (bool value) {
+                    myCameraController.wakeLock.value = value;
+                    SharedPref().pref.setBool('wakelock', value);
+                    if (value == false) {
+                      Wakelock.enable();
+                    } else {
+                      Wakelock.disable();
+                    }
+                  },
+                  value: myCameraController.wakeLock.value,
+                )),
           ),
           ListTile(
             title: Text(
@@ -127,13 +125,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ?.copyWith(fontWeight: FontWeight.normal),
             ),
             trailing: Obx(() => CupertinoSwitch(
-              onChanged: (bool value) {
-                myCameraController.autoDimmer.value = value;
-                SharedPref().pref.setBool('dimmer', value);
-              },
-              value: myCameraController.autoDimmer.value,
-            )),
+                  onChanged: (bool value) {
+                    myCameraController.autoDimmer.value = value;
+                    SharedPref().pref.setBool('dimmer', value);
+                  },
+                  value: myCameraController.autoDimmer.value,
+                )),
           ),
+
+          ListTile(
+            title: Container(
+              height: 0.1.sh,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: myCameraController.cameras.length,
+                  itemBuilder: (ctx, index) {
+                    return Text("HEYE");
+                    if (myCameraController.cameras[index].lensDirection !=
+                        CameraLensDirection.front) {
+                      return TextButton(
+                          onPressed: () {}, child: Text("Camera"));
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  }),
+            ),
+          )
           // ListTile(
           //   title: Text(
           //     'Show dev logs',
