@@ -1,4 +1,4 @@
-package com.geeklone.mvp_camera
+package com.SmartSurveyor
 
 import io.flutter.embedding.android.FlutterActivity
 
