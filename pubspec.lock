@@ -422,6 +422,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  manual_camera:
+    dependency: "direct main"
+    description:
+      name: manual_camera
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3"
   matcher:
     dependency: transitive
     description:

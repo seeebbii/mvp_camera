@@ -134,20 +134,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
 
           ListTile(
-            title: Container(
+            title: Text(
+              'Available Cameras',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline3
+                  ?.copyWith(fontWeight: FontWeight.normal),
+            ),
+            subtitle: Container(
+              margin: EdgeInsets.symmetric(vertical: 0.02.sh),
               height: 0.1.sh,
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: myCameraController.cameras.length,
                   itemBuilder: (ctx, index) {
-                    return Text("HEYE");
-                    if (myCameraController.cameras[index].lensDirection !=
-                        CameraLensDirection.front) {
-                      return TextButton(
-                          onPressed: () {}, child: Text("Camera"));
-                    } else {
-                      return const SizedBox.shrink();
-                    }
+                    print(myCameraController.cameras[index]);
+                    return myCameraController.cameras[index].lensDirection != CameraLensDirection.front ? Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14.sp),
+                      child: OutlinedButton(
+                        onPressed: () {
+                         myCameraController.changeCamera(myCameraController.cameras[index]);
+                        },
+                        child: Text(
+                          'Back Camera ${index+1}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline3
+                              ?.copyWith(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 13.sp),
+                        ),
+                      ),
+                    ) : const SizedBox.shrink();
                   }),
             ),
           )

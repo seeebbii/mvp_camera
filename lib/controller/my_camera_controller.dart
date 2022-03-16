@@ -9,6 +9,8 @@ import 'package:mvp_camera/app/utils/angle_calculator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
+import 'package:manual_camera/camera.dart' as mc;
+
 
 class MyCameraController extends GetxController {
   static MyCameraController instance = Get.find();
@@ -105,7 +107,7 @@ class MyCameraController extends GetxController {
         Permission.camera.request();
       }else if(status.isGranted){
         cameras.value = await availableCameras();
-        controller = CameraController(cameras[0], ResolutionPreset.ultraHigh, imageFormatGroup: ImageFormatGroup.bgra8888).obs;
+        controller = CameraController(cameras[0], ResolutionPreset.ultraHigh, imageFormatGroup: ImageFormatGroup.bgra8888,).obs;
         isRearCameraSelected.value = true;
         controller.value.initialize().then((value) {
           debugPrint("CAMERA INIT SUCCESS");
@@ -126,6 +128,17 @@ class MyCameraController extends GetxController {
         initializeZoom();
       });
     }
+  }
+
+  void changeCamera(CameraDescription cameraDescription){
+    controller = CameraController(cameraDescription, ResolutionPreset.ultraHigh).obs;
+    isRearCameraSelected.value = true;
+    controller.value.initialize().then((value) {
+      controller.value.lockCaptureOrientation(DeviceOrientation.portraitUp);
+      debugPrint("CAMERA INIT SUCCESS");
+      controller.value.setFlashMode(FlashMode.off);
+      initializeZoom();
+    });
   }
 
   Future<PermissionStatus> checkCameraPermission() async {

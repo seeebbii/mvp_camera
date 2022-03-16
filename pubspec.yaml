@@ -54,6 +54,7 @@ dependencies:
   open_file: ^3.2.1
   url_launcher: ^6.0.20
   explorer: ^2.1.0
+  manual_camera: ^0.0.3
 
   flutter_exif_plugin:
     git:
