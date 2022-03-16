@@ -128,7 +128,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/wakelock/ios"
 
 SPEC CHECKSUMS:
-  camera: fe33292aff715a981eb34d7ce7b35b54337ff34c
+  camera: 9993f92f2c793e87b65e35f3a23c70582afb05b1
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   disk_space: e94d34bbdf77954adfb39e60bde9cc5c7233eda6
   edit_exif: 2aa9af748753405ba74ea858dc70de92f6fdc606

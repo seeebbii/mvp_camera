@@ -103,9 +103,11 @@ class _CameraScreenState extends State<CameraScreen>
 
     // Update UI if controller updated
     cameraController.addListener(() {
-      if (mounted) setState(() {
-        print("MOUNTED FROM CAMERA SCREEN");
+      if (mounted) {
+        setState(() {
+        debugPrint("MOUNTED FROM CAMERA SCREEN");
       });
+      }
     });
 
     // Initialize controller
