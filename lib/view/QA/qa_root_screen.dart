@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:explorer/explorer.dart';
+import 'package:explorer/explorer_io.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +10,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mvp_camera/app/router/router_generator.dart';
-import 'package:share_plus/share_plus.dart';
-
+import 'package:open_file/open_file.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../app/constant/controllers.dart';
 import '../../app/utils/angle_calculator.dart';
 import '../../app/utils/colors.dart';
@@ -47,7 +49,6 @@ class _QaRootScreenState extends State<QaRootScreen> {
   void dispose() {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //     overlays: []);
-
 
     mapController.controller.dispose();
     fetchFilesController.filesInCurrentProject.clear();
@@ -98,7 +99,6 @@ class _QaRootScreenState extends State<QaRootScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (Platform.isAndroid) {
-
                       navigationController.getOff(cameraScreen);
                     } else {
                       navigationController.goBack();
@@ -309,6 +309,38 @@ class _QaRootScreenState extends State<QaRootScreen> {
         //         borderRadius: BorderRadius.circular(12)),
         //   ),
         // ),
+        ElevatedButton(
+          onPressed: () async {
+            Uri? uri;
+            if(Platform.isAndroid){
+              if(fetchFilesController.filesInCurrentProject.isNotEmpty){
+                uri = Uri.file(fetchFilesController.filesInCurrentProject.first.imageFile.path);
+              }
+            }else{
+              if(fetchFilesController.filesInCurrentProjectForIos.isNotEmpty){
+                uri = Uri.file(fetchFilesController.filesInCurrentProjectForIos.first.imageFile.path);
+              }
+            }
+
+            final _result = await OpenFile.open(myCameraController.projectDirectory.path);
+            print(_result.message );
+          },
+          child: Text(
+            "Open Directory",
+            style: Theme.of(context)
+                .textTheme
+                .bodyText1
+                ?.copyWith(color: Colors.white, fontSize: 13.sp),
+          ),
+          style: ElevatedButton.styleFrom(
+            onPrimary: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+            primary: Colors.green,
+            shape: RoundedRectangleBorder(
+                //to set border radius to button
+                borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
         ElevatedButton(
           onPressed: _buildConfirmationDialog,
           child: Text(

@@ -51,6 +51,9 @@ dependencies:
   connectivity_plus: ^2.2.0
   share_plus: ^3.0.4
   motion_sensors: ^0.1.0
+  open_file: ^3.2.1
+  url_launcher: ^6.0.20
+  explorer: ^2.1.0
 
   flutter_exif_plugin:
     git:

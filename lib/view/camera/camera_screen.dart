@@ -630,7 +630,7 @@ class _CameraScreenState extends State<CameraScreen>
                                   : primaryColor,
                               foregroundColor: primaryColor,
                               child: Text(
-                                "Export",
+                                "View",
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline2
