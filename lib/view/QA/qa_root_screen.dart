@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:explorer/explorer.dart';
 import 'package:explorer/explorer_io.dart';
 import 'package:flutter/cupertino.dart';
@@ -322,10 +323,16 @@ class _QaRootScreenState extends State<QaRootScreen> {
               }
             }
 
-            print(uri!.path);
+            print(uri!.toFilePath());
+            print(myCameraController.projectDirectory.path);
 
             if(Platform.isAndroid){
               // CODE HERE
+
+
+              final _result = await OpenFile.open(myCameraController.projectDirectory.path);
+              print(_result.message );
+
             }else{
               if (!await launch("shareddocuments:${myCameraController.projectDirectory.path}")) {
                 throw 'Could not launch $uri';

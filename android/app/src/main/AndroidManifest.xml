@@ -17,6 +17,17 @@
         android:requestLegacyExternalStorage="true">
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCNvTcW5SQsjdpR9vs0jcXEIYid2091TUk"/>
+
+<!--        <provider-->
+<!--            android:name="android.support.v4.content.FileProvider"-->
+<!--            android:authorities="com.example.myapp.provider"-->
+<!--            android:exported="false"-->
+<!--            android:grantUriPermissions="true">-->
+<!--            <meta-data-->
+<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
+<!--                android:resource="@xml/provider_paths"/>-->
+<!--        </provider>-->
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
