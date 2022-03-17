@@ -132,7 +132,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   value: myCameraController.autoDimmer.value,
                 )),
           ),
-
+          ListTile(
+            title: Text(
+              'Camera Quality',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline3
+                  ?.copyWith(fontWeight: FontWeight.normal),
+            ),
+            trailing: DropdownButton<ResolutionPreset>(
+              dropdownColor: Colors.black87,
+              underline: Container(),
+              value: myCameraController.currentResolutionPreset.value,
+              items: [
+                for (ResolutionPreset preset
+                in myCameraController.resolutionPresets)
+                  DropdownMenuItem(
+                    child: Text(
+                      preset
+                          .toString()
+                          .split('.')[1]
+                          .toUpperCase(),
+                      style:
+                      const TextStyle(color: Colors.white),
+                    ),
+                    value: preset,
+                  )
+              ],
+              onChanged: (value) {
+                setState(() {
+                  myCameraController.currentResolutionPreset.value = value!;
+                });
+                myCameraController.changeCamera(myCameraController.controller.value.description);
+              },
+              hint: Text("Select item"),
+            ),
+          ),
           ListTile(
             title: Text(
               'Available Cameras',
@@ -153,7 +188,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 14.sp),
                       child: OutlinedButton(
                         onPressed: () {
-                         myCameraController.changeCamera(myCameraController.cameras[index]);
+                          myCameraController.changeCamera(myCameraController.cameras[index]);
                         },
                         child: Text(
                           'Back Camera ${index+1}',
@@ -161,14 +196,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               .textTheme
                               .headline3
                               ?.copyWith(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 13.sp),
+                              fontWeight: FontWeight.normal,
+                              fontSize: 13.sp),
                         ),
                       ),
                     ) : const SizedBox.shrink();
                   }),
             ),
-          )
+          ),
           // ListTile(
           //   title: Text(
           //     'Show dev logs',

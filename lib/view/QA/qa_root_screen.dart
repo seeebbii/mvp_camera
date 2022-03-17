@@ -322,6 +322,7 @@ class _QaRootScreenState extends State<QaRootScreen> {
               }
             }
 
+
             final _result = await OpenFile.open(myCameraController.projectDirectory.path);
             print(_result.message );
           },

@@ -9,7 +9,6 @@ import 'package:mvp_camera/app/utils/angle_calculator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
-import 'package:manual_camera/camera.dart' as mc;
 
 
 class MyCameraController extends GetxController {
@@ -48,6 +47,9 @@ class MyCameraController extends GetxController {
   Rx<double> currentExposureOffset = 0.0.obs;
 
   Rx<bool> isRearCameraSelected = false.obs;
+
+  final resolutionPresets = ResolutionPreset.values.obs;
+  Rx<ResolutionPreset> currentResolutionPreset = ResolutionPreset.ultraHigh.obs;
 
 
   // TEMPORARY VARIABLE FOR STORING ABSOLUTE ORIENTATION's ROLL PITCH AND YAW
@@ -119,7 +121,7 @@ class MyCameraController extends GetxController {
     }if(Platform.isAndroid){
       cameras.value = await availableCameras();
       print("Available Cameras: $cameras");
-      controller = CameraController(cameras[0], ResolutionPreset.ultraHigh).obs;
+      controller = CameraController(cameras[0], ResolutionPreset.ultraHigh, imageFormatGroup: ImageFormatGroup.jpeg).obs;
       isRearCameraSelected.value = true;
       controller.value.initialize().then((value) {
         controller.value.lockCaptureOrientation(DeviceOrientation.portraitUp);
@@ -131,7 +133,7 @@ class MyCameraController extends GetxController {
   }
 
   void changeCamera(CameraDescription cameraDescription){
-    controller = CameraController(cameraDescription, ResolutionPreset.ultraHigh).obs;
+    controller = CameraController(cameraDescription, currentResolutionPreset.value).obs;
     isRearCameraSelected.value = true;
     controller.value.initialize().then((value) {
       controller.value.lockCaptureOrientation(DeviceOrientation.portraitUp);
