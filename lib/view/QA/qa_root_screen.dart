@@ -328,8 +328,13 @@ class _QaRootScreenState extends State<QaRootScreen> {
 
             if(Platform.isAndroid){
               // CODE HERE FOR ANDROID
-              final _result = await OpenFile.open(myCameraController.projectDirectory.path);
-              print(_result.message );
+
+              if (!await launch("file:${myCameraController.projectDirectory.path}")) {
+                throw 'Could not launch $uri';
+              }
+
+              // final _result = await OpenFile.open(myCameraController.projectDirectory.path);
+              // print(_result.message );
 
             }else{
               if (!await launch("shareddocuments:${myCameraController.projectDirectory.path}")) {
