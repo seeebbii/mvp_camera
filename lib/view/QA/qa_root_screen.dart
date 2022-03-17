@@ -49,8 +49,6 @@ class _QaRootScreenState extends State<QaRootScreen> {
   void dispose() {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //     overlays: []);
-
-    mapController.controller.dispose();
     fetchFilesController.filesInCurrentProject.clear();
     super.dispose();
   }
@@ -326,8 +324,12 @@ class _QaRootScreenState extends State<QaRootScreen> {
 
             print(uri!.path);
 
-            if (!await launch("shareddocuments:${myCameraController.projectDirectory.path}")) {
-              throw 'Could not launch $uri';
+            if(Platform.isAndroid){
+              // CODE HERE
+            }else{
+              if (!await launch("shareddocuments:${myCameraController.projectDirectory.path}")) {
+                throw 'Could not launch $uri';
+              }
             }
 
             // final _result = await OpenFile.open(myCameraController.projectDirectory.path);
