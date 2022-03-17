@@ -327,9 +327,7 @@ class _QaRootScreenState extends State<QaRootScreen> {
             print(myCameraController.projectDirectory.path);
 
             if(Platform.isAndroid){
-              // CODE HERE
-
-
+              // CODE HERE FOR ANDROID
               final _result = await OpenFile.open(myCameraController.projectDirectory.path);
               print(_result.message );
 
