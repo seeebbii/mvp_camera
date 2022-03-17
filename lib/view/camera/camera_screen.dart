@@ -431,6 +431,30 @@ class _CameraScreenState extends State<CameraScreen>
                     ),
                   ),
                   Positioned(
+                    bottom: 0.1.sh,
+                    right: 0.10.sw,
+                    child: RotatedBox(
+                      quarterTurns: 1 -
+                          myCameraController.controller.value.description
+                              .sensorOrientation ~/
+                              120,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius:
+                            const BorderRadius.all(Radius.circular(15))),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 0.02.sw, vertical: 0.01.sh),
+                          child: Text(
+                            "${myCameraController.currentResolutionPreset.value.name.capitalize}",
+                            style: TextStyle(
+                                color: Colors.white, fontSize: 14.sp),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
                     bottom: 0.03.sh,
                     right: 0.10.sw,
                     child: RotatedBox(
@@ -824,5 +848,4 @@ class _CameraScreenState extends State<CameraScreen>
     return currentColor;
   }
 
-  // }
 }

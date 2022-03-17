@@ -312,19 +312,26 @@ class _QaRootScreenState extends State<QaRootScreen> {
         ElevatedButton(
           onPressed: () async {
             Uri? uri;
-            if(Platform.isAndroid){
-              if(fetchFilesController.filesInCurrentProject.isNotEmpty){
-                uri = Uri.file(fetchFilesController.filesInCurrentProject.first.imageFile.path);
+            if (Platform.isAndroid) {
+              if (fetchFilesController.filesInCurrentProject.isNotEmpty) {
+                uri = Uri.file(fetchFilesController
+                    .filesInCurrentProject.first.imageFile.path);
               }
-            }else{
-              if(fetchFilesController.filesInCurrentProjectForIos.isNotEmpty){
-                uri = Uri.file(fetchFilesController.filesInCurrentProjectForIos.first.imageFile.path);
+            } else {
+              if (fetchFilesController.filesInCurrentProjectForIos.isNotEmpty) {
+                uri = Uri.file(fetchFilesController
+                    .filesInCurrentProjectForIos.first.imageFile.path);
               }
             }
 
+            print(uri!.path);
 
-            final _result = await OpenFile.open(myCameraController.projectDirectory.path);
-            print(_result.message );
+            if (!await launch("shareddocuments:${myCameraController.projectDirectory.path}")) {
+              throw 'Could not launch $uri';
+            }
+
+            // final _result = await OpenFile.open(myCameraController.projectDirectory.path);
+            // print(_result.message );
           },
           child: Text(
             "Open Directory",
