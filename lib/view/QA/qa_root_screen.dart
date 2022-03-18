@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mvp_camera/app/router/router_generator.dart';
+import 'package:mvp_camera/app/utils/platform_specific.dart';
 import 'package:open_file/open_file.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../app/constant/controllers.dart';
@@ -310,35 +311,20 @@ class _QaRootScreenState extends State<QaRootScreen> {
         // ),
         ElevatedButton(
           onPressed: () async {
-            Uri? uri;
-            if (Platform.isAndroid) {
-              if (fetchFilesController.filesInCurrentProject.isNotEmpty) {
-                uri = Uri.file(fetchFilesController
-                    .filesInCurrentProject.first.imageFile.path);
-              }
-            } else {
-              if (fetchFilesController.filesInCurrentProjectForIos.isNotEmpty) {
-                uri = Uri.file(fetchFilesController
-                    .filesInCurrentProjectForIos.first.imageFile.path);
-              }
-            }
-
-            print(uri!.toFilePath());
-            print(myCameraController.projectDirectory.path);
 
             if(Platform.isAndroid){
               // CODE HERE FOR ANDROID
 
-              if (!await launch("file:${myCameraController.projectDirectory.path}")) {
-                throw 'Could not launch $uri';
-              }
+              PlatformSpecific platform = PlatformSpecific();
+              platform.openDirectoryLocation(myCameraController.projectNameController.value.text);
+
 
               // final _result = await OpenFile.open(myCameraController.projectDirectory.path);
               // print(_result.message );
 
             }else{
               if (!await launch("shareddocuments:${myCameraController.projectDirectory.path}")) {
-                throw 'Could not launch $uri';
+                throw 'Could not launch ${myCameraController.projectDirectory.path}';
               }
             }
 

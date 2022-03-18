@@ -355,8 +355,7 @@ class _CameraScreenState extends State<CameraScreen>
                               .setFocusMode(FocusMode.locked);
 
                           // Manually set light exposure
-                          myCameraController.controller.value
-                              .setExposureOffset(0.0);
+                          myCameraController.controller.value.setExposurePoint(point);
 
                           myCameraController.controller.value
                               .setExposureMode(ExposureMode.locked);

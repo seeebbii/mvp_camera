@@ -10,12 +10,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
-
 class MyCameraController extends GetxController {
   static MyCameraController instance = Get.find();
 
   // DATA VARIABLES
-  Rx<TextEditingController> intervalController = TextEditingController(text: "1").obs;
+  Rx<TextEditingController> intervalController =
+      TextEditingController(text: "1").obs;
   final projectNameController = TextEditingController().obs;
   Directory projectDirectory = Directory('');
 
@@ -23,6 +23,7 @@ class MyCameraController extends GetxController {
   Rx<bool> angleCalculator = true.obs;
   Rx<bool> wakeLock = false.obs;
   Rx<bool> autoDimmer = true.obs;
+
   // Rx<bool> devLogs = false.obs;
 
   var listOfImagesFromAlbum = <Medium>[].obs;
@@ -45,24 +46,27 @@ class MyCameraController extends GetxController {
   Rx<double> minAvailableExposureOffset = 0.0.obs;
   Rx<double> maxAvailableExposureOffset = 0.0.obs;
   Rx<double> currentExposureOffset = 0.0.obs;
+  Rx<double> exposureOffsetStepSize = 0.0.obs;
 
   Rx<bool> isRearCameraSelected = false.obs;
 
   final resolutionPresets = ResolutionPreset.values.obs;
   Rx<ResolutionPreset> currentResolutionPreset = ResolutionPreset.ultraHigh.obs;
 
-
   // TEMPORARY VARIABLE FOR STORING ABSOLUTE ORIENTATION's ROLL PITCH AND YAW
   // FOR DISPLAYING GREEN OR RED (INDICATOR) ON CAMERA SCREEN
 
-  Rx<AngleCalculator> tempAbsoluteOrientation = AngleCalculator(roll: 0, yaw: 0, pitch: 0).obs;
+  Rx<AngleCalculator> tempAbsoluteOrientation =
+      AngleCalculator(roll: 0, yaw: 0, pitch: 0).obs;
   Rx<String> redGreenIndicatorCurrentImage = "green".obs;
 
-  Future<void> changeProjectDirectory(String project)async{
-    if(Platform.isAndroid){
+  Future<void> changeProjectDirectory(String project) async {
+    if (Platform.isAndroid) {
       final dir = await getExternalStorageDirectory();
-      projectDirectory = await Directory('${dir?.path}/$project').create(recursive: true);
-    }if(Platform.isIOS){
+      projectDirectory =
+          await Directory('${dir?.path}/$project').create(recursive: true);
+    }
+    if (Platform.isIOS) {
       final dir = await getApplicationDocumentsDirectory();
       projectDirectory = await Directory('${dir.path}/$project').create();
     }
@@ -88,6 +92,10 @@ class MyCameraController extends GetxController {
         .then((value) => minAvailableExposureOffset.value = value);
 
     controller.value
+        .getExposureOffsetStepSize()
+        .then((value) => exposureOffsetStepSize.value = value);
+
+    controller.value
         .getMaxExposureOffset()
         .then((value) => maxAvailableExposureOffset.value = value);
     //.then((value) => maxAvailableExposureOffset.value = value);
@@ -97,19 +105,23 @@ class MyCameraController extends GetxController {
     debugPrint("MAXIMUM ZOOM : $maxAvailableZoom");
     debugPrint("MAXIMUM EXPOSURE : $maxAvailableExposureOffset");
     debugPrint("MINIMUM EXPOSURE : $minAvailableExposureOffset");
-
+    debugPrint("EXPOSURE OFFSET STEP SIZE : $minAvailableExposureOffset");
 
     debugPrint("${controller.value}");
   }
 
- Future getAvailableCameras() async {
-    if(Platform.isIOS){
+  Future getAvailableCameras() async {
+    if (Platform.isIOS) {
       PermissionStatus status = await checkCameraPermission();
-      if(status.isDenied){
+      if (status.isDenied) {
         Permission.camera.request();
-      }else if(status.isGranted){
+      } else if (status.isGranted) {
         cameras.value = await availableCameras();
-        controller = CameraController(cameras[0], ResolutionPreset.ultraHigh, imageFormatGroup: ImageFormatGroup.bgra8888,).obs;
+        controller = CameraController(
+          cameras[0],
+          ResolutionPreset.ultraHigh,
+          imageFormatGroup: ImageFormatGroup.bgra8888,
+        ).obs;
         isRearCameraSelected.value = true;
         controller.value.initialize().then((value) {
           debugPrint("CAMERA INIT SUCCESS");
@@ -118,10 +130,13 @@ class MyCameraController extends GetxController {
           initializeZoom();
         });
       }
-    }if(Platform.isAndroid){
+    }
+    if (Platform.isAndroid) {
       cameras.value = await availableCameras();
       print("Available Cameras: $cameras");
-      controller = CameraController(cameras[0], ResolutionPreset.ultraHigh, imageFormatGroup: ImageFormatGroup.jpeg).obs;
+      controller = CameraController(cameras[0], ResolutionPreset.ultraHigh,
+              imageFormatGroup: ImageFormatGroup.jpeg)
+          .obs;
       isRearCameraSelected.value = true;
       controller.value.initialize().then((value) {
         controller.value.lockCaptureOrientation(DeviceOrientation.portraitUp);
@@ -132,8 +147,9 @@ class MyCameraController extends GetxController {
     }
   }
 
-  void changeCamera(CameraDescription cameraDescription){
-    controller = CameraController(cameraDescription, currentResolutionPreset.value).obs;
+  void changeCamera(CameraDescription cameraDescription) {
+    controller =
+        CameraController(cameraDescription, currentResolutionPreset.value).obs;
     isRearCameraSelected.value = true;
     controller.value.initialize().then((value) {
       controller.value.lockCaptureOrientation(DeviceOrientation.portraitUp);
