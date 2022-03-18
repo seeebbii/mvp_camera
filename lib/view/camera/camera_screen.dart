@@ -349,16 +349,13 @@ class _CameraScreenState extends State<CameraScreen>
                           debugPrint("point : $point");
 
                           // Manually focus
-                          myCameraController.controller.value
-                              .setFocusPoint(point);
-                          myCameraController.controller.value
-                              .setFocusMode(FocusMode.locked);
+                          myCameraController.controller.value.setFocusPoint(point);
+                          myCameraController.controller.value.setFocusMode(FocusMode.locked);
 
                           // Manually set light exposure
                           myCameraController.controller.value.setExposurePoint(point);
+                          myCameraController.controller.value.setExposureMode(ExposureMode.locked);
 
-                          myCameraController.controller.value
-                              .setExposureMode(ExposureMode.locked);
                           setState(() {
                             Future.delayed(const Duration(seconds: 2))
                                 .whenComplete(() {
