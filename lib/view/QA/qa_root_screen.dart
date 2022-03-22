@@ -67,10 +67,21 @@ class _QaRootScreenState extends State<QaRootScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: backgroundColor.withOpacity(1),
-      body: buildStackedContainer(),
+    return WillPopScope(
+      onWillPop: () async {
+        if (Platform.isAndroid) {
+          navigationController.getOff(cameraScreen);
+        } else {
+          navigationController.goBack();
+        }
+
+        return false;
+      },
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: backgroundColor.withOpacity(1),
+        body: buildStackedContainer(),
+      ),
     );
   }
 
