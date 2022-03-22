@@ -335,33 +335,11 @@ class _CameraScreenState extends State<CameraScreen>
     return Scaffold(
       backgroundColor: Colors.black,
       body: Obx(() => myCameraController.controller.value.value.isInitialized ?
-      // myCameraController.controller.value.description == myCameraController.cameras[0] ?
-
-
-      // Listener(
-      //   onPointerDown: (_) => _pointers++,
-      //   onPointerUp: (_) => _pointers--,
-      //   child: CameraPreview(
-      //     myCameraController.controller.value,
-      //     child: LayoutBuilder(
-      //         builder: (BuildContext context, BoxConstraints constraints) {
-      //           return GestureDetector(
-      //             behavior: HitTestBehavior.opaque,
-      //             onScaleStart: _handleScaleStart,
-      //             onScaleUpdate: _handleScaleUpdate,
-      //             onTapDown: (TapDownDetails details) =>
-      //                 onViewFinderTap(details, constraints),
-      //           );
-      //         }),
-      //   ),
-      // )
-
       LayoutBuilder(
         builder:  (BuildContext context, BoxConstraints constraints) {
           return landscapeCameraLeft(deviceRatio, constraints);
         }
       )
-          // : landscapeCameraRight(deviceRatio)
             : Container(
         color: Colors.black,
         height: size.height,
