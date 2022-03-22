@@ -295,39 +295,6 @@ class _CameraScreenState extends State<CameraScreen>
 
   bool focusModeAuto = true;
 
-
-  void _handleScaleStart(ScaleStartDetails details) {
-    _baseScale = _currentScale;
-  }
-
-  Future<void> _handleScaleUpdate(ScaleUpdateDetails details) async {
-    // When there are not exactly two fingers on screen don't scale
-    if (myCameraController.controller.value == null || _pointers != 2) {
-      return;
-    }
-
-    _currentScale = (_baseScale * details.scale)
-        .clamp(myCameraController.minAvailableZoom.value, myCameraController.maxAvailableZoom.value);
-
-    await myCameraController.controller.value.setZoomLevel(_currentScale);
-  }
-
-  void onViewFinderTap(TapDownDetails details, BoxConstraints constraints) {
-    if (myCameraController.controller.value == null) {
-      return;
-    }
-
-    final CameraController cameraController = myCameraController.controller.value;
-
-    final Offset offset = Offset(
-      details.localPosition.dx / constraints.maxWidth,
-      details.localPosition.dy / constraints.maxHeight,
-    );
-    cameraController.setExposurePoint(offset);
-    // cameraController.setFocusPoint(offset).then((value) => cameraController.setExposureMode(ExposureMode.locked));
-
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -357,7 +324,7 @@ class _CameraScreenState extends State<CameraScreen>
           myCameraController.controller.value.value.isInitialized ?
           CameraPreview(myCameraController.controller.value,
             child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
+              behavior: HitTestBehavior.translucent,
               onTapUp: (TapUpDetails tapUpDetails) {
 
                 final CameraController cameraController = myCameraController.controller.value;
@@ -387,6 +354,13 @@ class _CameraScreenState extends State<CameraScreen>
 
                         // Manually set light exposure
                         cameraController.setExposurePoint(point);
+
+                        // TODO :: 100 ms delay for locking the exposure mode after setting exposure point
+                        // TODO :: also tested with 400ms/1sec/2sec
+                        Future.delayed(const Duration(milliseconds: 400), (){
+                          // cameraController.setExposureMode(ExposureMode.locked);
+                        });
+
                         // myCameraController.controller.value.setExposureMode(ExposureMode.locked);
                       });
                     }else{

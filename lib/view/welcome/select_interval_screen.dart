@@ -34,7 +34,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
         var dirPath = await getExternalStorageDirectory();
         debugPrint(myCameraController.projectNameController.value.text);
         debugPrint(myCameraController.intervalController.value.text);
-        final myImgDir = await new io.Directory(
+        final myImgDir = await io.Directory(
                 '${dirPath!.path}/${myCameraController.projectNameController.value.text}')
             .create(recursive: true);
         myCameraController.projectDirectory = myImgDir;
@@ -45,7 +45,7 @@ class _SelectIntervalScreenState extends State<SelectIntervalScreen>
         var dirPath = await getApplicationDocumentsDirectory();
         debugPrint(myCameraController.projectNameController.value.text);
         debugPrint(myCameraController.intervalController.value.text);
-        final myImgDir = await new io.Directory(
+        final myImgDir = await io.Directory(
                 '${dirPath.path}/${myCameraController.projectNameController.value.text}')
             .create();
         myCameraController.projectDirectory = myImgDir;
