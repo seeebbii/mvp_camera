@@ -377,7 +377,8 @@ class _CameraScreenState extends State<CameraScreen>
         alignment: Alignment.center,
         children: [
           myCameraController.controller.value.value.isInitialized ?
-          CameraPreview(myCameraController.controller.value, child: GestureDetector(
+          CameraPreview(myCameraController.controller.value,
+            child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTapUp: (TapUpDetails tapUpDetails) {
 
