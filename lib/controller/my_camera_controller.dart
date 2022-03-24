@@ -121,6 +121,7 @@ class MyCameraController extends GetxController {
           cameras[0],
           ResolutionPreset.ultraHigh,
           imageFormatGroup: ImageFormatGroup.bgra8888,
+          enableAudio: false,
         ).obs;
         isRearCameraSelected.value = true;
         controller.value.initialize().then((value) {
@@ -135,7 +136,7 @@ class MyCameraController extends GetxController {
       cameras.value = await availableCameras();
       print("Available Cameras: $cameras");
       controller = CameraController(cameras[0], ResolutionPreset.ultraHigh,
-              imageFormatGroup: ImageFormatGroup.jpeg)
+              imageFormatGroup: ImageFormatGroup.jpeg, enableAudio: false,)
           .obs;
       isRearCameraSelected.value = true;
       controller.value.initialize().then((value) {
@@ -155,6 +156,7 @@ class MyCameraController extends GetxController {
       controller.value.lockCaptureOrientation(DeviceOrientation.portraitUp);
       debugPrint("CAMERA INIT SUCCESS");
       controller.value.setFlashMode(FlashMode.off);
+      print(controller.value.resolutionPreset);
       initializeZoom();
     });
   }

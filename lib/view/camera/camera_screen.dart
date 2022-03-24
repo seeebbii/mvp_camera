@@ -1,24 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
-import 'dart:isolate';
 import 'dart:math';
+
 import 'package:camera/camera.dart';
-import 'package:exif/exif.dart';
-import 'package:flutter/foundation.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:image/image.dart' as img;
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_beep/flutter_beep.dart';
-import 'package:flutter_exif_plugin/flutter_exif_plugin.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:metadata/metadata.dart' as meta;
 import 'package:mvp_camera/app/constant/controllers.dart';
 import 'package:mvp_camera/app/router/router_generator.dart';
 import 'package:mvp_camera/app/utils/angle_calculator.dart';
@@ -26,13 +19,8 @@ import 'package:mvp_camera/app/utils/colors.dart';
 import 'package:mvp_camera/app/utils/dialogs.dart';
 import 'package:mvp_camera/app/utils/handle_file.dart';
 import 'package:mvp_camera/app/utils/shared_pref.dart';
-import 'package:mvp_camera/view/QA/qa_root_screen.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:photo_gallery/photo_gallery.dart';
-import 'package:photo_manager/photo_manager.dart';
 import 'package:screen_brightness/screen_brightness.dart';
-import 'package:wakelock/wakelock.dart';
 
 import '../../controller/map_controller.dart';
 import '../../controller/sensor_controller.dart';
@@ -152,6 +140,17 @@ class _CameraScreenState extends State<CameraScreen>
   Future<PermissionStatus> checkLocationPermission() async {
     PermissionStatus permissionStatus = await Permission.locationWhenInUse.request();
     return permissionStatus;
+  }
+
+  getFileSize(String filepath, int decimals) async {
+    var file = File(filepath);
+    int bytes = await file.length();
+    if (bytes <= 0) return "0 B";
+    const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+    var i = (log(bytes) / log(1024)).floor();
+    print(((bytes / pow(1024, i)).toStringAsFixed(decimals)) +
+        ' ' +
+        suffixes[i]);
   }
 
   void startCapturingImages() async {
