@@ -14,8 +14,6 @@ PODS:
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
-  - gallery_saver (0.0.1):
-    - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
   - google_maps_flutter (0.0.1):
@@ -36,9 +34,6 @@ PODS:
     - Flutter
   - photo_gallery (0.0.1):
     - Flutter
-  - photo_manager (1.0.0):
-    - Flutter
-    - FlutterMacOS
   - ReachabilitySwift (5.0.0)
   - screen_brightness_ios (0.0.5):
     - Flutter
@@ -63,7 +58,6 @@ DEPENDENCIES:
   - edit_exif (from `.symlinks/plugins/edit_exif/ios`)
   - Flutter (from `Flutter`)
   - flutter_beep (from `.symlinks/plugins/flutter_beep/ios`)
-  - gallery_saver (from `.symlinks/plugins/gallery_saver/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter (from `.symlinks/plugins/google_maps_flutter/ios`)
   - motion_sensors (from `.symlinks/plugins/motion_sensors/ios`)
@@ -71,7 +65,6 @@ DEPENDENCIES:
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - photo_gallery (from `.symlinks/plugins/photo_gallery/ios`)
-  - photo_manager (from `.symlinks/plugins/photo_manager/ios`)
   - screen_brightness_ios (from `.symlinks/plugins/screen_brightness_ios/ios`)
   - sensors_plus (from `.symlinks/plugins/sensors_plus/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
@@ -99,8 +92,6 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_beep:
     :path: ".symlinks/plugins/flutter_beep/ios"
-  gallery_saver:
-    :path: ".symlinks/plugins/gallery_saver/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   google_maps_flutter:
@@ -115,8 +106,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler/ios"
   photo_gallery:
     :path: ".symlinks/plugins/photo_gallery/ios"
-  photo_manager:
-    :path: ".symlinks/plugins/photo_manager/ios"
   screen_brightness_ios:
     :path: ".symlinks/plugins/screen_brightness_ios/ios"
   sensors_plus:
@@ -140,16 +129,14 @@ SPEC CHECKSUMS:
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_beep: 54fb393b22dfa0f0e4573c81b1c74dd71c4e5af8
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  gallery_saver: 9fc173c9f4fcc48af53b2a9ebea1b643255be542
-  geolocator_apple: b741765c55dc21950e3e106e8b3584e55cf81ce5
-  google_maps_flutter: abdb8dee6c52d4be36ad131ee6ebfacd14417c5a
+  geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
+  google_maps_flutter: c59fc576c0d0c7f4dc4bd63832c862d22d5a7c6d
   GoogleMaps: c213fc2334b7374144cede914da779b99be0ab74
   motion_sensors: 03f55b7c637a7e365a0b5f9697a449f9059d5d91
   open_file: 02eb5cb6b21264bd3a696876f5afbfb7ca4f4b7d
-  path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
+  path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   photo_gallery: 9f95e57747cd22c10676ece3660d1ffe6c603ee5
-  photo_manager: 84fa94fbeb82e607333ea9a13c43b58e0903a463
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   screen_brightness_ios: dd110ebfe9602013ea863d59770a9192ebbb7ac7
   sensors_plus: 5717760720f7e6acd96fdbd75b7428f5ad755ec2
